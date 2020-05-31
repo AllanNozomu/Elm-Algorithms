@@ -1,4 +1,4 @@
-module MergeSort exposing (mergeSort)
+module MergeSort exposing (mergeSort, mergeSortSteps)
 
 mergeSort : List comparable -> List comparable
 mergeSort l = 
@@ -30,3 +30,45 @@ split l =
                 (xs, _) -> ([], xs)
     in
     splitAux l l
+
+mergeSortSteps : Int -> List comparable -> (List comparable, List (List comparable), List (Int, Int))
+mergeSortSteps i l = 
+    case l of
+        [] -> ([], [], [])
+        a :: [] -> ([ a ], [], [])
+        _ ->  
+            let
+                (left, right) = split l
+            in
+            case (left, right) |> Tuple.mapBoth (mergeSortSteps i) (mergeSortSteps (i + List.length left)) of 
+            ((sortedLeft, resLeft, sequenceLeft), (sortedRight, resRight, sequenceRight)) ->
+                let
+                    (sortedL, res, sequence) = mergeOnlyOne sortedLeft sortedRight i (i + List.length left + 1)
+                in  
+                    (sortedL, 
+                    (List.map (\ele -> ele ++ right) resLeft) ++ (List.map (\ele -> sortedLeft ++ ele) resRight) ++ res,
+                    sequenceLeft ++ sequenceRight ++ sequence
+                    )
+
+mergeOnlyOne : List comparable -> List comparable -> Int -> Int -> (List comparable, List (List comparable), List (Int, Int))
+mergeOnlyOne l1 l2 i1 i2=
+    case ( l1, l2 ) of
+        ( [], _ ) -> (l2, [], [])
+        ( _, [] ) -> (l1, [], [])
+        ( e1 :: r1, e2 :: r2 ) ->
+            if e1 < e2 then
+                let
+                    (l, res, seq) = mergeOnlyOne r1 (e2 :: r2) (i1+1) i2
+                in 
+                (e1 :: l,
+                 (e1 :: r1 ++ e2 :: r2) :: List.map (\a -> e1 :: a) res,
+                 (i1, i2) :: seq
+                 )
+            else
+                let
+                    (l, res, seq) = mergeOnlyOne (e1 :: r1) r2 (i1+1) (i2+1)
+                in 
+                (e2 :: l,
+                 (e2 :: (e1 :: r1) ++ r2) :: List.map (\a -> e2 :: a) res ,
+                 (i1, i2) :: seq
+                )
