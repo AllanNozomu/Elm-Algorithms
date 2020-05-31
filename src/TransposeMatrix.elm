@@ -11,12 +11,12 @@ transpose matrix =
                 |> Maybe.withDefault Array.empty
                 |> Array.get 0
 
-        numColumns = Array.get 0 matrix
+        columnsLen = Array.get 0 matrix
                 |> Maybe.withDefault Array.empty
                 |> Array.length
 
-        columns =
-                Array.initialize numColumns identity
+        numColumns =
+                Array.initialize columnsLen identity
     in
     case firstValue of
         Just def ->
@@ -29,7 +29,7 @@ transpose matrix =
                         matrix
                 )
             <|
-                columns
+                numColumns
 
         _ ->
             Array.fromList [ Array.empty ]
