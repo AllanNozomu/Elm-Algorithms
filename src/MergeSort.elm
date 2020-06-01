@@ -46,7 +46,7 @@ mergeSortSteps i l =
                     (sortedL, res, sequence) = mergeOnlyOne sortedLeft sortedRight i (i + List.length left + 1)
                 in  
                     (sortedL, 
-                    (List.map (\ele -> ele ++ right) resLeft) ++ (List.map (\ele -> sortedLeft ++ ele) resRight) ++ res,
+                    List.map (\ele -> ele ++ right) resLeft ++ List.map (\ele -> sortedLeft ++ ele) resRight ++ res,
                     sequenceLeft ++ sequenceRight ++ sequence
                     )
 

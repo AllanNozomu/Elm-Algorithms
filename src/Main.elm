@@ -3,6 +3,7 @@ module Main exposing (..)
 import Array
 import Browser
 import Html exposing (..)
+import Html.Attributes exposing (src)
 import Html.Events exposing (..)
 import MergeSort
 import Random
@@ -25,11 +26,11 @@ main =
         }
 
 
-shuffle : List comparable -> List comparable
-shuffle l =
+shuffle : List comparable -> Int -> List comparable
+shuffle l seed =
     let
         ( newl, _ ) =
-            Random.step (Random.List.shuffle l) (Random.initialSeed 1)
+            Random.step (Random.List.shuffle l) (Random.initialSeed seed)
     in
     newl
 
@@ -39,7 +40,7 @@ shuffle l =
 
 
 type alias Model =
-    { dieFace : Int
+    { seed : Int
     , listToBeSorted : List Int
     , steps : List (List Int)
     , currentStep : List Int
@@ -47,6 +48,7 @@ type alias Model =
     , currentLeft : Int
     , currentRight : Int
     , index : Int
+    , pause : Bool
     }
 
 
@@ -54,12 +56,12 @@ initModel : Model
 initModel =
     let
         shuffledList =
-            shuffle (List.range 0 512)
+            shuffle (List.range 0 512) 1
 
         ( orderedList, steps, leftRightSequence ) =
             MergeSort.mergeSortSteps 0 shuffledList
     in
-    { dieFace = 0
+    { seed = 0
     , listToBeSorted = shuffledList
     , steps = steps
     , currentStep = orderedList
@@ -67,13 +69,14 @@ initModel =
     , currentLeft = 0
     , currentRight = 0
     , index = 0
+    , pause = True
     }
 
 
 init : () -> ( Model, Cmd Msg )
 init _ =
     ( initModel
-    , Cmd.none
+    , Random.generate NewSeed (Random.int 1 100000)
     )
 
 
@@ -83,21 +86,38 @@ init _ =
 
 type Msg
     = Roll
-    | NewFace Int
+    | NewSeed Int
     | Tick Time.Posix
+    | Pause
+    | Continue
+    | Back
+    | Advance
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
         Roll ->
-            ( model
-            , Random.generate NewFace (Random.int 1 6)
+            let
+                shuffledList =
+                    shuffle (List.range 0 512) model.seed
+
+                ( orderedList, steps, leftRightSequence ) =
+                    MergeSort.mergeSortSteps 0 shuffledList
+            in
+            ( { model
+                | listToBeSorted = shuffledList
+                , currentStep = orderedList
+                , steps = steps
+                , leftRightSequence = leftRightSequence
+                , index = 0
+              }
+            , Random.generate NewSeed (Random.int 1 100000)
             )
 
-        NewFace newFace ->
+        NewSeed newFace ->
             ( { model
-                | dieFace = newFace
+                | seed = newFace
               }
             , Cmd.none
             )
@@ -105,7 +125,7 @@ update msg model =
         Tick _ ->
             let
                 newIndex =
-                    if model.index + 1 > List.length model.steps then
+                    if model.index + 1 > List.length model.steps || model.pause then
                         model.index
 
                     else
@@ -122,6 +142,34 @@ update msg model =
                 , currentStep = newCurr
                 , currentLeft = newLeft
                 , currentRight = newRight
+              }
+            , Cmd.none
+            )
+
+        Pause ->
+            ( { model
+                | pause = True
+              }
+            , Cmd.none
+            )
+
+        Continue ->
+            ( { model
+                | pause = False
+              }
+            , Cmd.none
+            )
+
+        Back ->
+            ( { model
+                | index = Basics.max 0 (model.index - 1)
+              }
+            , Cmd.none
+            )
+
+        Advance ->
+            ( { model
+                | index = Basics.min (List.length model.listToBeSorted) (model.index + 1)
               }
             , Cmd.none
             )
@@ -143,7 +191,6 @@ subscriptions _ =
 view : Model -> Html Msg
 view model =
     let
-
         getColor index =
             if index == model.currentLeft then
                 fill "red"
@@ -155,18 +202,18 @@ view model =
                 fill "black"
     in
     div []
-        [ h1 [] [ text <| String.fromInt model.index ]
-        , button [ onClick Roll ] [ text "Roll" ]
+        [ h1 [] [ text "Merge sort" ]
+        , h1 [] [ text <| String.fromInt model.index ++ " Steps" ]
         , Svg.svg
             [ width "1024"
-            , height "640"
-            , viewBox "0 0 1024 640"
+            , height "512"
+            , viewBox "0 0 1024 512"
             ]
             (List.indexedMap
                 (\index barHeight ->
                     Svg.rect
                         [ x <| String.fromInt <| index * 2
-                        , y <| String.fromInt (640 - barHeight * 1)
+                        , y <| String.fromInt (512 - barHeight * 1)
                         , width "2"
                         , getColor index
                         , height <| String.fromInt <| barHeight * 1
@@ -175,4 +222,9 @@ view model =
                 )
                 model.currentStep
             )
+        , button [ onClick Roll ] [ text "Shuffle" ]
+        , button [ onClick Back, Html.Attributes.disabled (model.index <= 0) ] [ text "<" ]
+        , button [ onClick Pause, Html.Attributes.disabled model.pause ] [ text "Pause" ]
+        , button [ onClick Continue, Html.Attributes.disabled <| not model.pause ] [ text "Continue" ]
+        , button [ onClick Advance, Html.Attributes.disabled (model.index >= List.length model.steps) ] [ text ">" ]
         ]
