@@ -172,7 +172,7 @@ update msg model =
 
         Advance ->
             ( { model
-                | index = Basics.min (List.length model.listToBeSorted) (model.index + 1)
+                | index = Basics.min (List.length model.steps) (model.index + 1)
               }
             , Cmd.none
             )
