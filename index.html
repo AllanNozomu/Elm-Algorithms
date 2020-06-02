@@ -5957,7 +5957,7 @@ var $author$project$Main$initModel = function () {
 	var orderedList = _v0.a;
 	var steps = _v0.b;
 	var leftRightSequence = _v0.c;
-	return {currentLeft: 0, currentRight: 0, currentStep: orderedList, index: 0, leftRightSequence: leftRightSequence, listToBeSorted: shuffledList, pause: true, seed: 0, steps: steps};
+	return {currentLeft: 0, currentRight: 0, currentStep: shuffledList, index: 0, leftRightSequence: leftRightSequence, listToBeSorted: shuffledList, orderedList: orderedList, pause: true, seed: 0, steps: steps};
 }();
 var $author$project$Main$init = function (_v0) {
 	return _Utils_Tuple2(
@@ -6260,7 +6260,7 @@ var $author$project$Main$update = F2(
 				return _Utils_Tuple2(
 					_Utils_update(
 						model,
-						{currentStep: orderedList, index: 0, leftRightSequence: leftRightSequence, listToBeSorted: shuffledList, steps: steps}),
+						{currentStep: orderedList, index: 0, leftRightSequence: leftRightSequence, listToBeSorted: shuffledList, orderedList: orderedList, steps: steps}),
 					A2(
 						$elm$random$Random$generate,
 						$author$project$Main$NewSeed,
@@ -6324,7 +6324,7 @@ var $author$project$Main$update = F2(
 						{
 							index: A2(
 								$elm$core$Basics$min,
-								$elm$core$List$length(model.listToBeSorted),
+								$elm$core$List$length(model.steps),
 								model.index + 1)
 						}),
 					$elm$core$Platform$Cmd$none);
@@ -6377,9 +6377,18 @@ var $elm$svg$Svg$Attributes$width = _VirtualDom_attribute('width');
 var $elm$svg$Svg$Attributes$x = _VirtualDom_attribute('x');
 var $elm$svg$Svg$Attributes$y = _VirtualDom_attribute('y');
 var $author$project$Main$view = function (model) {
-	var getColor = function (index) {
-		return _Utils_eq(index, model.currentLeft) ? $elm$svg$Svg$Attributes$fill('red') : (_Utils_eq(index, model.currentRight) ? $elm$svg$Svg$Attributes$fill('yellow') : $elm$svg$Svg$Attributes$fill('black'));
-	};
+	var getColor = F2(
+		function (index, barHeight) {
+			return _Utils_eq(index, model.currentLeft) ? $elm$svg$Svg$Attributes$fill('red') : (_Utils_eq(index, model.currentRight) ? $elm$svg$Svg$Attributes$fill('yellow') : (_Utils_eq(
+				A2(
+					$elm$core$Maybe$withDefault,
+					0,
+					A2(
+						$elm$core$Array$get,
+						index,
+						$elm$core$Array$fromList(model.orderedList))),
+				barHeight) ? $elm$svg$Svg$Attributes$fill('green') : $elm$svg$Svg$Attributes$fill('black')));
+		});
 	return A2(
 		$elm$html$Html$div,
 		_List_Nil,
@@ -6421,7 +6430,7 @@ var $author$project$Main$view = function (model) {
 										$elm$svg$Svg$Attributes$y(
 										$elm$core$String$fromInt(512 - (barHeight * 1))),
 										$elm$svg$Svg$Attributes$width('2'),
-										getColor(index),
+										A2(getColor, index, barHeight),
 										$elm$svg$Svg$Attributes$height(
 										$elm$core$String$fromInt(barHeight * 1))
 									]),
