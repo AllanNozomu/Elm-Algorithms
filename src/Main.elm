@@ -42,6 +42,7 @@ shuffle l seed =
 type alias Model =
     { seed : Int
     , listToBeSorted : List Int
+    , orderedList : List Int
     , steps : List (List Int)
     , currentStep : List Int
     , leftRightSequence : List ( Int, Int )
@@ -64,7 +65,8 @@ initModel =
     { seed = 0
     , listToBeSorted = shuffledList
     , steps = steps
-    , currentStep = orderedList
+    , currentStep = shuffledList
+    , orderedList = orderedList
     , leftRightSequence = leftRightSequence
     , currentLeft = 0
     , currentRight = 0
@@ -108,6 +110,7 @@ update msg model =
             ( { model
                 | listToBeSorted = shuffledList
                 , currentStep = orderedList
+                , orderedList = orderedList
                 , steps = steps
                 , leftRightSequence = leftRightSequence
                 , index = 0
@@ -191,13 +194,15 @@ subscriptions _ =
 view : Model -> Html Msg
 view model =
     let
-        getColor index =
+        getColor index barHeight =
             if index == model.currentLeft then
                 fill "red"
 
             else if index == model.currentRight then
                 fill "yellow"
 
+            else if (model.orderedList |> Array.fromList |> Array.get index |> Maybe.withDefault 0 ) == barHeight then
+                fill "green"
             else
                 fill "black"
     in
@@ -215,7 +220,7 @@ view model =
                         [ x <| String.fromInt <| index * 2
                         , y <| String.fromInt (512 - barHeight * 1)
                         , width "2"
-                        , getColor index
+                        , getColor index barHeight
                         , height <| String.fromInt <| barHeight * 1
                         ]
                         []
