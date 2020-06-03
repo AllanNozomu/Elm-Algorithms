@@ -5241,8 +5241,8 @@ var $elm$core$Task$perform = F2(
 				A2($elm$core$Task$map, toMessage, task)));
 	});
 var $elm$browser$Browser$element = _Browser_element;
-var $author$project$Main$NewSeed = function (a) {
-	return {$: 'NewSeed', a: a};
+var $author$project$Update$NewSeedStart = function (a) {
+	return {$: 'NewSeedStart', a: a};
 };
 var $elm$random$Random$Generate = function (a) {
 	return {$: 'Generate', a: a};
@@ -5351,220 +5351,8 @@ var $elm$random$Random$generate = F2(
 			$elm$random$Random$Generate(
 				A2($elm$random$Random$map, tagger, generator)));
 	});
-var $elm$core$Tuple$mapBoth = F3(
-	function (funcA, funcB, _v0) {
-		var x = _v0.a;
-		var y = _v0.b;
-		return _Utils_Tuple2(
-			funcA(x),
-			funcB(y));
-	});
-var $author$project$MergeSort$mergeOnlyOne = F4(
-	function (l1, l2, i1, i2) {
-		var _v0 = _Utils_Tuple2(l1, l2);
-		if (!_v0.a.b) {
-			return _Utils_Tuple3(l2, _List_Nil, _List_Nil);
-		} else {
-			if (!_v0.b.b) {
-				return _Utils_Tuple3(l1, _List_Nil, _List_Nil);
-			} else {
-				var _v1 = _v0.a;
-				var e1 = _v1.a;
-				var r1 = _v1.b;
-				var _v2 = _v0.b;
-				var e2 = _v2.a;
-				var r2 = _v2.b;
-				if (_Utils_cmp(e1, e2) < 0) {
-					var _v3 = A4(
-						$author$project$MergeSort$mergeOnlyOne,
-						r1,
-						A2($elm$core$List$cons, e2, r2),
-						i1 + 1,
-						i2);
-					var l = _v3.a;
-					var res = _v3.b;
-					var seq = _v3.c;
-					return _Utils_Tuple3(
-						A2($elm$core$List$cons, e1, l),
-						A2(
-							$elm$core$List$cons,
-							A2(
-								$elm$core$List$cons,
-								e1,
-								_Utils_ap(
-									r1,
-									A2($elm$core$List$cons, e2, r2))),
-							A2(
-								$elm$core$List$map,
-								function (a) {
-									return A2($elm$core$List$cons, e1, a);
-								},
-								res)),
-						A2(
-							$elm$core$List$cons,
-							_Utils_Tuple2(i1, i2),
-							seq));
-				} else {
-					var _v4 = A4(
-						$author$project$MergeSort$mergeOnlyOne,
-						A2($elm$core$List$cons, e1, r1),
-						r2,
-						i1 + 1,
-						i2 + 1);
-					var l = _v4.a;
-					var res = _v4.b;
-					var seq = _v4.c;
-					return _Utils_Tuple3(
-						A2($elm$core$List$cons, e2, l),
-						A2(
-							$elm$core$List$cons,
-							A2(
-								$elm$core$List$cons,
-								e2,
-								_Utils_ap(
-									A2($elm$core$List$cons, e1, r1),
-									r2)),
-							A2(
-								$elm$core$List$map,
-								function (a) {
-									return A2($elm$core$List$cons, e2, a);
-								},
-								res)),
-						A2(
-							$elm$core$List$cons,
-							_Utils_Tuple2(i1, i2),
-							seq));
-				}
-			}
-		}
-	});
-var $elm$core$Tuple$mapFirst = F2(
-	function (func, _v0) {
-		var x = _v0.a;
-		var y = _v0.b;
-		return _Utils_Tuple2(
-			func(x),
-			y);
-	});
-var $author$project$MergeSort$split = function (l) {
-	var splitAux = F2(
-		function (x, y) {
-			var _v0 = _Utils_Tuple2(x, y);
-			if ((_v0.a.b && _v0.b.b) && _v0.b.b.b) {
-				var _v1 = _v0.a;
-				var xs = _v1.a;
-				var xr = _v1.b;
-				var _v2 = _v0.b;
-				var _v3 = _v2.b;
-				var yr = _v3.b;
-				return A2(
-					$elm$core$Tuple$mapFirst,
-					$elm$core$List$cons(xs),
-					A2(splitAux, xr, yr));
-			} else {
-				var xs = _v0.a;
-				return _Utils_Tuple2(_List_Nil, xs);
-			}
-		});
-	return A2(splitAux, l, l);
-};
-var $author$project$MergeSort$mergeSortSteps = F2(
-	function (i, l) {
-		if (!l.b) {
-			return _Utils_Tuple3(_List_Nil, _List_Nil, _List_Nil);
-		} else {
-			if (!l.b.b) {
-				var a = l.a;
-				return _Utils_Tuple3(
-					_List_fromArray(
-						[a]),
-					_List_Nil,
-					_List_Nil);
-			} else {
-				var _v1 = $author$project$MergeSort$split(l);
-				var left = _v1.a;
-				var right = _v1.b;
-				var _v2 = A3(
-					$elm$core$Tuple$mapBoth,
-					$author$project$MergeSort$mergeSortSteps(i),
-					$author$project$MergeSort$mergeSortSteps(
-						i + $elm$core$List$length(left)),
-					_Utils_Tuple2(left, right));
-				var _v3 = _v2.a;
-				var sortedLeft = _v3.a;
-				var resLeft = _v3.b;
-				var sequenceLeft = _v3.c;
-				var _v4 = _v2.b;
-				var sortedRight = _v4.a;
-				var resRight = _v4.b;
-				var sequenceRight = _v4.c;
-				var _v5 = A4(
-					$author$project$MergeSort$mergeOnlyOne,
-					sortedLeft,
-					sortedRight,
-					i,
-					(i + $elm$core$List$length(left)) + 1);
-				var sortedL = _v5.a;
-				var res = _v5.b;
-				var sequence = _v5.c;
-				return _Utils_Tuple3(
-					sortedL,
-					_Utils_ap(
-						A2(
-							$elm$core$List$map,
-							function (ele) {
-								return _Utils_ap(ele, right);
-							},
-							resLeft),
-						_Utils_ap(
-							A2(
-								$elm$core$List$map,
-								function (ele) {
-									return _Utils_ap(sortedLeft, ele);
-								},
-								resRight),
-							res)),
-					_Utils_ap(
-						sequenceLeft,
-						_Utils_ap(sequenceRight, sequence)));
-			}
-		}
-	});
-var $elm$core$Array$fromListHelp = F3(
-	function (list, nodeList, nodeListSize) {
-		fromListHelp:
-		while (true) {
-			var _v0 = A2($elm$core$Elm$JsArray$initializeFromList, $elm$core$Array$branchFactor, list);
-			var jsArray = _v0.a;
-			var remainingItems = _v0.b;
-			if (_Utils_cmp(
-				$elm$core$Elm$JsArray$length(jsArray),
-				$elm$core$Array$branchFactor) < 0) {
-				return A2(
-					$elm$core$Array$builderToArray,
-					true,
-					{nodeList: nodeList, nodeListSize: nodeListSize, tail: jsArray});
-			} else {
-				var $temp$list = remainingItems,
-					$temp$nodeList = A2(
-					$elm$core$List$cons,
-					$elm$core$Array$Leaf(jsArray),
-					nodeList),
-					$temp$nodeListSize = nodeListSize + 1;
-				list = $temp$list;
-				nodeList = $temp$nodeList;
-				nodeListSize = $temp$nodeListSize;
-				continue fromListHelp;
-			}
-		}
-	});
-var $elm$core$Array$fromList = function (list) {
-	if (!list.b) {
-		return $elm$core$Array$empty;
-	} else {
-		return A3($elm$core$Array$fromListHelp, list, _List_Nil, 0);
-	}
-};
+var $author$project$Model$MergeSort = {$: 'MergeSort'};
+var $author$project$Model$initModel = {currentLeft: 0, currentRight: 0, currentStep: _List_Nil, index: 0, leftRightSequence: _List_Nil, listToBeSorted: _List_Nil, orderedList: _List_Nil, pause: true, seed: 0, sortType: $author$project$Model$MergeSort, steps: _List_Nil};
 var $elm$core$Bitwise$and = _Bitwise_and;
 var $elm$core$Basics$negate = function (n) {
 	return -n;
@@ -5607,40 +5395,29 @@ var $elm$random$Random$int = F2(
 				}
 			});
 	});
-var $elm$core$Array$length = function (_v0) {
-	var len = _v0.a;
-	return len;
+var $author$project$Main$init = function (_v0) {
+	return _Utils_Tuple2(
+		$author$project$Model$initModel,
+		A2(
+			$elm$random$Random$generate,
+			$author$project$Update$NewSeedStart,
+			A2($elm$random$Random$int, 1, 100000)));
 };
-var $elm$random$Random$listHelp = F4(
-	function (revList, n, gen, seed) {
-		listHelp:
-		while (true) {
-			if (n < 1) {
-				return _Utils_Tuple2(revList, seed);
-			} else {
-				var _v0 = gen(seed);
-				var value = _v0.a;
-				var newSeed = _v0.b;
-				var $temp$revList = A2($elm$core$List$cons, value, revList),
-					$temp$n = n - 1,
-					$temp$gen = gen,
-					$temp$seed = newSeed;
-				revList = $temp$revList;
-				n = $temp$n;
-				gen = $temp$gen;
-				seed = $temp$seed;
-				continue listHelp;
-			}
-		}
+var $author$project$Update$Tick = function (a) {
+	return {$: 'Tick', a: a};
+};
+var $elm$time$Time$Every = F2(
+	function (a, b) {
+		return {$: 'Every', a: a, b: b};
 	});
-var $elm$random$Random$list = F2(
-	function (n, _v0) {
-		var gen = _v0.a;
-		return $elm$random$Random$Generator(
-			function (seed) {
-				return A4($elm$random$Random$listHelp, _List_Nil, n, gen, seed);
-			});
+var $elm$time$Time$State = F2(
+	function (taggers, processes) {
+		return {processes: processes, taggers: taggers};
 	});
+var $elm$core$Dict$RBEmpty_elm_builtin = {$: 'RBEmpty_elm_builtin'};
+var $elm$core$Dict$empty = $elm$core$Dict$RBEmpty_elm_builtin;
+var $elm$time$Time$init = $elm$core$Task$succeed(
+	A2($elm$time$Time$State, $elm$core$Dict$empty, $elm$core$Dict$empty));
 var $elm$core$Basics$compare = _Utils_compare;
 var $elm$core$Dict$get = F2(
 	function (targetKey, dict) {
@@ -5673,88 +5450,6 @@ var $elm$core$Dict$get = F2(
 			}
 		}
 	});
-var $owanturist$elm_union_find$UnionFind$findFast = F2(
-	function (id, dict) {
-		findFast:
-		while (true) {
-			var _v0 = A2($elm$core$Dict$get, id, dict);
-			if (_v0.$ === 'Nothing') {
-				return id;
-			} else {
-				var cursor = _v0.a;
-				if (_Utils_eq(id, cursor)) {
-					return id;
-				} else {
-					var $temp$id = cursor,
-						$temp$dict = dict;
-					id = $temp$id;
-					dict = $temp$dict;
-					continue findFast;
-				}
-			}
-		}
-	});
-var $owanturist$elm_union_find$UnionFind$find = F2(
-	function (id, _v0) {
-		var dict = _v0.b;
-		return A2($owanturist$elm_union_find$UnionFind$findFast, id, dict);
-	});
-var $elm$core$Array$bitMask = 4294967295 >>> (32 - $elm$core$Array$shiftStep);
-var $elm$core$Basics$ge = _Utils_ge;
-var $elm$core$Elm$JsArray$unsafeGet = _JsArray_unsafeGet;
-var $elm$core$Array$getHelp = F3(
-	function (shift, index, tree) {
-		getHelp:
-		while (true) {
-			var pos = $elm$core$Array$bitMask & (index >>> shift);
-			var _v0 = A2($elm$core$Elm$JsArray$unsafeGet, pos, tree);
-			if (_v0.$ === 'SubTree') {
-				var subTree = _v0.a;
-				var $temp$shift = shift - $elm$core$Array$shiftStep,
-					$temp$index = index,
-					$temp$tree = subTree;
-				shift = $temp$shift;
-				index = $temp$index;
-				tree = $temp$tree;
-				continue getHelp;
-			} else {
-				var values = _v0.a;
-				return A2($elm$core$Elm$JsArray$unsafeGet, $elm$core$Array$bitMask & index, values);
-			}
-		}
-	});
-var $elm$core$Bitwise$shiftLeftBy = _Bitwise_shiftLeftBy;
-var $elm$core$Array$tailIndex = function (len) {
-	return (len >>> 5) << 5;
-};
-var $elm$core$Array$get = F2(
-	function (index, _v0) {
-		var len = _v0.a;
-		var startShift = _v0.b;
-		var tree = _v0.c;
-		var tail = _v0.d;
-		return ((index < 0) || (_Utils_cmp(index, len) > -1)) ? $elm$core$Maybe$Nothing : ((_Utils_cmp(
-			index,
-			$elm$core$Array$tailIndex(len)) > -1) ? $elm$core$Maybe$Just(
-			A2($elm$core$Elm$JsArray$unsafeGet, $elm$core$Array$bitMask & index, tail)) : $elm$core$Maybe$Just(
-			A3($elm$core$Array$getHelp, startShift, index, tree)));
-	});
-var $elm$core$Array$isEmpty = function (_v0) {
-	var len = _v0.a;
-	return !len;
-};
-var $elm$core$Basics$modBy = _Basics_modBy;
-var $owanturist$elm_union_find$UnionFind$QuickUnionPathCompression = F2(
-	function (a, b) {
-		return {$: 'QuickUnionPathCompression', a: a, b: b};
-	});
-var $elm$core$Dict$RBEmpty_elm_builtin = {$: 'RBEmpty_elm_builtin'};
-var $elm$core$Dict$empty = $elm$core$Dict$RBEmpty_elm_builtin;
-var $owanturist$elm_union_find$UnionFind$quickUnionPathCompression = A2($owanturist$elm_union_find$UnionFind$QuickUnionPathCompression, 0, $elm$core$Dict$empty);
-var $elm$core$Tuple$second = function (_v0) {
-	var y = _v0.b;
-	return y;
-};
 var $elm$core$Dict$Black = {$: 'Black'};
 var $elm$core$Dict$RBNode_elm_builtin = F5(
 	function (a, b, c, d, e) {
@@ -5863,123 +5558,6 @@ var $elm$core$Dict$insert = F3(
 			return x;
 		}
 	});
-var $owanturist$elm_union_find$UnionFind$findCompressed = F2(
-	function (id, dict) {
-		var _v0 = A2($elm$core$Dict$get, id, dict);
-		if (_v0.$ === 'Nothing') {
-			return _Utils_Tuple2(
-				id,
-				A3($elm$core$Dict$insert, id, id, dict));
-		} else {
-			var cursor = _v0.a;
-			if (_Utils_eq(id, cursor)) {
-				return _Utils_Tuple2(id, dict);
-			} else {
-				var _v1 = A2($owanturist$elm_union_find$UnionFind$findCompressed, cursor, dict);
-				var parent = _v1.a;
-				var nextDict = _v1.b;
-				return _Utils_Tuple2(
-					parent,
-					A3($elm$core$Dict$insert, id, parent, nextDict));
-			}
-		}
-	});
-var $owanturist$elm_union_find$UnionFind$union = F3(
-	function (left, right, _v0) {
-		var count_ = _v0.a;
-		var dict = _v0.b;
-		var _v1 = A2($owanturist$elm_union_find$UnionFind$findCompressed, left, dict);
-		var leftRoot = _v1.a;
-		var leftDict = _v1.b;
-		var _v2 = A2($owanturist$elm_union_find$UnionFind$findCompressed, right, leftDict);
-		var rightRoot = _v2.a;
-		var rightDict = _v2.b;
-		return _Utils_eq(leftRoot, rightRoot) ? A2($owanturist$elm_union_find$UnionFind$QuickUnionPathCompression, count_, rightDict) : A2(
-			$owanturist$elm_union_find$UnionFind$QuickUnionPathCompression,
-			count_ + 1,
-			A3($elm$core$Dict$insert, leftRoot, rightRoot, rightDict));
-	});
-var $elm_community$random_extra$Utils$selectUniqByIndexes = F2(
-	function (values, randomIndexes) {
-		var modByLength = $elm$core$Basics$modBy(
-			$elm$core$Array$length(values));
-		var step = F2(
-			function (randomIndex, _v1) {
-				var uf = _v1.a;
-				var acc = _v1.b;
-				var leaderOfElement = A2($owanturist$elm_union_find$UnionFind$find, randomIndex, uf);
-				var leaderOfNextElement = A2(
-					$owanturist$elm_union_find$UnionFind$find,
-					modByLength(leaderOfElement + 1),
-					uf);
-				var _v0 = A2($elm$core$Array$get, leaderOfElement, values);
-				if (_v0.$ === 'Nothing') {
-					return _Utils_Tuple2(uf, acc);
-				} else {
-					var value = _v0.a;
-					return _Utils_Tuple2(
-						A3($owanturist$elm_union_find$UnionFind$union, leaderOfElement, leaderOfNextElement, uf),
-						A2($elm$core$List$cons, value, acc));
-				}
-			});
-		return $elm$core$Array$isEmpty(values) ? _List_Nil : A3(
-			$elm$core$List$foldr,
-			step,
-			_Utils_Tuple2($owanturist$elm_union_find$UnionFind$quickUnionPathCompression, _List_Nil),
-			randomIndexes).b;
-	});
-var $elm_community$random_extra$Random$List$shuffle = function (list) {
-	var values = $elm$core$Array$fromList(list);
-	var length = $elm$core$Array$length(values);
-	return A2(
-		$elm$random$Random$map,
-		$elm_community$random_extra$Utils$selectUniqByIndexes(values),
-		A2(
-			$elm$random$Random$list,
-			length,
-			A2($elm$random$Random$int, 0, length - 1)));
-};
-var $author$project$Main$shuffle = F2(
-	function (l, seed) {
-		var _v0 = A2(
-			$elm$random$Random$step,
-			$elm_community$random_extra$Random$List$shuffle(l),
-			$elm$random$Random$initialSeed(seed));
-		var newl = _v0.a;
-		return newl;
-	});
-var $author$project$Main$initModel = function () {
-	var shuffledList = A2(
-		$author$project$Main$shuffle,
-		A2($elm$core$List$range, 0, 512),
-		1);
-	var _v0 = A2($author$project$MergeSort$mergeSortSteps, 0, shuffledList);
-	var orderedList = _v0.a;
-	var steps = _v0.b;
-	var leftRightSequence = _v0.c;
-	return {currentLeft: 0, currentRight: 0, currentStep: shuffledList, index: 0, leftRightSequence: leftRightSequence, listToBeSorted: shuffledList, orderedList: orderedList, pause: true, seed: 0, steps: steps};
-}();
-var $author$project$Main$init = function (_v0) {
-	return _Utils_Tuple2(
-		$author$project$Main$initModel,
-		A2(
-			$elm$random$Random$generate,
-			$author$project$Main$NewSeed,
-			A2($elm$random$Random$int, 1, 100000)));
-};
-var $author$project$Main$Tick = function (a) {
-	return {$: 'Tick', a: a};
-};
-var $elm$time$Time$Every = F2(
-	function (a, b) {
-		return {$: 'Every', a: a, b: b};
-	});
-var $elm$time$Time$State = F2(
-	function (taggers, processes) {
-		return {processes: processes, taggers: taggers};
-	});
-var $elm$time$Time$init = $elm$core$Task$succeed(
-	A2($elm$time$Time$State, $elm$core$Dict$empty, $elm$core$Dict$empty));
 var $elm$time$Time$addMySub = F2(
 	function (_v0, state) {
 		var interval = _v0.a;
@@ -6227,15 +5805,585 @@ var $elm$time$Time$every = F2(
 		return $elm$time$Time$subscription(
 			A2($elm$time$Time$Every, interval, tagger));
 	});
-var $author$project$Main$subscriptions = function (_v0) {
-	return A2($elm$time$Time$every, 1, $author$project$Main$Tick);
+var $author$project$Subscriptions$subscriptions = function (_v0) {
+	return A2($elm$time$Time$every, 1, $author$project$Update$Tick);
 };
+var $author$project$Update$NewSeed = function (a) {
+	return {$: 'NewSeed', a: a};
+};
+var $author$project$Update$Roll = {$: 'Roll'};
+var $elm$core$Array$fromListHelp = F3(
+	function (list, nodeList, nodeListSize) {
+		fromListHelp:
+		while (true) {
+			var _v0 = A2($elm$core$Elm$JsArray$initializeFromList, $elm$core$Array$branchFactor, list);
+			var jsArray = _v0.a;
+			var remainingItems = _v0.b;
+			if (_Utils_cmp(
+				$elm$core$Elm$JsArray$length(jsArray),
+				$elm$core$Array$branchFactor) < 0) {
+				return A2(
+					$elm$core$Array$builderToArray,
+					true,
+					{nodeList: nodeList, nodeListSize: nodeListSize, tail: jsArray});
+			} else {
+				var $temp$list = remainingItems,
+					$temp$nodeList = A2(
+					$elm$core$List$cons,
+					$elm$core$Array$Leaf(jsArray),
+					nodeList),
+					$temp$nodeListSize = nodeListSize + 1;
+				list = $temp$list;
+				nodeList = $temp$nodeList;
+				nodeListSize = $temp$nodeListSize;
+				continue fromListHelp;
+			}
+		}
+	});
+var $elm$core$Array$fromList = function (list) {
+	if (!list.b) {
+		return $elm$core$Array$empty;
+	} else {
+		return A3($elm$core$Array$fromListHelp, list, _List_Nil, 0);
+	}
+};
+var $elm$core$Array$bitMask = 4294967295 >>> (32 - $elm$core$Array$shiftStep);
+var $elm$core$Basics$ge = _Utils_ge;
+var $elm$core$Elm$JsArray$unsafeGet = _JsArray_unsafeGet;
+var $elm$core$Array$getHelp = F3(
+	function (shift, index, tree) {
+		getHelp:
+		while (true) {
+			var pos = $elm$core$Array$bitMask & (index >>> shift);
+			var _v0 = A2($elm$core$Elm$JsArray$unsafeGet, pos, tree);
+			if (_v0.$ === 'SubTree') {
+				var subTree = _v0.a;
+				var $temp$shift = shift - $elm$core$Array$shiftStep,
+					$temp$index = index,
+					$temp$tree = subTree;
+				shift = $temp$shift;
+				index = $temp$index;
+				tree = $temp$tree;
+				continue getHelp;
+			} else {
+				var values = _v0.a;
+				return A2($elm$core$Elm$JsArray$unsafeGet, $elm$core$Array$bitMask & index, values);
+			}
+		}
+	});
+var $elm$core$Bitwise$shiftLeftBy = _Bitwise_shiftLeftBy;
+var $elm$core$Array$tailIndex = function (len) {
+	return (len >>> 5) << 5;
+};
+var $elm$core$Array$get = F2(
+	function (index, _v0) {
+		var len = _v0.a;
+		var startShift = _v0.b;
+		var tree = _v0.c;
+		var tail = _v0.d;
+		return ((index < 0) || (_Utils_cmp(index, len) > -1)) ? $elm$core$Maybe$Nothing : ((_Utils_cmp(
+			index,
+			$elm$core$Array$tailIndex(len)) > -1) ? $elm$core$Maybe$Just(
+			A2($elm$core$Elm$JsArray$unsafeGet, $elm$core$Array$bitMask & index, tail)) : $elm$core$Maybe$Just(
+			A3($elm$core$Array$getHelp, startShift, index, tree)));
+	});
+var $elm$core$List$append = F2(
+	function (xs, ys) {
+		if (!ys.b) {
+			return xs;
+		} else {
+			return A3($elm$core$List$foldr, $elm$core$List$cons, ys, xs);
+		}
+	});
+var $elm$core$List$concat = function (lists) {
+	return A3($elm$core$List$foldr, $elm$core$List$append, _List_Nil, lists);
+};
+var $elm$core$Tuple$mapBoth = F3(
+	function (funcA, funcB, _v0) {
+		var x = _v0.a;
+		var y = _v0.b;
+		return _Utils_Tuple2(
+			funcA(x),
+			funcB(y));
+	});
+var $author$project$MergeSort$mergeSteps = F4(
+	function (l1, l2, i1, i2) {
+		var _v0 = _Utils_Tuple2(l1, l2);
+		if (!_v0.a.b) {
+			return _Utils_Tuple3(l2, _List_Nil, _List_Nil);
+		} else {
+			if (!_v0.b.b) {
+				return _Utils_Tuple3(l1, _List_Nil, _List_Nil);
+			} else {
+				var _v1 = _v0.a;
+				var e1 = _v1.a;
+				var r1 = _v1.b;
+				var _v2 = _v0.b;
+				var e2 = _v2.a;
+				var r2 = _v2.b;
+				if (_Utils_cmp(e1, e2) < 0) {
+					var _v3 = A4(
+						$author$project$MergeSort$mergeSteps,
+						r1,
+						A2($elm$core$List$cons, e2, r2),
+						i1 + 1,
+						i2);
+					var l = _v3.a;
+					var res = _v3.b;
+					var seq = _v3.c;
+					return _Utils_Tuple3(
+						A2($elm$core$List$cons, e1, l),
+						A2(
+							$elm$core$List$cons,
+							A2(
+								$elm$core$List$cons,
+								e1,
+								_Utils_ap(
+									r1,
+									A2($elm$core$List$cons, e2, r2))),
+							A2(
+								$elm$core$List$map,
+								function (a) {
+									return A2($elm$core$List$cons, e1, a);
+								},
+								res)),
+						A2(
+							$elm$core$List$cons,
+							_Utils_Tuple2(i1, i2),
+							seq));
+				} else {
+					var _v4 = A4(
+						$author$project$MergeSort$mergeSteps,
+						A2($elm$core$List$cons, e1, r1),
+						r2,
+						i1 + 1,
+						i2 + 1);
+					var l = _v4.a;
+					var res = _v4.b;
+					var seq = _v4.c;
+					return _Utils_Tuple3(
+						A2($elm$core$List$cons, e2, l),
+						A2(
+							$elm$core$List$cons,
+							A2(
+								$elm$core$List$cons,
+								e2,
+								_Utils_ap(
+									A2($elm$core$List$cons, e1, r1),
+									r2)),
+							A2(
+								$elm$core$List$map,
+								function (a) {
+									return A2($elm$core$List$cons, e2, a);
+								},
+								res)),
+						A2(
+							$elm$core$List$cons,
+							_Utils_Tuple2(i1, i2),
+							seq));
+				}
+			}
+		}
+	});
+var $elm$core$Tuple$mapFirst = F2(
+	function (func, _v0) {
+		var x = _v0.a;
+		var y = _v0.b;
+		return _Utils_Tuple2(
+			func(x),
+			y);
+	});
+var $author$project$MergeSort$split = function (l) {
+	var splitAux = F2(
+		function (x, y) {
+			var _v0 = _Utils_Tuple2(x, y);
+			if ((_v0.a.b && _v0.b.b) && _v0.b.b.b) {
+				var _v1 = _v0.a;
+				var xs = _v1.a;
+				var xr = _v1.b;
+				var _v2 = _v0.b;
+				var _v3 = _v2.b;
+				var yr = _v3.b;
+				return A2(
+					$elm$core$Tuple$mapFirst,
+					$elm$core$List$cons(xs),
+					A2(splitAux, xr, yr));
+			} else {
+				var xs = _v0.a;
+				return _Utils_Tuple2(_List_Nil, xs);
+			}
+		});
+	return A2(splitAux, l, l);
+};
+var $author$project$MergeSort$mergeSortSteps = F2(
+	function (i, l) {
+		if (!l.b) {
+			return _Utils_Tuple3(_List_Nil, _List_Nil, _List_Nil);
+		} else {
+			if (!l.b.b) {
+				var a = l.a;
+				return _Utils_Tuple3(
+					_List_fromArray(
+						[a]),
+					_List_Nil,
+					_List_Nil);
+			} else {
+				var _v1 = $author$project$MergeSort$split(l);
+				var left = _v1.a;
+				var right = _v1.b;
+				var _v2 = A3(
+					$elm$core$Tuple$mapBoth,
+					$author$project$MergeSort$mergeSortSteps(i),
+					$author$project$MergeSort$mergeSortSteps(
+						i + $elm$core$List$length(left)),
+					_Utils_Tuple2(left, right));
+				var _v3 = _v2.a;
+				var sortedLeft = _v3.a;
+				var resLeft = _v3.b;
+				var sequenceLeft = _v3.c;
+				var _v4 = _v2.b;
+				var sortedRight = _v4.a;
+				var resRight = _v4.b;
+				var sequenceRight = _v4.c;
+				var _v5 = A4(
+					$author$project$MergeSort$mergeSteps,
+					sortedLeft,
+					sortedRight,
+					i,
+					(i + $elm$core$List$length(left)) + 1);
+				var sortedL = _v5.a;
+				var res = _v5.b;
+				var sequence = _v5.c;
+				return _Utils_Tuple3(
+					sortedL,
+					_Utils_ap(
+						A2(
+							$elm$core$List$map,
+							function (ele) {
+								return _Utils_ap(ele, right);
+							},
+							resLeft),
+						_Utils_ap(
+							A2(
+								$elm$core$List$map,
+								function (ele) {
+									return _Utils_ap(sortedLeft, ele);
+								},
+								resRight),
+							res)),
+					_Utils_ap(
+						sequenceLeft,
+						_Utils_ap(sequenceRight, sequence)));
+			}
+		}
+	});
+var $elm$core$List$repeatHelp = F3(
+	function (result, n, value) {
+		repeatHelp:
+		while (true) {
+			if (n <= 0) {
+				return result;
+			} else {
+				var $temp$result = A2($elm$core$List$cons, value, result),
+					$temp$n = n - 1,
+					$temp$value = value;
+				result = $temp$result;
+				n = $temp$n;
+				value = $temp$value;
+				continue repeatHelp;
+			}
+		}
+	});
+var $elm$core$List$repeat = F2(
+	function (n, value) {
+		return A3($elm$core$List$repeatHelp, _List_Nil, n, value);
+	});
+var $author$project$SelectionSort$getMinAndPositionSteps = F4(
+	function (l, _v0, steps, index) {
+		getMinAndPositionSteps:
+		while (true) {
+			var minPosition = _v0.a;
+			var minValue = _v0.b;
+			if (!l.b) {
+				return _Utils_Tuple3(minPosition, minValue, steps);
+			} else {
+				var v = l.a;
+				var r = l.b;
+				var _v2 = (_Utils_cmp(v, minValue) < 0) ? _Utils_Tuple2(index, v) : _Utils_Tuple2(minPosition, minValue);
+				var newPosition = _v2.a;
+				var newMin = _v2.b;
+				var newSteps = _Utils_ap(
+					steps,
+					_List_fromArray(
+						[
+							_Utils_Tuple2(index, newPosition)
+						]));
+				var $temp$l = r,
+					$temp$_v0 = _Utils_Tuple2(newPosition, newMin),
+					$temp$steps = newSteps,
+					$temp$index = index + 1;
+				l = $temp$l;
+				_v0 = $temp$_v0;
+				steps = $temp$steps;
+				index = $temp$index;
+				continue getMinAndPositionSteps;
+			}
+		}
+	});
+var $author$project$SelectionSort$selectionSortSteps = F2(
+	function (l, i) {
+		if (!l.b) {
+			return _Utils_Tuple2(_List_Nil, _List_Nil);
+		} else {
+			var a = l.a;
+			var r = l.b;
+			var addI = $elm$core$Basics$add(i);
+			var _v1 = A4(
+				$author$project$SelectionSort$getMinAndPositionSteps,
+				l,
+				_Utils_Tuple2(0, a),
+				_List_Nil,
+				0);
+			var minPosition = _v1.a;
+			var minValue = _v1.b;
+			var steps = _v1.c;
+			var changedSubList = A2(
+				$elm$core$List$indexedMap,
+				F2(
+					function (index, value) {
+						return _Utils_eq(index + 1, minPosition) ? a : value;
+					}),
+				r);
+			var _v2 = A2($author$project$SelectionSort$selectionSortSteps, changedSubList, i + 1);
+			var sortedList = _v2.a;
+			var recSteps = _v2.b;
+			return _Utils_Tuple2(
+				A2($elm$core$List$cons, minValue, sortedList),
+				A2(
+					$elm$core$List$cons,
+					_Utils_Tuple2(
+						l,
+						A2(
+							$elm$core$List$map,
+							function (p) {
+								return A3($elm$core$Tuple$mapBoth, addI, addI, p);
+							},
+							steps)),
+					A2(
+						$elm$core$List$map,
+						function (_v3) {
+							var rsl = _v3.a;
+							var rst = _v3.b;
+							return _Utils_Tuple2(
+								A2($elm$core$List$cons, minValue, rsl),
+								rst);
+						},
+						recSteps)));
+		}
+	});
+var $author$project$Update$getListParameters = F2(
+	function (model, l) {
+		var _v0 = model.sortType;
+		if (_v0.$ === 'SelectionSort') {
+			var _v1 = A2($author$project$SelectionSort$selectionSortSteps, l, 0);
+			var selectionSortSteps = _v1.b;
+			var leftRightSequence = $elm$core$List$concat(
+				A2(
+					$elm$core$List$map,
+					function (_v3) {
+						var lr = _v3.b;
+						return lr;
+					},
+					selectionSortSteps));
+			var steps = $elm$core$List$concat(
+				A2(
+					$elm$core$List$map,
+					function (_v2) {
+						var st = _v2.a;
+						var lr = _v2.b;
+						return A2(
+							$elm$core$List$repeat,
+							$elm$core$List$length(lr),
+							st);
+					},
+					selectionSortSteps));
+			return _Utils_Tuple2(steps, leftRightSequence);
+		} else {
+			var _v4 = A2($author$project$MergeSort$mergeSortSteps, 0, l);
+			var steps = _v4.b;
+			var leftRightSequence = _v4.c;
+			return _Utils_Tuple2(steps, leftRightSequence);
+		}
+	});
 var $elm$core$Basics$min = F2(
 	function (x, y) {
 		return (_Utils_cmp(x, y) < 0) ? x : y;
 	});
 var $elm$core$Platform$Cmd$batch = _Platform_batch;
 var $elm$core$Platform$Cmd$none = $elm$core$Platform$Cmd$batch(_List_Nil);
+var $elm$core$Array$length = function (_v0) {
+	var len = _v0.a;
+	return len;
+};
+var $elm$random$Random$listHelp = F4(
+	function (revList, n, gen, seed) {
+		listHelp:
+		while (true) {
+			if (n < 1) {
+				return _Utils_Tuple2(revList, seed);
+			} else {
+				var _v0 = gen(seed);
+				var value = _v0.a;
+				var newSeed = _v0.b;
+				var $temp$revList = A2($elm$core$List$cons, value, revList),
+					$temp$n = n - 1,
+					$temp$gen = gen,
+					$temp$seed = newSeed;
+				revList = $temp$revList;
+				n = $temp$n;
+				gen = $temp$gen;
+				seed = $temp$seed;
+				continue listHelp;
+			}
+		}
+	});
+var $elm$random$Random$list = F2(
+	function (n, _v0) {
+		var gen = _v0.a;
+		return $elm$random$Random$Generator(
+			function (seed) {
+				return A4($elm$random$Random$listHelp, _List_Nil, n, gen, seed);
+			});
+	});
+var $owanturist$elm_union_find$UnionFind$findFast = F2(
+	function (id, dict) {
+		findFast:
+		while (true) {
+			var _v0 = A2($elm$core$Dict$get, id, dict);
+			if (_v0.$ === 'Nothing') {
+				return id;
+			} else {
+				var cursor = _v0.a;
+				if (_Utils_eq(id, cursor)) {
+					return id;
+				} else {
+					var $temp$id = cursor,
+						$temp$dict = dict;
+					id = $temp$id;
+					dict = $temp$dict;
+					continue findFast;
+				}
+			}
+		}
+	});
+var $owanturist$elm_union_find$UnionFind$find = F2(
+	function (id, _v0) {
+		var dict = _v0.b;
+		return A2($owanturist$elm_union_find$UnionFind$findFast, id, dict);
+	});
+var $elm$core$Array$isEmpty = function (_v0) {
+	var len = _v0.a;
+	return !len;
+};
+var $elm$core$Basics$modBy = _Basics_modBy;
+var $owanturist$elm_union_find$UnionFind$QuickUnionPathCompression = F2(
+	function (a, b) {
+		return {$: 'QuickUnionPathCompression', a: a, b: b};
+	});
+var $owanturist$elm_union_find$UnionFind$quickUnionPathCompression = A2($owanturist$elm_union_find$UnionFind$QuickUnionPathCompression, 0, $elm$core$Dict$empty);
+var $elm$core$Tuple$second = function (_v0) {
+	var y = _v0.b;
+	return y;
+};
+var $owanturist$elm_union_find$UnionFind$findCompressed = F2(
+	function (id, dict) {
+		var _v0 = A2($elm$core$Dict$get, id, dict);
+		if (_v0.$ === 'Nothing') {
+			return _Utils_Tuple2(
+				id,
+				A3($elm$core$Dict$insert, id, id, dict));
+		} else {
+			var cursor = _v0.a;
+			if (_Utils_eq(id, cursor)) {
+				return _Utils_Tuple2(id, dict);
+			} else {
+				var _v1 = A2($owanturist$elm_union_find$UnionFind$findCompressed, cursor, dict);
+				var parent = _v1.a;
+				var nextDict = _v1.b;
+				return _Utils_Tuple2(
+					parent,
+					A3($elm$core$Dict$insert, id, parent, nextDict));
+			}
+		}
+	});
+var $owanturist$elm_union_find$UnionFind$union = F3(
+	function (left, right, _v0) {
+		var count_ = _v0.a;
+		var dict = _v0.b;
+		var _v1 = A2($owanturist$elm_union_find$UnionFind$findCompressed, left, dict);
+		var leftRoot = _v1.a;
+		var leftDict = _v1.b;
+		var _v2 = A2($owanturist$elm_union_find$UnionFind$findCompressed, right, leftDict);
+		var rightRoot = _v2.a;
+		var rightDict = _v2.b;
+		return _Utils_eq(leftRoot, rightRoot) ? A2($owanturist$elm_union_find$UnionFind$QuickUnionPathCompression, count_, rightDict) : A2(
+			$owanturist$elm_union_find$UnionFind$QuickUnionPathCompression,
+			count_ + 1,
+			A3($elm$core$Dict$insert, leftRoot, rightRoot, rightDict));
+	});
+var $elm_community$random_extra$Utils$selectUniqByIndexes = F2(
+	function (values, randomIndexes) {
+		var modByLength = $elm$core$Basics$modBy(
+			$elm$core$Array$length(values));
+		var step = F2(
+			function (randomIndex, _v1) {
+				var uf = _v1.a;
+				var acc = _v1.b;
+				var leaderOfElement = A2($owanturist$elm_union_find$UnionFind$find, randomIndex, uf);
+				var leaderOfNextElement = A2(
+					$owanturist$elm_union_find$UnionFind$find,
+					modByLength(leaderOfElement + 1),
+					uf);
+				var _v0 = A2($elm$core$Array$get, leaderOfElement, values);
+				if (_v0.$ === 'Nothing') {
+					return _Utils_Tuple2(uf, acc);
+				} else {
+					var value = _v0.a;
+					return _Utils_Tuple2(
+						A3($owanturist$elm_union_find$UnionFind$union, leaderOfElement, leaderOfNextElement, uf),
+						A2($elm$core$List$cons, value, acc));
+				}
+			});
+		return $elm$core$Array$isEmpty(values) ? _List_Nil : A3(
+			$elm$core$List$foldr,
+			step,
+			_Utils_Tuple2($owanturist$elm_union_find$UnionFind$quickUnionPathCompression, _List_Nil),
+			randomIndexes).b;
+	});
+var $elm_community$random_extra$Random$List$shuffle = function (list) {
+	var values = $elm$core$Array$fromList(list);
+	var length = $elm$core$Array$length(values);
+	return A2(
+		$elm$random$Random$map,
+		$elm_community$random_extra$Utils$selectUniqByIndexes(values),
+		A2(
+			$elm$random$Random$list,
+			length,
+			A2($elm$random$Random$int, 0, length - 1)));
+};
+var $author$project$Update$shuffle = F2(
+	function (l, seed) {
+		var _v0 = A2(
+			$elm$random$Random$step,
+			$elm_community$random_extra$Random$List$shuffle(l),
+			$elm$random$Random$initialSeed(seed));
+		var newl = _v0.a;
+		return newl;
+	});
+var $elm$core$List$sortBy = _List_sortBy;
+var $elm$core$List$sort = function (xs) {
+	return A2($elm$core$List$sortBy, $elm$core$Basics$identity, xs);
+};
 var $elm$core$Maybe$withDefault = F2(
 	function (_default, maybe) {
 		if (maybe.$ === 'Just') {
@@ -6245,96 +6393,133 @@ var $elm$core$Maybe$withDefault = F2(
 			return _default;
 		}
 	});
-var $author$project$Main$update = F2(
+var $author$project$Update$update = F2(
 	function (msg, model) {
-		switch (msg.$) {
-			case 'Roll':
-				var shuffledList = A2(
-					$author$project$Main$shuffle,
-					A2($elm$core$List$range, 0, 512),
-					model.seed);
-				var _v1 = A2($author$project$MergeSort$mergeSortSteps, 0, shuffledList);
-				var orderedList = _v1.a;
-				var steps = _v1.b;
-				var leftRightSequence = _v1.c;
-				return _Utils_Tuple2(
-					_Utils_update(
+		update:
+		while (true) {
+			switch (msg.$) {
+				case 'Roll':
+					var listLength = function () {
+						var _v2 = model.sortType;
+						if (_v2.$ === 'SelectionSort') {
+							return 100;
+						} else {
+							return 512;
+						}
+					}();
+					var shuffledList = A2(
+						$author$project$Update$shuffle,
+						A2($elm$core$List$range, 0, listLength),
+						model.seed);
+					var _v1 = A2($author$project$Update$getListParameters, model, shuffledList);
+					var steps = _v1.a;
+					var leftRightSequence = _v1.b;
+					return _Utils_Tuple2(
+						_Utils_update(
+							model,
+							{
+								index: 0,
+								leftRightSequence: leftRightSequence,
+								listToBeSorted: shuffledList,
+								orderedList: $elm$core$List$sort(shuffledList),
+								steps: steps
+							}),
+						A2(
+							$elm$random$Random$generate,
+							$author$project$Update$NewSeed,
+							A2($elm$random$Random$int, 1, 100000)));
+				case 'ChangeSort':
+					var sortType = msg.a;
+					var $temp$msg = $author$project$Update$Roll,
+						$temp$model = _Utils_update(
 						model,
-						{currentStep: orderedList, index: 0, leftRightSequence: leftRightSequence, listToBeSorted: shuffledList, orderedList: orderedList, steps: steps}),
-					A2(
-						$elm$random$Random$generate,
-						$author$project$Main$NewSeed,
-						A2($elm$random$Random$int, 1, 100000)));
-			case 'NewSeed':
-				var newFace = msg.a;
-				return _Utils_Tuple2(
-					_Utils_update(
+						{sortType: sortType});
+					msg = $temp$msg;
+					model = $temp$model;
+					continue update;
+				case 'Tick':
+					var newIndex = ((_Utils_cmp(
+						model.index + 1,
+						$elm$core$List$length(model.steps)) > 0) || model.pause) ? model.index : (model.index + 1);
+					var newCurr = A2(
+						$elm$core$Maybe$withDefault,
+						model.currentStep,
+						A2(
+							$elm$core$Array$get,
+							newIndex,
+							$elm$core$Array$fromList(model.steps)));
+					var _v3 = A2(
+						$elm$core$Maybe$withDefault,
+						_Utils_Tuple2(model.currentLeft, model.currentRight),
+						A2(
+							$elm$core$Array$get,
+							newIndex,
+							$elm$core$Array$fromList(model.leftRightSequence)));
+					var newLeft = _v3.a;
+					var newRight = _v3.b;
+					return _Utils_Tuple2(
+						_Utils_update(
+							model,
+							{currentLeft: newLeft, currentRight: newRight, currentStep: newCurr, index: newIndex}),
+						$elm$core$Platform$Cmd$none);
+				case 'Pause':
+					return _Utils_Tuple2(
+						_Utils_update(
+							model,
+							{pause: true}),
+						$elm$core$Platform$Cmd$none);
+				case 'Continue':
+					return _Utils_Tuple2(
+						_Utils_update(
+							model,
+							{pause: false}),
+						$elm$core$Platform$Cmd$none);
+				case 'Back':
+					return _Utils_Tuple2(
+						_Utils_update(
+							model,
+							{
+								index: A2($elm$core$Basics$max, 0, model.index - 1)
+							}),
+						$elm$core$Platform$Cmd$none);
+				case 'Advance':
+					return _Utils_Tuple2(
+						_Utils_update(
+							model,
+							{
+								index: A2(
+									$elm$core$Basics$min,
+									$elm$core$List$length(model.steps),
+									model.index + 1)
+							}),
+						$elm$core$Platform$Cmd$none);
+				case 'NewSeed':
+					var newFace = msg.a;
+					return _Utils_Tuple2(
+						_Utils_update(
+							model,
+							{seed: newFace}),
+						$elm$core$Platform$Cmd$none);
+				default:
+					var newFace = msg.a;
+					var $temp$msg = $author$project$Update$Roll,
+						$temp$model = _Utils_update(
 						model,
-						{seed: newFace}),
-					$elm$core$Platform$Cmd$none);
-			case 'Tick':
-				var newIndex = ((_Utils_cmp(
-					model.index + 1,
-					$elm$core$List$length(model.steps)) > 0) || model.pause) ? model.index : (model.index + 1);
-				var newCurr = A2(
-					$elm$core$Maybe$withDefault,
-					model.currentStep,
-					A2(
-						$elm$core$Array$get,
-						newIndex,
-						$elm$core$Array$fromList(model.steps)));
-				var _v2 = A2(
-					$elm$core$Maybe$withDefault,
-					_Utils_Tuple2(model.currentLeft, model.currentRight),
-					A2(
-						$elm$core$Array$get,
-						newIndex,
-						$elm$core$Array$fromList(model.leftRightSequence)));
-				var newLeft = _v2.a;
-				var newRight = _v2.b;
-				return _Utils_Tuple2(
-					_Utils_update(
-						model,
-						{currentLeft: newLeft, currentRight: newRight, currentStep: newCurr, index: newIndex}),
-					$elm$core$Platform$Cmd$none);
-			case 'Pause':
-				return _Utils_Tuple2(
-					_Utils_update(
-						model,
-						{pause: true}),
-					$elm$core$Platform$Cmd$none);
-			case 'Continue':
-				return _Utils_Tuple2(
-					_Utils_update(
-						model,
-						{pause: false}),
-					$elm$core$Platform$Cmd$none);
-			case 'Back':
-				return _Utils_Tuple2(
-					_Utils_update(
-						model,
-						{
-							index: A2($elm$core$Basics$max, 0, model.index - 1)
-						}),
-					$elm$core$Platform$Cmd$none);
-			default:
-				return _Utils_Tuple2(
-					_Utils_update(
-						model,
-						{
-							index: A2(
-								$elm$core$Basics$min,
-								$elm$core$List$length(model.steps),
-								model.index + 1)
-						}),
-					$elm$core$Platform$Cmd$none);
+						{seed: newFace});
+					msg = $temp$msg;
+					model = $temp$model;
+					continue update;
+			}
 		}
 	});
-var $author$project$Main$Advance = {$: 'Advance'};
-var $author$project$Main$Back = {$: 'Back'};
-var $author$project$Main$Continue = {$: 'Continue'};
-var $author$project$Main$Pause = {$: 'Pause'};
-var $author$project$Main$Roll = {$: 'Roll'};
+var $author$project$Update$Advance = {$: 'Advance'};
+var $author$project$Update$Back = {$: 'Back'};
+var $author$project$Update$ChangeSort = function (a) {
+	return {$: 'ChangeSort', a: a};
+};
+var $author$project$Update$Continue = {$: 'Continue'};
+var $author$project$Update$Pause = {$: 'Pause'};
+var $author$project$Model$SelectionSort = {$: 'SelectionSort'};
 var $elm$html$Html$button = _VirtualDom_node('button');
 var $elm$json$Json$Encode$bool = _Json_wrap;
 var $elm$html$Html$Attributes$boolProperty = F2(
@@ -6346,7 +6531,6 @@ var $elm$html$Html$Attributes$boolProperty = F2(
 	});
 var $elm$html$Html$Attributes$disabled = $elm$html$Html$Attributes$boolProperty('disabled');
 var $elm$html$Html$div = _VirtualDom_node('div');
-var $elm$svg$Svg$Attributes$fill = _VirtualDom_attribute('fill');
 var $elm$html$Html$h1 = _VirtualDom_node('h1');
 var $elm$svg$Svg$Attributes$height = _VirtualDom_attribute('height');
 var $elm$core$Basics$not = _Basics_not;
@@ -6368,27 +6552,50 @@ var $elm$html$Html$Events$onClick = function (msg) {
 		$elm$json$Json$Decode$succeed(msg));
 };
 var $elm$svg$Svg$trustedNode = _VirtualDom_nodeNS('http://www.w3.org/2000/svg');
-var $elm$svg$Svg$rect = $elm$svg$Svg$trustedNode('rect');
 var $elm$svg$Svg$svg = $elm$svg$Svg$trustedNode('svg');
-var $elm$virtual_dom$VirtualDom$text = _VirtualDom_text;
-var $elm$html$Html$text = $elm$virtual_dom$VirtualDom$text;
-var $elm$svg$Svg$Attributes$viewBox = _VirtualDom_attribute('viewBox');
+var $elm$svg$Svg$Attributes$fill = _VirtualDom_attribute('fill');
+var $author$project$View$getColor = F3(
+	function (index, barHeight, model) {
+		return _Utils_eq(index, model.currentLeft) ? $elm$svg$Svg$Attributes$fill('red') : (_Utils_eq(index, model.currentRight) ? $elm$svg$Svg$Attributes$fill('yellow') : (_Utils_eq(
+			A2(
+				$elm$core$Maybe$withDefault,
+				0,
+				A2(
+					$elm$core$Array$get,
+					index,
+					$elm$core$Array$fromList(model.orderedList))),
+			barHeight) ? $elm$svg$Svg$Attributes$fill('green') : $elm$svg$Svg$Attributes$fill('black')));
+	});
+var $elm$svg$Svg$rect = $elm$svg$Svg$trustedNode('rect');
 var $elm$svg$Svg$Attributes$width = _VirtualDom_attribute('width');
 var $elm$svg$Svg$Attributes$x = _VirtualDom_attribute('x');
 var $elm$svg$Svg$Attributes$y = _VirtualDom_attribute('y');
-var $author$project$Main$view = function (model) {
-	var getColor = F2(
-		function (index, barHeight) {
-			return _Utils_eq(index, model.currentLeft) ? $elm$svg$Svg$Attributes$fill('red') : (_Utils_eq(index, model.currentRight) ? $elm$svg$Svg$Attributes$fill('yellow') : (_Utils_eq(
-				A2(
-					$elm$core$Maybe$withDefault,
-					0,
-					A2(
-						$elm$core$Array$get,
-						index,
-						$elm$core$Array$fromList(model.orderedList))),
-				barHeight) ? $elm$svg$Svg$Attributes$fill('green') : $elm$svg$Svg$Attributes$fill('black')));
-		});
+var $author$project$View$svgRect = F3(
+	function (index, barHeight, model) {
+		var bigger = _Utils_eq(model.sortType, $author$project$Model$SelectionSort);
+		return A2(
+			$elm$svg$Svg$rect,
+			_List_fromArray(
+				[
+					$elm$svg$Svg$Attributes$x(
+					$elm$core$String$fromInt(
+						index * (bigger ? 8 : 2))),
+					$elm$svg$Svg$Attributes$y(
+					$elm$core$String$fromInt(
+						(512 - (barHeight * (bigger ? 4 : 1))) - 1)),
+					$elm$svg$Svg$Attributes$width(
+					bigger ? '8' : '2'),
+					A3($author$project$View$getColor, index, barHeight, model),
+					$elm$svg$Svg$Attributes$height(
+					$elm$core$String$fromInt(
+						(barHeight * (index * (bigger ? 4 : 2))) + 1))
+				]),
+			_List_Nil);
+	});
+var $elm$virtual_dom$VirtualDom$text = _VirtualDom_text;
+var $elm$html$Html$text = $elm$virtual_dom$VirtualDom$text;
+var $elm$svg$Svg$Attributes$viewBox = _VirtualDom_attribute('viewBox');
+var $author$project$View$view = function (model) {
 	return A2(
 		$elm$html$Html$div,
 		_List_Nil,
@@ -6421,27 +6628,14 @@ var $author$project$Main$view = function (model) {
 					$elm$core$List$indexedMap,
 					F2(
 						function (index, barHeight) {
-							return A2(
-								$elm$svg$Svg$rect,
-								_List_fromArray(
-									[
-										$elm$svg$Svg$Attributes$x(
-										$elm$core$String$fromInt(index * 2)),
-										$elm$svg$Svg$Attributes$y(
-										$elm$core$String$fromInt(512 - (barHeight * 1))),
-										$elm$svg$Svg$Attributes$width('2'),
-										A2(getColor, index, barHeight),
-										$elm$svg$Svg$Attributes$height(
-										$elm$core$String$fromInt(barHeight * 1))
-									]),
-								_List_Nil);
+							return A3($author$project$View$svgRect, index, barHeight, model);
 						}),
 					model.currentStep)),
 				A2(
 				$elm$html$Html$button,
 				_List_fromArray(
 					[
-						$elm$html$Html$Events$onClick($author$project$Main$Roll)
+						$elm$html$Html$Events$onClick($author$project$Update$Roll)
 					]),
 				_List_fromArray(
 					[
@@ -6451,7 +6645,20 @@ var $author$project$Main$view = function (model) {
 				$elm$html$Html$button,
 				_List_fromArray(
 					[
-						$elm$html$Html$Events$onClick($author$project$Main$Back),
+						$elm$html$Html$Events$onClick(
+						$author$project$Update$ChangeSort(
+							_Utils_eq(model.sortType, $author$project$Model$MergeSort) ? $author$project$Model$SelectionSort : $author$project$Model$MergeSort))
+					]),
+				_List_fromArray(
+					[
+						$elm$html$Html$text(
+						_Utils_eq(model.sortType, $author$project$Model$MergeSort) ? 'SelectionSort' : 'MergeSort')
+					])),
+				A2(
+				$elm$html$Html$button,
+				_List_fromArray(
+					[
+						$elm$html$Html$Events$onClick($author$project$Update$Back),
 						$elm$html$Html$Attributes$disabled(model.index <= 0)
 					]),
 				_List_fromArray(
@@ -6462,7 +6669,7 @@ var $author$project$Main$view = function (model) {
 				$elm$html$Html$button,
 				_List_fromArray(
 					[
-						$elm$html$Html$Events$onClick($author$project$Main$Pause),
+						$elm$html$Html$Events$onClick($author$project$Update$Pause),
 						$elm$html$Html$Attributes$disabled(model.pause)
 					]),
 				_List_fromArray(
@@ -6473,7 +6680,7 @@ var $author$project$Main$view = function (model) {
 				$elm$html$Html$button,
 				_List_fromArray(
 					[
-						$elm$html$Html$Events$onClick($author$project$Main$Continue),
+						$elm$html$Html$Events$onClick($author$project$Update$Continue),
 						$elm$html$Html$Attributes$disabled(!model.pause)
 					]),
 				_List_fromArray(
@@ -6484,7 +6691,7 @@ var $author$project$Main$view = function (model) {
 				$elm$html$Html$button,
 				_List_fromArray(
 					[
-						$elm$html$Html$Events$onClick($author$project$Main$Advance),
+						$elm$html$Html$Events$onClick($author$project$Update$Advance),
 						$elm$html$Html$Attributes$disabled(
 						_Utils_cmp(
 							model.index,
@@ -6497,7 +6704,7 @@ var $author$project$Main$view = function (model) {
 			]));
 };
 var $author$project$Main$main = $elm$browser$Browser$element(
-	{init: $author$project$Main$init, subscriptions: $author$project$Main$subscriptions, update: $author$project$Main$update, view: $author$project$Main$view});
+	{init: $author$project$Main$init, subscriptions: $author$project$Subscriptions$subscriptions, update: $author$project$Update$update, view: $author$project$View$view});
 _Platform_export({'Main':{'init':$author$project$Main$main(
 	$elm$json$Json$Decode$succeed(_Utils_Tuple0))(0)}});}(this));
 
