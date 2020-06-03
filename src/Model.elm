@@ -1,10 +1,11 @@
-module Model exposing (Model, initModel)
+module Model exposing (Model, initModel, SortType(..))
 
 type alias Model =
     { seed : Int
     , listToBeSorted : List Int
     , orderedList : List Int
     , steps : List (List Int)
+    , sortType : SortType
     , currentStep : List Int
     , leftRightSequence : List ( Int, Int )
     , currentLeft : Int
@@ -13,12 +14,16 @@ type alias Model =
     , pause : Bool
     }
 
+type SortType 
+    = MergeSort
+    | SelectionSort
 
 initModel : Model
 initModel =
     { seed = 0
     , listToBeSorted = []
     , steps = []
+    , sortType = MergeSort
     , currentStep = []
     , orderedList = []
     , leftRightSequence = []

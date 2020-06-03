@@ -4,8 +4,9 @@ import Array
 import Random
 import Random.List
 import Time
-import Model exposing (Model)
+import Model exposing (Model, SortType(..))
 import MergeSort
+import SelectionSort
 
 shuffle : List comparable -> Int -> List comparable
 shuffle l seed =
@@ -14,30 +15,57 @@ shuffle l seed =
             Random.step (Random.List.shuffle l) (Random.initialSeed seed)
     in
     newl
+
 type Msg
     = Roll
-    | NewSeed Int
-    | NewSeedStart Int
-    | Tick Time.Posix
+    | ChangeSort SortType
     | Pause
     | Continue
     | Back
     | Advance
+    | Tick Time.Posix
+    | NewSeed Int
+    | NewSeedStart Int
+
+getListParameters model l =
+    case model.sortType of
+        SelectionSort ->
+            let
+                ( _, selectionSortSteps ) =
+                    SelectionSort.selectionSortSteps l 0
+                
+                leftRightSequence = List.map (\(_, lr) -> lr ) selectionSortSteps 
+                    |> List.concat
+
+                steps = List.map(\(st, lr) ->  List.repeat (List.length lr) st) selectionSortSteps
+                    |> List.concat
+            in
+                (steps, leftRightSequence)
+        MergeSort ->
+                let
+                    ( _, steps, leftRightSequence ) =
+                        MergeSort.mergeSortSteps 0 l
+
+                in
+                (steps, leftRightSequence)
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
         Roll ->
             let
+                listLength = 
+                    case model.sortType of
+                        SelectionSort -> 100
+                        _ -> 512
                 shuffledList =
-                    shuffle (List.range 0 512) model.seed
+                    shuffle (List.range 0 listLength) model.seed
 
-                ( orderedList, steps, leftRightSequence ) =
-                    MergeSort.mergeSortSteps 0 shuffledList
+                (steps, leftRightSequence) = getListParameters model shuffledList
             in
             ( { model
                 | listToBeSorted = shuffledList
-                , orderedList = orderedList
+                , orderedList = List.sort shuffledList
                 , steps = steps
                 , leftRightSequence = leftRightSequence
                 , index = 0
@@ -45,11 +73,8 @@ update msg model =
             , Random.generate NewSeed (Random.int 1 100000)
             )
 
-        NewSeed newFace ->
-                ({ model | seed = newFace }, Cmd.none) 
-        
-        NewSeedStart newFace ->
-                update Roll { model | seed = newFace }
+        ChangeSort sortType ->
+            update Roll {model | sortType = sortType}
 
         Tick _ ->
             let
@@ -102,3 +127,9 @@ update msg model =
               }
             , Cmd.none
             )
+
+        NewSeed newFace ->
+                ({ model | seed = newFace }, Cmd.none) 
+        
+        NewSeedStart newFace ->
+                update Roll { model | seed = newFace }
