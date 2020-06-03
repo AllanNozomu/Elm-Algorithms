@@ -12,19 +12,11 @@ selectionSort l =
                 ( minPosition, minValue ) =
                     getMinAndPosition l a
             in
-            minValue
-                :: (selectionSort <|
-                        List.indexedMap
-                            (\index v ->
-                                if index + 1 == minPosition then
-                                    a
+            minValue :: (selectionSort <| insertList r minPosition a)
 
-                                else
-                                    v
-                            )
-                            r
-                   )
-
+insertList : List a -> Int -> a -> List a
+insertList l pos ele =
+    List.indexedMap (\index v -> if index + 1 == pos then ele else v) l
 
 getMinAndPosition : List comparable -> comparable -> ( Int, comparable )
 getMinAndPosition l default =
@@ -57,16 +49,7 @@ selectionSortSteps l i =
                 ( minPosition, minValue, steps ) =
                     getMinAndPositionSteps l ( 0, a ) [] 0
 
-                changedSubList =
-                    List.indexedMap
-                        (\index value ->
-                            if index + 1 == minPosition then
-                                a
-
-                            else
-                                value
-                        )
-                        r
+                changedSubList = selectionSort <| insertList r minPosition a
                 
                 addI = (+) i
 
