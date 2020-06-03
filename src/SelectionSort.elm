@@ -46,8 +46,8 @@ getMinAndPosition l default =
                 List.indexedMap Tuple.pair l
 
 
-selectionSortSteps : List comparable -> ( List comparable, List ( List comparable, List ( Int, Int ) ) )
-selectionSortSteps l =
+selectionSortSteps : List comparable -> Int -> ( List comparable, List ( List comparable, List ( Int, Int ) ) )
+selectionSortSteps l i =
     case l of
         [] ->
             ( [], [] )
@@ -67,11 +67,13 @@ selectionSortSteps l =
                                 value
                         )
                         r
+                
+                addI = (+) i
 
                 ( sortedList, recSteps ) =
-                    selectionSortSteps <| changedSubList
+                    selectionSortSteps changedSubList (i + 1)
             in
-            ( minValue :: sortedList, List.map (\( rsl, rst ) -> ( minValue :: rsl, rst )) recSteps ++ [ ( minValue :: changedSubList, steps ) ] )
+            ( minValue :: sortedList, ( l, List.map(\p -> Tuple.mapBoth addI addI p) steps ) :: List.map (\( rsl, rst ) -> ( minValue :: rsl, rst )) recSteps )
 
 
 getMinAndPositionSteps : List comparable -> ( Int, comparable ) -> List ( Int, Int ) -> Int -> ( Int, comparable, List ( Int, Int ) )
