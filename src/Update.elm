@@ -32,7 +32,7 @@ getListParameters model l =
         SelectionSort ->
             let
                 ( _, selectionSortSteps ) =
-                    SelectionSort.selectionSortSteps l 0
+                    SelectionSort.selectionSortSteps l
                 
                 leftRightSequence = List.map (\(_, lr) -> lr ) selectionSortSteps 
                     |> List.concat
@@ -44,7 +44,7 @@ getListParameters model l =
         MergeSort ->
                 let
                     ( _, steps, leftRightSequence ) =
-                        MergeSort.mergeSortSteps 0 l
+                        MergeSort.mergeSortSteps l
 
                 in
                 (steps, leftRightSequence)

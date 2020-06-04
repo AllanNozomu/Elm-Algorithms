@@ -5898,14 +5898,6 @@ var $elm$core$List$append = F2(
 var $elm$core$List$concat = function (lists) {
 	return A3($elm$core$List$foldr, $elm$core$List$append, _List_Nil, lists);
 };
-var $elm$core$Tuple$mapBoth = F3(
-	function (funcA, funcB, _v0) {
-		var x = _v0.a;
-		var y = _v0.b;
-		return _Utils_Tuple2(
-			funcA(x),
-			funcB(y));
-	});
 var $author$project$MergeSort$mergeSteps = F4(
 	function (l1, l2, i1, i2) {
 		var _v0 = _Utils_Tuple2(l1, l2);
@@ -6015,8 +6007,8 @@ var $author$project$MergeSort$split = function (l) {
 		});
 	return A2(splitAux, l, l);
 };
-var $author$project$MergeSort$mergeSortSteps = F2(
-	function (i, l) {
+var $author$project$MergeSort$mergeSortStepsAux = F2(
+	function (l, i) {
 		if (!l.b) {
 			return _Utils_Tuple3(_List_Nil, _List_Nil, _List_Nil);
 		} else {
@@ -6031,12 +6023,12 @@ var $author$project$MergeSort$mergeSortSteps = F2(
 				var _v1 = $author$project$MergeSort$split(l);
 				var left = _v1.a;
 				var right = _v1.b;
-				var _v2 = A3(
-					$elm$core$Tuple$mapBoth,
-					$author$project$MergeSort$mergeSortSteps(i),
-					$author$project$MergeSort$mergeSortSteps(
-						i + $elm$core$List$length(left)),
-					_Utils_Tuple2(left, right));
+				var _v2 = _Utils_Tuple2(
+					A2($author$project$MergeSort$mergeSortStepsAux, left, i),
+					A2(
+						$author$project$MergeSort$mergeSortStepsAux,
+						right,
+						i + $elm$core$List$length(left)));
 				var _v3 = _v2.a;
 				var sortedLeft = _v3.a;
 				var resLeft = _v3.b;
@@ -6077,6 +6069,9 @@ var $author$project$MergeSort$mergeSortSteps = F2(
 			}
 		}
 	});
+var $author$project$MergeSort$mergeSortSteps = function (l) {
+	return A2($author$project$MergeSort$mergeSortStepsAux, l, 0);
+};
 var $elm$core$List$repeatHelp = F3(
 	function (result, n, value) {
 		repeatHelp:
@@ -6099,7 +6094,7 @@ var $elm$core$List$repeat = F2(
 		return A3($elm$core$List$repeatHelp, _List_Nil, n, value);
 	});
 var $author$project$SelectionSort$getMinAndPositionSteps = F4(
-	function (l, _v0, steps, index) {
+	function (l, index, _v0, steps) {
 		getMinAndPositionSteps:
 		while (true) {
 			var minPosition = _v0.a;
@@ -6112,80 +6107,100 @@ var $author$project$SelectionSort$getMinAndPositionSteps = F4(
 				var _v2 = (_Utils_cmp(v, minValue) < 0) ? _Utils_Tuple2(index, v) : _Utils_Tuple2(minPosition, minValue);
 				var newPosition = _v2.a;
 				var newMin = _v2.b;
-				var newSteps = _Utils_ap(
-					steps,
-					_List_fromArray(
-						[
-							_Utils_Tuple2(index, newPosition)
-						]));
+				var newSteps = A2(
+					$elm$core$List$cons,
+					_Utils_Tuple2(index, newPosition),
+					steps);
 				var $temp$l = r,
+					$temp$index = index + 1,
 					$temp$_v0 = _Utils_Tuple2(newPosition, newMin),
-					$temp$steps = newSteps,
-					$temp$index = index + 1;
+					$temp$steps = newSteps;
 				l = $temp$l;
+				index = $temp$index;
 				_v0 = $temp$_v0;
 				steps = $temp$steps;
-				index = $temp$index;
 				continue getMinAndPositionSteps;
 			}
 		}
 	});
-var $author$project$SelectionSort$selectionSortSteps = F2(
-	function (l, i) {
-		if (!l.b) {
-			return _Utils_Tuple2(_List_Nil, _List_Nil);
-		} else {
-			var a = l.a;
-			var r = l.b;
-			var addI = $elm$core$Basics$add(i);
-			var _v1 = A4(
-				$author$project$SelectionSort$getMinAndPositionSteps,
-				l,
-				_Utils_Tuple2(0, a),
-				_List_Nil,
-				0);
-			var minPosition = _v1.a;
-			var minValue = _v1.b;
-			var steps = _v1.c;
-			var changedSubList = A2(
-				$elm$core$List$indexedMap,
-				F2(
-					function (index, value) {
-						return _Utils_eq(index + 1, minPosition) ? a : value;
-					}),
-				r);
-			var _v2 = A2($author$project$SelectionSort$selectionSortSteps, changedSubList, i + 1);
-			var sortedList = _v2.a;
-			var recSteps = _v2.b;
-			return _Utils_Tuple2(
-				A2($elm$core$List$cons, minValue, sortedList),
-				A2(
+var $author$project$SelectionSort$insertList = F3(
+	function (l, pos, ele) {
+		return A2(
+			$elm$core$List$indexedMap,
+			F2(
+				function (index, v) {
+					return _Utils_eq(index, pos) ? ele : v;
+				}),
+			l);
+	});
+var $elm$core$Tuple$mapBoth = F3(
+	function (funcA, funcB, _v0) {
+		var x = _v0.a;
+		var y = _v0.b;
+		return _Utils_Tuple2(
+			funcA(x),
+			funcB(y));
+	});
+var $author$project$SelectionSort$selectionSortStepsAux = F4(
+	function (l, index, orderedList, steps) {
+		selectionSortStepsAux:
+		while (true) {
+			if (!l.b) {
+				return _Utils_Tuple2(orderedList, steps);
+			} else {
+				var a = l.a;
+				var r = l.b;
+				var addI = $elm$core$Basics$add(index);
+				var _v1 = A4(
+					$author$project$SelectionSort$getMinAndPositionSteps,
+					l,
+					0,
+					_Utils_Tuple2(0, a),
+					_List_Nil);
+				var minPosition = _v1.a;
+				var minValue = _v1.b;
+				var minSteps = _v1.c;
+				var changedSubList = A3($author$project$SelectionSort$insertList, r, minPosition - 1, a);
+				var newMinSteps = A2(
+					$elm$core$List$map,
+					function (p) {
+						return A3($elm$core$Tuple$mapBoth, addI, addI, p);
+					},
+					minSteps);
+				var newSteps = A2(
 					$elm$core$List$cons,
 					_Utils_Tuple2(
-						l,
-						A2(
-							$elm$core$List$map,
-							function (p) {
-								return A3($elm$core$Tuple$mapBoth, addI, addI, p);
-							},
-							steps)),
-					A2(
-						$elm$core$List$map,
-						function (_v3) {
-							var rsl = _v3.a;
-							var rst = _v3.b;
-							return _Utils_Tuple2(
-								A2($elm$core$List$cons, minValue, rsl),
-								rst);
-						},
-						recSteps)));
+						_Utils_ap(orderedList, l),
+						newMinSteps),
+					steps);
+				var $temp$l = changedSubList,
+					$temp$index = index + 1,
+					$temp$orderedList = _Utils_ap(
+					orderedList,
+					_List_fromArray(
+						[minValue])),
+					$temp$steps = newSteps;
+				l = $temp$l;
+				index = $temp$index;
+				orderedList = $temp$orderedList;
+				steps = $temp$steps;
+				continue selectionSortStepsAux;
+			}
 		}
 	});
+var $author$project$SelectionSort$selectionSortSteps = function (l) {
+	var _v0 = A4($author$project$SelectionSort$selectionSortStepsAux, l, 0, _List_Nil, _List_Nil);
+	var sortedList = _v0.a;
+	var steps = _v0.b;
+	return _Utils_Tuple2(
+		sortedList,
+		$elm$core$List$reverse(steps));
+};
 var $author$project$Update$getListParameters = F2(
 	function (model, l) {
 		var _v0 = model.sortType;
 		if (_v0.$ === 'SelectionSort') {
-			var _v1 = A2($author$project$SelectionSort$selectionSortSteps, l, 0);
+			var _v1 = $author$project$SelectionSort$selectionSortSteps(l);
 			var selectionSortSteps = _v1.b;
 			var leftRightSequence = $elm$core$List$concat(
 				A2(
@@ -6209,7 +6224,7 @@ var $author$project$Update$getListParameters = F2(
 					selectionSortSteps));
 			return _Utils_Tuple2(steps, leftRightSequence);
 		} else {
-			var _v4 = A2($author$project$MergeSort$mergeSortSteps, 0, l);
+			var _v4 = $author$project$MergeSort$mergeSortSteps(l);
 			var steps = _v4.b;
 			var leftRightSequence = _v4.c;
 			return _Utils_Tuple2(steps, leftRightSequence);

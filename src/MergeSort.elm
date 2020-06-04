@@ -1,4 +1,4 @@
-module MergeSort exposing (mergeSort, mergeSortSteps)
+module MergeSort exposing (mergeSort, mergeSortSteps, mergeSortStepsAux)
 
 mergeSort : List comparable -> List comparable
 mergeSort l = 
@@ -31,8 +31,12 @@ split l =
     in
     splitAux l l
 
-mergeSortSteps : Int -> List comparable -> (List comparable, List (List comparable), List (Int, Int))
-mergeSortSteps i l = 
+mergeSortSteps: List comparable -> (List comparable, List (List comparable), List (Int, Int))
+mergeSortSteps l =
+    mergeSortStepsAux l 0
+
+mergeSortStepsAux : List comparable -> Int -> (List comparable, List (List comparable), List (Int, Int))
+mergeSortStepsAux l i = 
     case l of
         [] -> ([], [], [])
         a :: [] -> ([ a ], [], [])
@@ -40,7 +44,7 @@ mergeSortSteps i l =
             let
                 (left, right) = split l
             in
-            case (left, right) |> Tuple.mapBoth (mergeSortSteps i) (mergeSortSteps (i + List.length left)) of 
+            case (mergeSortStepsAux left i , mergeSortStepsAux right (i + List.length left)) of 
             ((sortedLeft, resLeft, sequenceLeft), (sortedRight, resRight, sequenceRight)) ->
                 let
                     (sortedL, res, sequence) = mergeSteps sortedLeft sortedRight i (i + List.length left + 1)
