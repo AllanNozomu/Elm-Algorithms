@@ -12,11 +12,7 @@ selectionSort l =
                 ( minPosition, minValue ) =
                     getMinAndPosition l a
             in
-            minValue :: (selectionSort <| insertList r minPosition a)
-
-insertList : List a -> Int -> a -> List a
-insertList l pos ele =
-    List.indexedMap (\index v -> if index + 1 == pos then ele else v) l
+            minValue :: (selectionSort <| insertList r (minPosition - 1) a)
 
 getMinAndPosition : List comparable -> comparable -> ( Int, comparable )
 getMinAndPosition l default =
@@ -25,42 +21,48 @@ getMinAndPosition l default =
             ( 0, default )
 
         a :: _ ->
-            List.foldl
-                (\( minpos, minv ) ( index, value ) ->
-                    if minv <= value then
-                        ( minpos, minv )
-
+            List.indexedMap Tuple.pair l
+            |> List.foldl
+                (\acc curr ->
+                    if Tuple.second acc <= Tuple.second curr then
+                        acc
                     else
-                        ( index, value )
-                )
-                ( 0, a )
-            <|
-                List.indexedMap Tuple.pair l
+                        curr
+                ) ( 0, a )
 
+insertList : List a -> Int -> a -> List a
+insertList l pos ele =
+    List.indexedMap (\index v -> if index == pos then ele else v) l
 
-selectionSortSteps : List comparable -> Int -> ( List comparable, List ( List comparable, List ( Int, Int ) ) )
-selectionSortSteps l i =
+selectionSortSteps : List comparable -> ( List comparable, List ( List comparable, List ( Int, Int ) ) )
+selectionSortSteps l =
+    let 
+        (sortedList, steps) = selectionSortStepsAux l 0 [] []
+    in
+    (sortedList, List.reverse steps)
+selectionSortStepsAux : List comparable -> Int -> List comparable -> List ( List comparable, List ( Int, Int ) ) -> ( List comparable, List ( List comparable, List ( Int, Int ) ) )
+selectionSortStepsAux l index orderedList steps =
     case l of
         [] ->
-            ( [], [] )
+            ( orderedList, steps )
 
         a :: r ->
             let
-                ( minPosition, minValue, steps ) =
-                    getMinAndPositionSteps l ( 0, a ) [] 0
+                ( minPosition, minValue, minSteps ) =
+                    getMinAndPositionSteps l 0 ( 0, a ) []
 
-                changedSubList = selectionSort <| insertList r minPosition a
-                
-                addI = (+) i
+                changedSubList = insertList r (minPosition - 1) a
 
-                ( sortedList, recSteps ) =
-                    selectionSortSteps changedSubList (i + 1)
+                addI = (+) index
+
+                newMinSteps = List.map(\p -> Tuple.mapBoth addI addI p) minSteps
+                newSteps = ( orderedList ++ l, newMinSteps ) :: steps
             in
-            ( minValue :: sortedList, ( l, List.map(\p -> Tuple.mapBoth addI addI p) steps ) :: List.map (\( rsl, rst ) -> ( minValue :: rsl, rst )) recSteps )
+            selectionSortStepsAux changedSubList (index + 1) (orderedList ++ [minValue]) newSteps
 
 
-getMinAndPositionSteps : List comparable -> ( Int, comparable ) -> List ( Int, Int ) -> Int -> ( Int, comparable, List ( Int, Int ) )
-getMinAndPositionSteps l ( minPosition, minValue ) steps index =
+getMinAndPositionSteps : List comparable -> Int -> ( Int, comparable ) -> List ( Int, Int ) -> ( Int, comparable, List ( Int, Int ) )
+getMinAndPositionSteps l index ( minPosition, minValue ) steps  =
     case l of
         [] ->
             ( minPosition, minValue, steps )
@@ -75,6 +77,6 @@ getMinAndPositionSteps l ( minPosition, minValue ) steps index =
                         ( minPosition, minValue )
 
                 newSteps =
-                    steps ++ [ ( index, newPosition ) ]
+                    ( index, newPosition ) :: steps
             in
-            getMinAndPositionSteps r ( newPosition, newMin ) newSteps (index + 1)
+            getMinAndPositionSteps r (index + 1) ( newPosition, newMin ) newSteps
