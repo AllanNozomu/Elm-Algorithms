@@ -17,26 +17,27 @@ import Model exposing (Model, SortType(..))
 import Svg
 import Svg.Attributes exposing (..)
 import Update exposing (Msg(..))
+import Svg.Keyed as Keyed
+import Svg.Lazy as Lazy
 
 
-getColor index barHeight model =
-    if index == model.currentLeft then
+getColor index barHeight left right =
+    if index == left then
         fill "red"
 
-    else if index == model.currentRight then
+    else if index == right then
         fill "yellow"
 
-    else if (model.orderedList |> Array.fromList |> Array.get index |> Maybe.withDefault 0) == barHeight then
+    else if index == barHeight then
         fill "green"
 
     else
         fill "black"
 
-
-svgRect index barHeight model =
+svgRect2 index barHeight left right sortType= 
     let
         bigger =
-            model.sortType == SelectionSort
+            sortType == SelectionSort
     in
     Svg.rect
         [ x <|
@@ -67,7 +68,7 @@ svgRect index barHeight model =
 
             else
                 "2"
-        , getColor index barHeight model
+        , getColor index barHeight left right
         , height <|
             String.fromInt <|
                 barHeight
@@ -81,6 +82,10 @@ svgRect index barHeight model =
         ]
         []
 
+svgRect : Int -> Int -> Model -> (String, Svg.Svg Msg)
+svgRect index barHeight model =
+    (String.fromInt index, Lazy.lazy5 svgRect2 index barHeight model.currentLeft model.currentRight model.sortType)
+
 
 view : Model -> Html Msg
 view model =
@@ -90,7 +95,7 @@ view model =
                 [ Grid.col []
                     [ h1 [] [ text <| if model.sortType == MergeSort then "Merge sort" else "Selection Sort"]
                     , h1 [] [ text <| String.fromInt model.index ++ " Steps" ]
-                    , Svg.svg
+                    , Keyed.node "svg"
                         [ width "1024"
                         , height "512"
                         , viewBox "0 0 1024 512"
@@ -127,7 +132,7 @@ view model =
                         [ text "<" ]
                     , Button.button [ Button.onClick Pause, Button.disabled model.pause ,Button.attrs [ Spacing.ml1 ]] [ text "Pause" ]
                     , Button.button [ Button.onClick Continue, Button.disabled <| not model.pause ,Button.attrs [ Spacing.ml1 ]] [ text "Continue" ]
-                    , Button.button [ Button.onClick Advance, Button.disabled (model.index >= List.length model.steps) ,Button.attrs [ Spacing.ml1 ]] [ text ">" ]
+                    , Button.button [ Button.onClick Advance, Button.disabled (model.index >= Array.length model.steps) ,Button.attrs [ Spacing.ml1 ]] [ text ">" ]
                     ]
                 ]
             ]

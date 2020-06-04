@@ -66,8 +66,8 @@ update msg model =
             ( { model
                 | listToBeSorted = shuffledList
                 , orderedList = List.sort shuffledList
-                , steps = steps
-                , leftRightSequence = leftRightSequence
+                , steps = Array.fromList steps
+                , leftRightSequence = Array.fromList leftRightSequence
                 , index = 0
               }
             , Random.generate NewSeed (Random.int 1 100000)
@@ -79,17 +79,17 @@ update msg model =
         Tick _ ->
             let
                 newIndex =
-                    if model.index + 1 > List.length model.steps || model.pause then
+                    if model.index + 1 > Array.length model.steps || model.pause then
                         model.index
 
                     else
                         model.index + 1
 
                 newCurr =
-                    Array.fromList model.steps |> Array.get newIndex |> Maybe.withDefault model.currentStep
+                    Array.get newIndex model.steps |> Maybe.withDefault model.currentStep
 
                 ( newLeft, newRight ) =
-                    Array.fromList model.leftRightSequence |> Array.get newIndex |> Maybe.withDefault ( model.currentLeft, model.currentRight )
+                    Array.get newIndex model.leftRightSequence |> Maybe.withDefault ( model.currentLeft, model.currentRight )
             in
             ( { model
                 | index = newIndex
@@ -123,7 +123,7 @@ update msg model =
 
         Advance ->
             ( { model
-                | index = Basics.min (List.length model.steps) (model.index + 1)
+                | index = Basics.min (Array.length model.steps) (model.index + 1)
               }
             , Cmd.none
             )
