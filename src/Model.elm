@@ -1,6 +1,9 @@
-module Model exposing (Model, initModel, SortType(..))
+module Model exposing (Model, SortType(..), initModel)
 
 import Array exposing (Array)
+import Browser.Navigation as Nav
+import Url
+
 
 type alias Model =
     { seed : Int
@@ -14,14 +17,17 @@ type alias Model =
     , currentRight : Int
     , index : Int
     , pause : Bool
+    , url : Url.Url
+    , key : Nav.Key
     }
 
-type SortType 
+
+type SortType
     = MergeSort
     | SelectionSort
 
-initModel : Model
-initModel =
+initModel : Url.Url -> Nav.Key -> Model
+initModel url key =
     { seed = 0
     , listToBeSorted = []
     , steps = Array.empty
@@ -33,4 +39,6 @@ initModel =
     , currentRight = 0
     , index = 0
     , pause = True
+    , key = key
+    , url = url
     }

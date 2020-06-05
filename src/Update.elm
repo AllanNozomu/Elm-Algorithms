@@ -3,6 +3,9 @@ module Update exposing (update, Msg(..))
 import Array
 import Random
 import Random.List
+import Browser
+import Browser.Navigation as Nav
+import Url
 import Time
 import Model exposing (Model, SortType(..))
 import MergeSort
@@ -26,6 +29,8 @@ type Msg
     | Tick Time.Posix
     | NewSeed Int
     | NewSeedStart Int
+    | LinkClicked Browser.UrlRequest
+    | UrlChanged Url.Url
 
 getListParameters model l =
     case model.sortType of
@@ -56,7 +61,7 @@ update msg model =
             let
                 listLength = 
                     case model.sortType of
-                        SelectionSort -> 100
+                        SelectionSort -> 96
                         _ -> 512
                 shuffledList =
                     shuffle (List.range 0 listLength) model.seed
@@ -133,3 +138,13 @@ update msg model =
         
         NewSeedStart newFace ->
                 update Roll { model | seed = newFace }
+
+        UrlChanged url -> 
+            ({model | url = url}, Cmd.none)
+
+        LinkClicked urlRequest ->
+            case urlRequest of
+                Browser.Internal url -> 
+                    ( model, Nav.pushUrl model.key (Url.toString url))
+                Browser.External href ->
+                    (model, Nav.load href)

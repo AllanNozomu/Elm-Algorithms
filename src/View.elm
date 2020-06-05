@@ -1,6 +1,7 @@
 module View exposing (view)
 
 import Array
+import Browser
 import Bootstrap.Button as Button
 import Bootstrap.Card as Card
 import Bootstrap.Card.Block as Block
@@ -87,9 +88,9 @@ svgRect index barHeight model =
     (String.fromInt index, Lazy.lazy5 svgRect2 index barHeight model.currentLeft model.currentRight model.sortType)
 
 
-view : Model -> Html Msg
+view : Model ->  Browser.Document Msg
 view model =
-    div []
+    {title = "Sort algorithms", body = 
         [ Grid.container []
             [ Grid.row []
                 [ Grid.col []
@@ -137,3 +138,4 @@ view model =
                 ]
             ]
         ]
+    }

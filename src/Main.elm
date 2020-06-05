@@ -1,27 +1,36 @@
 module Main exposing (..)
 
-import Random
 import Browser
-import Update exposing (update, Msg(..))
+import Browser.Navigation as Nav
 import Model exposing (Model, initModel)
+import Random
 import Subscriptions exposing (subscriptions)
+import Update exposing (Msg(..), update)
+import Url
 import View exposing (view)
+
 
 
 -- MAIN
 
+
 main =
-    Browser.element
+    Browser.application
         { init = init
         , update = update
         , subscriptions = subscriptions
         , view = view
+        , onUrlChange = UrlChanged
+        , onUrlRequest = LinkClicked
         }
+
+
 
 -- MODEL
 
-init : () -> ( Model, Cmd Msg )
-init _ =
-    ( initModel
+
+init : () -> Url.Url -> Nav.Key -> ( Model, Cmd Msg )
+init _ url key =
+    ( Model.initModel url key
     , Random.generate NewSeedStart (Random.int 1 100000)
     )

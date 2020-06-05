@@ -4438,6 +4438,12 @@ function _Time_getZoneName()
 		callback(_Scheduler_succeed(name));
 	});
 }
+var $author$project$Update$LinkClicked = function (a) {
+	return {$: 'LinkClicked', a: a};
+};
+var $author$project$Update$UrlChanged = function (a) {
+	return {$: 'UrlChanged', a: a};
+};
 var $elm$core$Basics$EQ = {$: 'EQ'};
 var $elm$core$Basics$GT = {$: 'GT'};
 var $elm$core$Basics$LT = {$: 'LT'};
@@ -5226,7 +5232,7 @@ var $elm$core$Task$perform = F2(
 			$elm$core$Task$Perform(
 				A2($elm$core$Task$map, toMessage, task)));
 	});
-var $elm$browser$Browser$element = _Browser_element;
+var $elm$browser$Browser$application = _Browser_application;
 var $author$project$Update$NewSeedStart = function (a) {
 	return {$: 'NewSeedStart', a: a};
 };
@@ -5338,7 +5344,10 @@ var $elm$random$Random$generate = F2(
 				A2($elm$random$Random$map, tagger, generator)));
 	});
 var $author$project$Model$MergeSort = {$: 'MergeSort'};
-var $author$project$Model$initModel = {currentLeft: 0, currentRight: 0, currentStep: _List_Nil, index: 0, leftRightSequence: _List_Nil, listToBeSorted: _List_Nil, orderedList: _List_Nil, pause: true, seed: 0, sortType: $author$project$Model$MergeSort, steps: _List_Nil};
+var $author$project$Model$initModel = F2(
+	function (url, key) {
+		return {currentLeft: 0, currentRight: 0, currentStep: _List_Nil, index: 0, key: key, leftRightSequence: $elm$core$Array$empty, listToBeSorted: _List_Nil, orderedList: _List_Nil, pause: true, seed: 0, sortType: $author$project$Model$MergeSort, steps: $elm$core$Array$empty, url: url};
+	});
 var $elm$core$Bitwise$and = _Bitwise_and;
 var $elm$core$Basics$negate = function (n) {
 	return -n;
@@ -5381,14 +5390,15 @@ var $elm$random$Random$int = F2(
 				}
 			});
 	});
-var $author$project$Main$init = function (_v0) {
-	return _Utils_Tuple2(
-		$author$project$Model$initModel,
-		A2(
-			$elm$random$Random$generate,
-			$author$project$Update$NewSeedStart,
-			A2($elm$random$Random$int, 1, 100000)));
-};
+var $author$project$Main$init = F3(
+	function (_v0, url, key) {
+		return _Utils_Tuple2(
+			A2($author$project$Model$initModel, url, key),
+			A2(
+				$elm$random$Random$generate,
+				$author$project$Update$NewSeedStart,
+				A2($elm$random$Random$int, 1, 100000)));
+	});
 var $author$project$Update$Tick = function (a) {
 	return {$: 'Tick', a: a};
 };
@@ -6216,16 +6226,18 @@ var $author$project$Update$getListParameters = F2(
 			return _Utils_Tuple2(steps, leftRightSequence);
 		}
 	});
+var $elm$core$Array$length = function (_v0) {
+	var len = _v0.a;
+	return len;
+};
+var $elm$browser$Browser$Navigation$load = _Browser_load;
 var $elm$core$Basics$min = F2(
 	function (x, y) {
 		return (_Utils_cmp(x, y) < 0) ? x : y;
 	});
 var $elm$core$Platform$Cmd$batch = _Platform_batch;
 var $elm$core$Platform$Cmd$none = $elm$core$Platform$Cmd$batch(_List_Nil);
-var $elm$core$Array$length = function (_v0) {
-	var len = _v0.a;
-	return len;
-};
+var $elm$browser$Browser$Navigation$pushUrl = _Browser_pushUrl;
 var $elm$random$Random$listHelp = F4(
 	function (revList, n, gen, seed) {
 		listHelp:
@@ -6385,6 +6397,50 @@ var $elm$core$List$sortBy = _List_sortBy;
 var $elm$core$List$sort = function (xs) {
 	return A2($elm$core$List$sortBy, $elm$core$Basics$identity, xs);
 };
+var $elm$url$Url$addPort = F2(
+	function (maybePort, starter) {
+		if (maybePort.$ === 'Nothing') {
+			return starter;
+		} else {
+			var port_ = maybePort.a;
+			return starter + (':' + $elm$core$String$fromInt(port_));
+		}
+	});
+var $elm$url$Url$addPrefixed = F3(
+	function (prefix, maybeSegment, starter) {
+		if (maybeSegment.$ === 'Nothing') {
+			return starter;
+		} else {
+			var segment = maybeSegment.a;
+			return _Utils_ap(
+				starter,
+				_Utils_ap(prefix, segment));
+		}
+	});
+var $elm$url$Url$toString = function (url) {
+	var http = function () {
+		var _v0 = url.protocol;
+		if (_v0.$ === 'Http') {
+			return 'http://';
+		} else {
+			return 'https://';
+		}
+	}();
+	return A3(
+		$elm$url$Url$addPrefixed,
+		'#',
+		url.fragment,
+		A3(
+			$elm$url$Url$addPrefixed,
+			'?',
+			url.query,
+			_Utils_ap(
+				A2(
+					$elm$url$Url$addPort,
+					url.port_,
+					_Utils_ap(http, url.host)),
+				url.path)));
+};
 var $elm$core$Maybe$withDefault = F2(
 	function (_default, maybe) {
 		if (maybe.$ === 'Just') {
@@ -6403,7 +6459,7 @@ var $author$project$Update$update = F2(
 					var listLength = function () {
 						var _v2 = model.sortType;
 						if (_v2.$ === 'SelectionSort') {
-							return 100;
+							return 96;
 						} else {
 							return 512;
 						}
@@ -6420,10 +6476,10 @@ var $author$project$Update$update = F2(
 							model,
 							{
 								index: 0,
-								leftRightSequence: leftRightSequence,
+								leftRightSequence: $elm$core$Array$fromList(leftRightSequence),
 								listToBeSorted: shuffledList,
 								orderedList: $elm$core$List$sort(shuffledList),
-								steps: steps
+								steps: $elm$core$Array$fromList(steps)
 							}),
 						A2(
 							$elm$random$Random$generate,
@@ -6441,21 +6497,15 @@ var $author$project$Update$update = F2(
 				case 'Tick':
 					var newIndex = ((_Utils_cmp(
 						model.index + 1,
-						$elm$core$List$length(model.steps)) > 0) || model.pause) ? model.index : (model.index + 1);
+						$elm$core$Array$length(model.steps)) > 0) || model.pause) ? model.index : (model.index + 1);
 					var newCurr = A2(
 						$elm$core$Maybe$withDefault,
 						model.currentStep,
-						A2(
-							$elm$core$Array$get,
-							newIndex,
-							$elm$core$Array$fromList(model.steps)));
+						A2($elm$core$Array$get, newIndex, model.steps));
 					var _v3 = A2(
 						$elm$core$Maybe$withDefault,
 						_Utils_Tuple2(model.currentLeft, model.currentRight),
-						A2(
-							$elm$core$Array$get,
-							newIndex,
-							$elm$core$Array$fromList(model.leftRightSequence)));
+						A2($elm$core$Array$get, newIndex, model.leftRightSequence));
 					var newLeft = _v3.a;
 					var newRight = _v3.b;
 					return _Utils_Tuple2(
@@ -6490,7 +6540,7 @@ var $author$project$Update$update = F2(
 							{
 								index: A2(
 									$elm$core$Basics$min,
-									$elm$core$List$length(model.steps),
+									$elm$core$Array$length(model.steps),
 									model.index + 1)
 							}),
 						$elm$core$Platform$Cmd$none);
@@ -6501,7 +6551,7 @@ var $author$project$Update$update = F2(
 							model,
 							{seed: newFace}),
 						$elm$core$Platform$Cmd$none);
-				default:
+				case 'NewSeedStart':
 					var newFace = msg.a;
 					var $temp$msg = $author$project$Update$Roll,
 						$temp$model = _Utils_update(
@@ -6510,6 +6560,29 @@ var $author$project$Update$update = F2(
 					msg = $temp$msg;
 					model = $temp$model;
 					continue update;
+				case 'UrlChanged':
+					var url = msg.a;
+					return _Utils_Tuple2(
+						_Utils_update(
+							model,
+							{url: url}),
+						$elm$core$Platform$Cmd$none);
+				default:
+					var urlRequest = msg.a;
+					if (urlRequest.$ === 'Internal') {
+						var url = urlRequest.a;
+						return _Utils_Tuple2(
+							model,
+							A2(
+								$elm$browser$Browser$Navigation$pushUrl,
+								model.key,
+								$elm$url$Url$toString(url)));
+					} else {
+						var href = urlRequest.a;
+						return _Utils_Tuple2(
+							model,
+							$elm$browser$Browser$Navigation$load(href));
+					}
 			}
 		}
 	});
@@ -6737,6 +6810,14 @@ var $rundis$elm_bootstrap$Bootstrap$Button$disabled = function (disabled_) {
 var $elm$html$Html$h1 = _VirtualDom_node('h1');
 var $elm$svg$Svg$Attributes$height = _VirtualDom_attribute('height');
 var $rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$ml1 = $elm$html$Html$Attributes$class('ml-1');
+var $elm$virtual_dom$VirtualDom$keyedNodeNS = F2(
+	function (namespace, tag) {
+		return A2(
+			_VirtualDom_keyedNodeNS,
+			namespace,
+			_VirtualDom_noScript(tag));
+	});
+var $elm$svg$Svg$Keyed$node = $elm$virtual_dom$VirtualDom$keyedNodeNS('http://www.w3.org/2000/svg');
 var $elm$core$Basics$not = _Basics_not;
 var $elm$virtual_dom$VirtualDom$MayPreventDefault = function (a) {
 	return {$: 'MayPreventDefault', a: a};
@@ -7579,28 +7660,21 @@ var $rundis$elm_bootstrap$Bootstrap$Grid$row = F2(
 			$rundis$elm_bootstrap$Bootstrap$Grid$Internal$rowAttributes(options),
 			A2($elm$core$List$map, $rundis$elm_bootstrap$Bootstrap$Grid$renderCol, cols));
 	});
-var $elm$svg$Svg$trustedNode = _VirtualDom_nodeNS('http://www.w3.org/2000/svg');
-var $elm$svg$Svg$svg = $elm$svg$Svg$trustedNode('svg');
+var $elm$virtual_dom$VirtualDom$lazy5 = _VirtualDom_lazy5;
+var $elm$svg$Svg$Lazy$lazy5 = $elm$virtual_dom$VirtualDom$lazy5;
 var $elm$svg$Svg$Attributes$fill = _VirtualDom_attribute('fill');
-var $author$project$View$getColor = F3(
-	function (index, barHeight, model) {
-		return _Utils_eq(index, model.currentLeft) ? $elm$svg$Svg$Attributes$fill('red') : (_Utils_eq(index, model.currentRight) ? $elm$svg$Svg$Attributes$fill('yellow') : (_Utils_eq(
-			A2(
-				$elm$core$Maybe$withDefault,
-				0,
-				A2(
-					$elm$core$Array$get,
-					index,
-					$elm$core$Array$fromList(model.orderedList))),
-			barHeight) ? $elm$svg$Svg$Attributes$fill('green') : $elm$svg$Svg$Attributes$fill('black')));
+var $author$project$View$getColor = F4(
+	function (index, barHeight, left, right) {
+		return _Utils_eq(index, left) ? $elm$svg$Svg$Attributes$fill('red') : (_Utils_eq(index, right) ? $elm$svg$Svg$Attributes$fill('yellow') : (_Utils_eq(index, barHeight) ? $elm$svg$Svg$Attributes$fill('green') : $elm$svg$Svg$Attributes$fill('black')));
 	});
+var $elm$svg$Svg$trustedNode = _VirtualDom_nodeNS('http://www.w3.org/2000/svg');
 var $elm$svg$Svg$rect = $elm$svg$Svg$trustedNode('rect');
 var $elm$svg$Svg$Attributes$width = _VirtualDom_attribute('width');
 var $elm$svg$Svg$Attributes$x = _VirtualDom_attribute('x');
 var $elm$svg$Svg$Attributes$y = _VirtualDom_attribute('y');
-var $author$project$View$svgRect = F3(
-	function (index, barHeight, model) {
-		var bigger = _Utils_eq(model.sortType, $author$project$Model$SelectionSort);
+var $author$project$View$svgRect2 = F5(
+	function (index, barHeight, left, right, sortType) {
+		var bigger = _Utils_eq(sortType, $author$project$Model$SelectionSort);
 		return A2(
 			$elm$svg$Svg$rect,
 			_List_fromArray(
@@ -7613,21 +7687,25 @@ var $author$project$View$svgRect = F3(
 						(512 - (barHeight * (bigger ? 4 : 1))) - 4)),
 					$elm$svg$Svg$Attributes$width(
 					bigger ? '8' : '2'),
-					A3($author$project$View$getColor, index, barHeight, model),
+					A4($author$project$View$getColor, index, barHeight, left, right),
 					$elm$svg$Svg$Attributes$height(
 					$elm$core$String$fromInt(
 						(barHeight * (bigger ? 4 : 2)) + 4))
 				]),
 			_List_Nil);
 	});
+var $author$project$View$svgRect = F3(
+	function (index, barHeight, model) {
+		return _Utils_Tuple2(
+			$elm$core$String$fromInt(index),
+			A6($elm$svg$Svg$Lazy$lazy5, $author$project$View$svgRect2, index, barHeight, model.currentLeft, model.currentRight, model.sortType));
+	});
 var $elm$virtual_dom$VirtualDom$text = _VirtualDom_text;
 var $elm$html$Html$text = $elm$virtual_dom$VirtualDom$text;
 var $elm$svg$Svg$Attributes$viewBox = _VirtualDom_attribute('viewBox');
 var $author$project$View$view = function (model) {
-	return A2(
-		$elm$html$Html$div,
-		_List_Nil,
-		_List_fromArray(
+	return {
+		body: _List_fromArray(
 			[
 				A2(
 				$rundis$elm_bootstrap$Bootstrap$Grid$container,
@@ -7660,8 +7738,9 @@ var $author$project$View$view = function (model) {
 												$elm$html$Html$text(
 												$elm$core$String$fromInt(model.index) + ' Steps')
 											])),
-										A2(
-										$elm$svg$Svg$svg,
+										A3(
+										$elm$svg$Svg$Keyed$node,
+										'svg',
 										_List_fromArray(
 											[
 												$elm$svg$Svg$Attributes$width('1024'),
@@ -7766,7 +7845,7 @@ var $author$project$View$view = function (model) {
 												$rundis$elm_bootstrap$Bootstrap$Button$disabled(
 												_Utils_cmp(
 													model.index,
-													$elm$core$List$length(model.steps)) > -1),
+													$elm$core$Array$length(model.steps)) > -1),
 												$rundis$elm_bootstrap$Bootstrap$Button$attrs(
 												_List_fromArray(
 													[$rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$ml1]))
@@ -7778,9 +7857,11 @@ var $author$project$View$view = function (model) {
 									]))
 							]))
 					]))
-			]));
+			]),
+		title: 'Sort algorithms'
+	};
 };
-var $author$project$Main$main = $elm$browser$Browser$element(
-	{init: $author$project$Main$init, subscriptions: $author$project$Subscriptions$subscriptions, update: $author$project$Update$update, view: $author$project$View$view});
+var $author$project$Main$main = $elm$browser$Browser$application(
+	{init: $author$project$Main$init, onUrlChange: $author$project$Update$UrlChanged, onUrlRequest: $author$project$Update$LinkClicked, subscriptions: $author$project$Subscriptions$subscriptions, update: $author$project$Update$update, view: $author$project$View$view});
 _Platform_export({'Main':{'init':$author$project$Main$main(
 	$elm$json$Json$Decode$succeed(_Utils_Tuple0))(0)}});}(this));
