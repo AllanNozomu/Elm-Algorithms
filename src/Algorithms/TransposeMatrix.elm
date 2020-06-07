@@ -1,4 +1,4 @@
-module TransposeMatrix exposing (transpose)
+module Algorithms.TransposeMatrix exposing (transpose)
 
 import Array exposing (Array)
 

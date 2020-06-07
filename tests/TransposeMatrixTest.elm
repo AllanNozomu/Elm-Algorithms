@@ -4,7 +4,7 @@ import Array
 import Expect exposing (Expectation)
 import Fuzz exposing (string, array)
 import Test exposing (..)
-import TransposeMatrix exposing (transpose)
+import Algorithms.TransposeMatrix exposing (transpose)
 
 
 suite : Test

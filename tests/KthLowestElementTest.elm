@@ -3,7 +3,7 @@ module KthLowestElementTest exposing (..)
 import Array
 import Expect exposing (Expectation)
 import Fuzz exposing (int, list, string)
-import KthLowestElement exposing (kthLowestElement)
+import Algorithms.KthLowestElement exposing (kthLowestElement)
 import Random
 import Test exposing (..)
 

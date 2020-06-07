@@ -2,7 +2,7 @@ module MergeSortTest exposing (..)
 
 import Expect exposing (Expectation)
 import Fuzz exposing (int, list, string)
-import MergeSort exposing (mergeSort)
+import Algorithms.MergeSort exposing (mergeSort)
 import Test exposing (..)
 
 suite : Test

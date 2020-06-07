@@ -8,8 +8,8 @@ import Browser.Navigation as Nav
 import Url
 import Time
 import Model exposing (Model, SortType(..))
-import MergeSort
-import SelectionSort
+import Algorithms.Visualization.MergeSort as MergeSort
+import Algorithms.Visualization.SelectionSort as SelectionSort
 
 shuffle : List comparable -> Int -> List comparable
 shuffle l seed =
@@ -32,6 +32,7 @@ type Msg
     | LinkClicked Browser.UrlRequest
     | UrlChanged Url.Url
 
+getListParameters : Model -> List comparable -> (List (List comparable), List (Int, Int))
 getListParameters model l =
     case model.sortType of
         SelectionSort ->

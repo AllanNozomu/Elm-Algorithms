@@ -1,4 +1,4 @@
-module KthLowestElement exposing (kthLowestElement)
+module Algorithms.KthLowestElement exposing (kthLowestElement)
 
 import List
 lessOrEqual : List comparable -> comparable -> List comparable

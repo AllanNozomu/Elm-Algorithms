@@ -2,7 +2,7 @@ module SelectionSortTest exposing (..)
 
 import Expect exposing (Expectation)
 import Fuzz exposing (int, list, string)
-import SelectionSort exposing (selectionSort)
+import Algorithms.SelectionSort exposing (selectionSort)
 import Test exposing (..)
 
 suite : Test
