@@ -5233,9 +5233,13 @@ var $elm$core$Task$perform = F2(
 				A2($elm$core$Task$map, toMessage, task)));
 	});
 var $elm$browser$Browser$application = _Browser_application;
-var $author$project$Update$NewSeedStart = function (a) {
+var $author$project$Algorithms$Visualization$Update$NewSeedStart = function (a) {
 	return {$: 'NewSeedStart', a: a};
 };
+var $author$project$Update$SubPageMsg = function (a) {
+	return {$: 'SubPageMsg', a: a};
+};
+var $elm$core$Platform$Cmd$batch = _Platform_batch;
 var $elm$random$Random$Generate = function (a) {
 	return {$: 'Generate', a: a};
 };
@@ -5343,10 +5347,18 @@ var $elm$random$Random$generate = F2(
 			$elm$random$Random$Generate(
 				A2($elm$random$Random$map, tagger, generator)));
 	});
-var $author$project$Model$MergeSort = {$: 'MergeSort'};
+var $author$project$Model$SortAlgorithmsModel = function (a) {
+	return {$: 'SortAlgorithmsModel', a: a};
+};
+var $author$project$Algorithms$Visualization$Model$MergeSort = {$: 'MergeSort'};
+var $author$project$Algorithms$Visualization$Model$initModel = {currentLeft: 0, currentRight: 0, currentStep: _List_Nil, index: 0, leftRightSequence: $elm$core$Array$empty, listToBeSorted: _List_Nil, orderedList: _List_Nil, pause: true, seed: 0, sortType: $author$project$Algorithms$Visualization$Model$MergeSort, steps: $elm$core$Array$empty};
 var $author$project$Model$initModel = F2(
 	function (url, key) {
-		return {currentLeft: 0, currentRight: 0, currentStep: _List_Nil, index: 0, key: key, leftRightSequence: $elm$core$Array$empty, listToBeSorted: _List_Nil, orderedList: _List_Nil, pause: true, seed: 0, sortType: $author$project$Model$MergeSort, steps: $elm$core$Array$empty, url: url};
+		return {
+			currentModel: $author$project$Model$SortAlgorithmsModel($author$project$Algorithms$Visualization$Model$initModel),
+			key: key,
+			url: url
+		};
 	});
 var $elm$core$Bitwise$and = _Bitwise_and;
 var $elm$core$Basics$negate = function (n) {
@@ -5390,16 +5402,26 @@ var $elm$random$Random$int = F2(
 				}
 			});
 	});
+var $elm$core$Platform$Cmd$map = _Platform_map;
 var $author$project$Main$init = F3(
 	function (_v0, url, key) {
 		return _Utils_Tuple2(
 			A2($author$project$Model$initModel, url, key),
-			A2(
-				$elm$random$Random$generate,
-				$author$project$Update$NewSeedStart,
-				A2($elm$random$Random$int, 1, 100000)));
+			$elm$core$Platform$Cmd$batch(
+				A2(
+					$elm$core$List$map,
+					$elm$core$Platform$Cmd$map($author$project$Update$SubPageMsg),
+					_List_fromArray(
+						[
+							A2(
+							$elm$random$Random$generate,
+							$author$project$Algorithms$Visualization$Update$NewSeedStart,
+							A2($elm$random$Random$int, 1, 1000000))
+						]))));
 	});
-var $author$project$Update$Tick = function (a) {
+var $elm$core$Platform$Sub$batch = _Platform_batch;
+var $elm$core$Platform$Sub$map = _Platform_map;
+var $author$project$Algorithms$Visualization$Update$Tick = function (a) {
 	return {$: 'Tick', a: a};
 };
 var $elm$time$Time$Every = F2(
@@ -5801,13 +5823,72 @@ var $elm$time$Time$every = F2(
 		return $elm$time$Time$subscription(
 			A2($elm$time$Time$Every, interval, tagger));
 	});
-var $author$project$Subscriptions$subscriptions = function (_v0) {
-	return A2($elm$time$Time$every, 1, $author$project$Update$Tick);
+var $author$project$Algorithms$Visualization$Subscriptions$subscriptions = function (_v0) {
+	return A2($elm$time$Time$every, 1, $author$project$Algorithms$Visualization$Update$Tick);
 };
-var $author$project$Update$NewSeed = function (a) {
+var $author$project$Subscriptions$subscriptions = function (model) {
+	var _v0 = model.currentModel;
+	var subModel = _v0.a;
+	return $elm$core$Platform$Sub$batch(
+		A2(
+			$elm$core$List$map,
+			$elm$core$Platform$Sub$map($author$project$Update$SubPageMsg),
+			_List_fromArray(
+				[
+					$author$project$Algorithms$Visualization$Subscriptions$subscriptions(subModel)
+				])));
+};
+var $elm$browser$Browser$Navigation$load = _Browser_load;
+var $elm$core$Platform$Cmd$none = $elm$core$Platform$Cmd$batch(_List_Nil);
+var $elm$browser$Browser$Navigation$pushUrl = _Browser_pushUrl;
+var $elm$url$Url$addPort = F2(
+	function (maybePort, starter) {
+		if (maybePort.$ === 'Nothing') {
+			return starter;
+		} else {
+			var port_ = maybePort.a;
+			return starter + (':' + $elm$core$String$fromInt(port_));
+		}
+	});
+var $elm$url$Url$addPrefixed = F3(
+	function (prefix, maybeSegment, starter) {
+		if (maybeSegment.$ === 'Nothing') {
+			return starter;
+		} else {
+			var segment = maybeSegment.a;
+			return _Utils_ap(
+				starter,
+				_Utils_ap(prefix, segment));
+		}
+	});
+var $elm$url$Url$toString = function (url) {
+	var http = function () {
+		var _v0 = url.protocol;
+		if (_v0.$ === 'Http') {
+			return 'http://';
+		} else {
+			return 'https://';
+		}
+	}();
+	return A3(
+		$elm$url$Url$addPrefixed,
+		'#',
+		url.fragment,
+		A3(
+			$elm$url$Url$addPrefixed,
+			'?',
+			url.query,
+			_Utils_ap(
+				A2(
+					$elm$url$Url$addPort,
+					url.port_,
+					_Utils_ap(http, url.host)),
+				url.path)));
+};
+var $author$project$Algorithms$Visualization$Update$NewSeed = function (a) {
 	return {$: 'NewSeed', a: a};
 };
-var $author$project$Update$Roll = {$: 'Roll'};
+var $author$project$Algorithms$Visualization$Update$Roll = {$: 'Roll'};
 var $elm$core$Array$fromListHelp = F3(
 	function (list, nodeList, nodeListSize) {
 		fromListHelp:
@@ -6192,7 +6273,7 @@ var $author$project$Algorithms$Visualization$SelectionSort$selectionSortSteps = 
 		sortedList,
 		$elm$core$List$reverse(steps));
 };
-var $author$project$Update$getListParameters = F2(
+var $author$project$Algorithms$Visualization$Update$getListParameters = F2(
 	function (model, l) {
 		var _v0 = model.sortType;
 		if (_v0.$ === 'SelectionSort') {
@@ -6230,14 +6311,10 @@ var $elm$core$Array$length = function (_v0) {
 	var len = _v0.a;
 	return len;
 };
-var $elm$browser$Browser$Navigation$load = _Browser_load;
 var $elm$core$Basics$min = F2(
 	function (x, y) {
 		return (_Utils_cmp(x, y) < 0) ? x : y;
 	});
-var $elm$core$Platform$Cmd$batch = _Platform_batch;
-var $elm$core$Platform$Cmd$none = $elm$core$Platform$Cmd$batch(_List_Nil);
-var $elm$browser$Browser$Navigation$pushUrl = _Browser_pushUrl;
 var $elm$random$Random$listHelp = F4(
 	function (revList, n, gen, seed) {
 		listHelp:
@@ -6384,7 +6461,7 @@ var $elm_community$random_extra$Random$List$shuffle = function (list) {
 			length,
 			A2($elm$random$Random$int, 0, length - 1)));
 };
-var $author$project$Update$shuffle = F2(
+var $author$project$Algorithms$Visualization$Update$shuffle = F2(
 	function (l, seed) {
 		var _v0 = A2(
 			$elm$random$Random$step,
@@ -6397,50 +6474,6 @@ var $elm$core$List$sortBy = _List_sortBy;
 var $elm$core$List$sort = function (xs) {
 	return A2($elm$core$List$sortBy, $elm$core$Basics$identity, xs);
 };
-var $elm$url$Url$addPort = F2(
-	function (maybePort, starter) {
-		if (maybePort.$ === 'Nothing') {
-			return starter;
-		} else {
-			var port_ = maybePort.a;
-			return starter + (':' + $elm$core$String$fromInt(port_));
-		}
-	});
-var $elm$url$Url$addPrefixed = F3(
-	function (prefix, maybeSegment, starter) {
-		if (maybeSegment.$ === 'Nothing') {
-			return starter;
-		} else {
-			var segment = maybeSegment.a;
-			return _Utils_ap(
-				starter,
-				_Utils_ap(prefix, segment));
-		}
-	});
-var $elm$url$Url$toString = function (url) {
-	var http = function () {
-		var _v0 = url.protocol;
-		if (_v0.$ === 'Http') {
-			return 'http://';
-		} else {
-			return 'https://';
-		}
-	}();
-	return A3(
-		$elm$url$Url$addPrefixed,
-		'#',
-		url.fragment,
-		A3(
-			$elm$url$Url$addPrefixed,
-			'?',
-			url.query,
-			_Utils_ap(
-				A2(
-					$elm$url$Url$addPort,
-					url.port_,
-					_Utils_ap(http, url.host)),
-				url.path)));
-};
 var $elm$core$Maybe$withDefault = F2(
 	function (_default, maybe) {
 		if (maybe.$ === 'Just') {
@@ -6450,7 +6483,7 @@ var $elm$core$Maybe$withDefault = F2(
 			return _default;
 		}
 	});
-var $author$project$Update$update = F2(
+var $author$project$Algorithms$Visualization$Update$update = F2(
 	function (msg, model) {
 		update:
 		while (true) {
@@ -6465,10 +6498,10 @@ var $author$project$Update$update = F2(
 						}
 					}();
 					var shuffledList = A2(
-						$author$project$Update$shuffle,
+						$author$project$Algorithms$Visualization$Update$shuffle,
 						A2($elm$core$List$range, 0, listLength),
 						model.seed);
-					var _v1 = A2($author$project$Update$getListParameters, model, shuffledList);
+					var _v1 = A2($author$project$Algorithms$Visualization$Update$getListParameters, model, shuffledList);
 					var steps = _v1.a;
 					var leftRightSequence = _v1.b;
 					return _Utils_Tuple2(
@@ -6483,11 +6516,11 @@ var $author$project$Update$update = F2(
 							}),
 						A2(
 							$elm$random$Random$generate,
-							$author$project$Update$NewSeed,
+							$author$project$Algorithms$Visualization$Update$NewSeed,
 							A2($elm$random$Random$int, 1, 100000)));
 				case 'ChangeSort':
 					var sortType = msg.a;
-					var $temp$msg = $author$project$Update$Roll,
+					var $temp$msg = $author$project$Algorithms$Visualization$Update$Roll,
 						$temp$model = _Utils_update(
 						model,
 						{sortType: sortType});
@@ -6551,49 +6584,93 @@ var $author$project$Update$update = F2(
 							model,
 							{seed: newFace}),
 						$elm$core$Platform$Cmd$none);
-				case 'NewSeedStart':
+				default:
 					var newFace = msg.a;
-					var $temp$msg = $author$project$Update$Roll,
+					var $temp$msg = $author$project$Algorithms$Visualization$Update$Roll,
 						$temp$model = _Utils_update(
 						model,
 						{seed: newFace});
 					msg = $temp$msg;
 					model = $temp$model;
 					continue update;
-				case 'UrlChanged':
-					var url = msg.a;
-					return _Utils_Tuple2(
-						_Utils_update(
-							model,
-							{url: url}),
-						$elm$core$Platform$Cmd$none);
-				default:
-					var urlRequest = msg.a;
-					if (urlRequest.$ === 'Internal') {
-						var url = urlRequest.a;
-						return _Utils_Tuple2(
-							model,
-							A2(
-								$elm$browser$Browser$Navigation$pushUrl,
-								model.key,
-								$elm$url$Url$toString(url)));
-					} else {
-						var href = urlRequest.a;
-						return _Utils_Tuple2(
-							model,
-							$elm$browser$Browser$Navigation$load(href));
-					}
 			}
 		}
 	});
-var $author$project$Update$Advance = {$: 'Advance'};
-var $author$project$Update$Back = {$: 'Back'};
-var $author$project$Update$ChangeSort = function (a) {
+var $author$project$Update$update = F2(
+	function (msg, model) {
+		var _v0 = _Utils_Tuple2(msg, model);
+		switch (_v0.a.$) {
+			case 'UrlChanged':
+				var url = _v0.a.a;
+				return _Utils_Tuple2(
+					_Utils_update(
+						model,
+						{url: url}),
+					$elm$core$Platform$Cmd$none);
+			case 'LinkClicked':
+				var urlRequest = _v0.a.a;
+				if (urlRequest.$ === 'Internal') {
+					var url = urlRequest.a;
+					return _Utils_Tuple2(
+						model,
+						A2(
+							$elm$browser$Browser$Navigation$pushUrl,
+							model.key,
+							$elm$url$Url$toString(url)));
+				} else {
+					var href = urlRequest.a;
+					return _Utils_Tuple2(
+						model,
+						$elm$browser$Browser$Navigation$load(href));
+				}
+			default:
+				var subMsg = _v0.a.a;
+				var _v2 = model.currentModel;
+				var subModel = _v2.a;
+				var _v3 = A2($author$project$Algorithms$Visualization$Update$update, subMsg, subModel);
+				var newModel = _v3.a;
+				var subCmd = _v3.b;
+				return _Utils_Tuple2(
+					_Utils_update(
+						model,
+						{
+							currentModel: $author$project$Model$SortAlgorithmsModel(newModel)
+						}),
+					A2($elm$core$Platform$Cmd$map, $author$project$Update$SubPageMsg, subCmd));
+		}
+	});
+var $elm$json$Json$Encode$string = _Json_wrap;
+var $elm$html$Html$Attributes$stringProperty = F2(
+	function (key, string) {
+		return A2(
+			_VirtualDom_property,
+			key,
+			$elm$json$Json$Encode$string(string));
+	});
+var $elm$html$Html$Attributes$class = $elm$html$Html$Attributes$stringProperty('className');
+var $elm$html$Html$div = _VirtualDom_node('div');
+var $rundis$elm_bootstrap$Bootstrap$Grid$container = F2(
+	function (attributes, children) {
+		return A2(
+			$elm$html$Html$div,
+			_Utils_ap(
+				_List_fromArray(
+					[
+						$elm$html$Html$Attributes$class('container')
+					]),
+				attributes),
+			children);
+	});
+var $elm$virtual_dom$VirtualDom$map = _VirtualDom_map;
+var $elm$html$Html$map = $elm$virtual_dom$VirtualDom$map;
+var $author$project$Algorithms$Visualization$Update$Advance = {$: 'Advance'};
+var $author$project$Algorithms$Visualization$Update$Back = {$: 'Back'};
+var $author$project$Algorithms$Visualization$Update$ChangeSort = function (a) {
 	return {$: 'ChangeSort', a: a};
 };
-var $author$project$Update$Continue = {$: 'Continue'};
-var $author$project$Update$Pause = {$: 'Pause'};
-var $author$project$Model$SelectionSort = {$: 'SelectionSort'};
+var $author$project$Algorithms$Visualization$Update$Continue = {$: 'Continue'};
+var $author$project$Algorithms$Visualization$Update$Pause = {$: 'Pause'};
+var $author$project$Algorithms$Visualization$Model$SelectionSort = {$: 'SelectionSort'};
 var $rundis$elm_bootstrap$Bootstrap$Internal$Button$Attrs = function (a) {
 	return {$: 'Attrs', a: a};
 };
@@ -6645,15 +6722,6 @@ var $rundis$elm_bootstrap$Bootstrap$Internal$Button$applyModifier = F2(
 					});
 		}
 	});
-var $elm$json$Json$Encode$string = _Json_wrap;
-var $elm$html$Html$Attributes$stringProperty = F2(
-	function (key, string) {
-		return A2(
-			_VirtualDom_property,
-			key,
-			$elm$json$Json$Encode$string(string));
-	});
-var $elm$html$Html$Attributes$class = $elm$html$Html$Attributes$stringProperty('className');
 var $elm$core$List$filter = F2(
 	function (isGood, list) {
 		return A3(
@@ -6787,19 +6855,6 @@ var $rundis$elm_bootstrap$Bootstrap$Grid$col = F2(
 	function (options, children) {
 		return $rundis$elm_bootstrap$Bootstrap$Grid$Column(
 			{children: children, options: options});
-	});
-var $elm$html$Html$div = _VirtualDom_node('div');
-var $rundis$elm_bootstrap$Bootstrap$Grid$container = F2(
-	function (attributes, children) {
-		return A2(
-			$elm$html$Html$div,
-			_Utils_ap(
-				_List_fromArray(
-					[
-						$elm$html$Html$Attributes$class('container')
-					]),
-				attributes),
-			children);
 	});
 var $rundis$elm_bootstrap$Bootstrap$Internal$Button$Disabled = function (a) {
 	return {$: 'Disabled', a: a};
@@ -7663,7 +7718,7 @@ var $rundis$elm_bootstrap$Bootstrap$Grid$row = F2(
 var $elm$virtual_dom$VirtualDom$lazy5 = _VirtualDom_lazy5;
 var $elm$svg$Svg$Lazy$lazy5 = $elm$virtual_dom$VirtualDom$lazy5;
 var $elm$svg$Svg$Attributes$fill = _VirtualDom_attribute('fill');
-var $author$project$View$getColor = F4(
+var $author$project$Algorithms$Visualization$SortView$getColor = F4(
 	function (index, barHeight, left, right) {
 		return _Utils_eq(index, left) ? $elm$svg$Svg$Attributes$fill('red') : (_Utils_eq(index, right) ? $elm$svg$Svg$Attributes$fill('yellow') : (_Utils_eq(index, barHeight) ? $elm$svg$Svg$Attributes$fill('green') : $elm$svg$Svg$Attributes$fill('black')));
 	});
@@ -7672,9 +7727,9 @@ var $elm$svg$Svg$rect = $elm$svg$Svg$trustedNode('rect');
 var $elm$svg$Svg$Attributes$width = _VirtualDom_attribute('width');
 var $elm$svg$Svg$Attributes$x = _VirtualDom_attribute('x');
 var $elm$svg$Svg$Attributes$y = _VirtualDom_attribute('y');
-var $author$project$View$svgRect2 = F5(
+var $author$project$Algorithms$Visualization$SortView$svgRect2 = F5(
 	function (index, barHeight, left, right, sortType) {
-		var bigger = _Utils_eq(sortType, $author$project$Model$SelectionSort);
+		var bigger = _Utils_eq(sortType, $author$project$Algorithms$Visualization$Model$SelectionSort);
 		return A2(
 			$elm$svg$Svg$rect,
 			_List_fromArray(
@@ -7687,23 +7742,183 @@ var $author$project$View$svgRect2 = F5(
 						(512 - (barHeight * (bigger ? 4 : 1))) - 4)),
 					$elm$svg$Svg$Attributes$width(
 					bigger ? '8' : '2'),
-					A4($author$project$View$getColor, index, barHeight, left, right),
+					A4($author$project$Algorithms$Visualization$SortView$getColor, index, barHeight, left, right),
 					$elm$svg$Svg$Attributes$height(
 					$elm$core$String$fromInt(
 						(barHeight * (bigger ? 4 : 2)) + 4))
 				]),
 			_List_Nil);
 	});
-var $author$project$View$svgRect = F3(
+var $author$project$Algorithms$Visualization$SortView$svgRect = F3(
 	function (index, barHeight, model) {
 		return _Utils_Tuple2(
 			$elm$core$String$fromInt(index),
-			A6($elm$svg$Svg$Lazy$lazy5, $author$project$View$svgRect2, index, barHeight, model.currentLeft, model.currentRight, model.sortType));
+			A6($elm$svg$Svg$Lazy$lazy5, $author$project$Algorithms$Visualization$SortView$svgRect2, index, barHeight, model.currentLeft, model.currentRight, model.sortType));
 	});
 var $elm$virtual_dom$VirtualDom$text = _VirtualDom_text;
 var $elm$html$Html$text = $elm$virtual_dom$VirtualDom$text;
 var $elm$svg$Svg$Attributes$viewBox = _VirtualDom_attribute('viewBox');
+var $author$project$Algorithms$Visualization$SortView$view = function (model) {
+	return A2(
+		$elm$html$Html$div,
+		_List_Nil,
+		_List_fromArray(
+			[
+				A2(
+				$rundis$elm_bootstrap$Bootstrap$Grid$row,
+				_List_Nil,
+				_List_fromArray(
+					[
+						A2(
+						$rundis$elm_bootstrap$Bootstrap$Grid$col,
+						_List_Nil,
+						_List_fromArray(
+							[
+								A2(
+								$elm$html$Html$h1,
+								_List_Nil,
+								_List_fromArray(
+									[
+										$elm$html$Html$text(
+										_Utils_eq(model.sortType, $author$project$Algorithms$Visualization$Model$MergeSort) ? 'Merge sort' : 'Selection Sort')
+									])),
+								A2(
+								$elm$html$Html$h1,
+								_List_Nil,
+								_List_fromArray(
+									[
+										$elm$html$Html$text(
+										$elm$core$String$fromInt(model.index) + ' Steps')
+									])),
+								A3(
+								$elm$svg$Svg$Keyed$node,
+								'svg',
+								_List_fromArray(
+									[
+										$elm$svg$Svg$Attributes$width('1024'),
+										$elm$svg$Svg$Attributes$height('512'),
+										$elm$svg$Svg$Attributes$viewBox('0 0 1024 512')
+									]),
+								A2(
+									$elm$core$List$indexedMap,
+									F2(
+										function (index, barHeight) {
+											return A3($author$project$Algorithms$Visualization$SortView$svgRect, index, barHeight, model);
+										}),
+									model.currentStep))
+							]))
+					])),
+				A2(
+				$rundis$elm_bootstrap$Bootstrap$Grid$row,
+				_List_Nil,
+				_List_fromArray(
+					[
+						A2(
+						$rundis$elm_bootstrap$Bootstrap$Grid$col,
+						_List_Nil,
+						_List_fromArray(
+							[
+								A2(
+								$rundis$elm_bootstrap$Bootstrap$Button$button,
+								_List_fromArray(
+									[
+										$rundis$elm_bootstrap$Bootstrap$Button$onClick($author$project$Algorithms$Visualization$Update$Roll),
+										$rundis$elm_bootstrap$Bootstrap$Button$attrs(
+										_List_fromArray(
+											[$rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$ml1]))
+									]),
+								_List_fromArray(
+									[
+										$elm$html$Html$text('Shuffle')
+									])),
+								A2(
+								$rundis$elm_bootstrap$Bootstrap$Button$button,
+								_List_fromArray(
+									[
+										$rundis$elm_bootstrap$Bootstrap$Button$onClick(
+										$author$project$Algorithms$Visualization$Update$ChangeSort(
+											_Utils_eq(model.sortType, $author$project$Algorithms$Visualization$Model$MergeSort) ? $author$project$Algorithms$Visualization$Model$SelectionSort : $author$project$Algorithms$Visualization$Model$MergeSort)),
+										$rundis$elm_bootstrap$Bootstrap$Button$attrs(
+										_List_fromArray(
+											[$rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$ml1]))
+									]),
+								_List_fromArray(
+									[
+										$elm$html$Html$text(
+										_Utils_eq(model.sortType, $author$project$Algorithms$Visualization$Model$MergeSort) ? 'SelectionSort' : 'MergeSort')
+									])),
+								A2(
+								$rundis$elm_bootstrap$Bootstrap$Button$button,
+								_List_fromArray(
+									[
+										$rundis$elm_bootstrap$Bootstrap$Button$onClick($author$project$Algorithms$Visualization$Update$Back),
+										$rundis$elm_bootstrap$Bootstrap$Button$disabled(model.index <= 0),
+										$rundis$elm_bootstrap$Bootstrap$Button$attrs(
+										_List_fromArray(
+											[$rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$ml1]))
+									]),
+								_List_fromArray(
+									[
+										$elm$html$Html$text('<')
+									])),
+								A2(
+								$rundis$elm_bootstrap$Bootstrap$Button$button,
+								_List_fromArray(
+									[
+										$rundis$elm_bootstrap$Bootstrap$Button$onClick($author$project$Algorithms$Visualization$Update$Pause),
+										$rundis$elm_bootstrap$Bootstrap$Button$disabled(model.pause),
+										$rundis$elm_bootstrap$Bootstrap$Button$attrs(
+										_List_fromArray(
+											[$rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$ml1]))
+									]),
+								_List_fromArray(
+									[
+										$elm$html$Html$text('Pause')
+									])),
+								A2(
+								$rundis$elm_bootstrap$Bootstrap$Button$button,
+								_List_fromArray(
+									[
+										$rundis$elm_bootstrap$Bootstrap$Button$onClick($author$project$Algorithms$Visualization$Update$Continue),
+										$rundis$elm_bootstrap$Bootstrap$Button$disabled(!model.pause),
+										$rundis$elm_bootstrap$Bootstrap$Button$attrs(
+										_List_fromArray(
+											[$rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$ml1]))
+									]),
+								_List_fromArray(
+									[
+										$elm$html$Html$text('Continue')
+									])),
+								A2(
+								$rundis$elm_bootstrap$Bootstrap$Button$button,
+								_List_fromArray(
+									[
+										$rundis$elm_bootstrap$Bootstrap$Button$onClick($author$project$Algorithms$Visualization$Update$Advance),
+										$rundis$elm_bootstrap$Bootstrap$Button$disabled(
+										_Utils_cmp(
+											model.index,
+											$elm$core$Array$length(model.steps)) > -1),
+										$rundis$elm_bootstrap$Bootstrap$Button$attrs(
+										_List_fromArray(
+											[$rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$ml1]))
+									]),
+								_List_fromArray(
+									[
+										$elm$html$Html$text('>')
+									]))
+							]))
+					]))
+			]));
+};
 var $author$project$View$view = function (model) {
+	var currentPage = function () {
+		var _v0 = model.currentModel;
+		var sortmodel = _v0.a;
+		return A2(
+			$elm$html$Html$map,
+			$author$project$Update$SubPageMsg,
+			$author$project$Algorithms$Visualization$SortView$view(sortmodel));
+	}();
 	return {
 		body: _List_fromArray(
 			[
@@ -7711,152 +7926,7 @@ var $author$project$View$view = function (model) {
 				$rundis$elm_bootstrap$Bootstrap$Grid$container,
 				_List_Nil,
 				_List_fromArray(
-					[
-						A2(
-						$rundis$elm_bootstrap$Bootstrap$Grid$row,
-						_List_Nil,
-						_List_fromArray(
-							[
-								A2(
-								$rundis$elm_bootstrap$Bootstrap$Grid$col,
-								_List_Nil,
-								_List_fromArray(
-									[
-										A2(
-										$elm$html$Html$h1,
-										_List_Nil,
-										_List_fromArray(
-											[
-												$elm$html$Html$text(
-												_Utils_eq(model.sortType, $author$project$Model$MergeSort) ? 'Merge sort' : 'Selection Sort')
-											])),
-										A2(
-										$elm$html$Html$h1,
-										_List_Nil,
-										_List_fromArray(
-											[
-												$elm$html$Html$text(
-												$elm$core$String$fromInt(model.index) + ' Steps')
-											])),
-										A3(
-										$elm$svg$Svg$Keyed$node,
-										'svg',
-										_List_fromArray(
-											[
-												$elm$svg$Svg$Attributes$width('1024'),
-												$elm$svg$Svg$Attributes$height('512'),
-												$elm$svg$Svg$Attributes$viewBox('0 0 1024 512')
-											]),
-										A2(
-											$elm$core$List$indexedMap,
-											F2(
-												function (index, barHeight) {
-													return A3($author$project$View$svgRect, index, barHeight, model);
-												}),
-											model.currentStep))
-									]))
-							])),
-						A2(
-						$rundis$elm_bootstrap$Bootstrap$Grid$row,
-						_List_Nil,
-						_List_fromArray(
-							[
-								A2(
-								$rundis$elm_bootstrap$Bootstrap$Grid$col,
-								_List_Nil,
-								_List_fromArray(
-									[
-										A2(
-										$rundis$elm_bootstrap$Bootstrap$Button$button,
-										_List_fromArray(
-											[
-												$rundis$elm_bootstrap$Bootstrap$Button$onClick($author$project$Update$Roll),
-												$rundis$elm_bootstrap$Bootstrap$Button$attrs(
-												_List_fromArray(
-													[$rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$ml1]))
-											]),
-										_List_fromArray(
-											[
-												$elm$html$Html$text('Shuffle')
-											])),
-										A2(
-										$rundis$elm_bootstrap$Bootstrap$Button$button,
-										_List_fromArray(
-											[
-												$rundis$elm_bootstrap$Bootstrap$Button$onClick(
-												$author$project$Update$ChangeSort(
-													_Utils_eq(model.sortType, $author$project$Model$MergeSort) ? $author$project$Model$SelectionSort : $author$project$Model$MergeSort)),
-												$rundis$elm_bootstrap$Bootstrap$Button$attrs(
-												_List_fromArray(
-													[$rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$ml1]))
-											]),
-										_List_fromArray(
-											[
-												$elm$html$Html$text(
-												_Utils_eq(model.sortType, $author$project$Model$MergeSort) ? 'SelectionSort' : 'MergeSort')
-											])),
-										A2(
-										$rundis$elm_bootstrap$Bootstrap$Button$button,
-										_List_fromArray(
-											[
-												$rundis$elm_bootstrap$Bootstrap$Button$onClick($author$project$Update$Back),
-												$rundis$elm_bootstrap$Bootstrap$Button$disabled(model.index <= 0),
-												$rundis$elm_bootstrap$Bootstrap$Button$attrs(
-												_List_fromArray(
-													[$rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$ml1]))
-											]),
-										_List_fromArray(
-											[
-												$elm$html$Html$text('<')
-											])),
-										A2(
-										$rundis$elm_bootstrap$Bootstrap$Button$button,
-										_List_fromArray(
-											[
-												$rundis$elm_bootstrap$Bootstrap$Button$onClick($author$project$Update$Pause),
-												$rundis$elm_bootstrap$Bootstrap$Button$disabled(model.pause),
-												$rundis$elm_bootstrap$Bootstrap$Button$attrs(
-												_List_fromArray(
-													[$rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$ml1]))
-											]),
-										_List_fromArray(
-											[
-												$elm$html$Html$text('Pause')
-											])),
-										A2(
-										$rundis$elm_bootstrap$Bootstrap$Button$button,
-										_List_fromArray(
-											[
-												$rundis$elm_bootstrap$Bootstrap$Button$onClick($author$project$Update$Continue),
-												$rundis$elm_bootstrap$Bootstrap$Button$disabled(!model.pause),
-												$rundis$elm_bootstrap$Bootstrap$Button$attrs(
-												_List_fromArray(
-													[$rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$ml1]))
-											]),
-										_List_fromArray(
-											[
-												$elm$html$Html$text('Continue')
-											])),
-										A2(
-										$rundis$elm_bootstrap$Bootstrap$Button$button,
-										_List_fromArray(
-											[
-												$rundis$elm_bootstrap$Bootstrap$Button$onClick($author$project$Update$Advance),
-												$rundis$elm_bootstrap$Bootstrap$Button$disabled(
-												_Utils_cmp(
-													model.index,
-													$elm$core$Array$length(model.steps)) > -1),
-												$rundis$elm_bootstrap$Bootstrap$Button$attrs(
-												_List_fromArray(
-													[$rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$ml1]))
-											]),
-										_List_fromArray(
-											[
-												$elm$html$Html$text('>')
-											]))
-									]))
-							]))
-					]))
+					[currentPage]))
 			]),
 		title: 'Sort algorithms'
 	};

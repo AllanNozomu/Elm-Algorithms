@@ -8,7 +8,7 @@ import Subscriptions exposing (subscriptions)
 import Update exposing (Msg(..), update)
 import Url
 import View exposing (view)
-
+import Algorithms.Visualization.Update as Algorithms
 
 
 -- MAIN
@@ -32,5 +32,6 @@ main =
 init : () -> Url.Url -> Nav.Key -> ( Model, Cmd Msg )
 init _ url key =
     ( Model.initModel url key
-    , Random.generate NewSeedStart (Random.int 1 100000)
+    , List.map (Cmd.map SubPageMsg) [Random.generate Algorithms.NewSeedStart (Random.int 1 1000000)] 
+            |> Cmd.batch
     )

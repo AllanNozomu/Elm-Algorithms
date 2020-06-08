@@ -1,9 +1,12 @@
 module Subscriptions exposing (subscriptions)
 
-import Time
-import Model exposing (Model)
+import Model exposing (Model, CurrentModel(..))
 import Update exposing (Msg(..))
+import Algorithms.Visualization.Subscriptions as Algorithms
 
 subscriptions : Model -> Sub Msg
-subscriptions _ =
-    Time.every 1 Tick
+subscriptions model =
+    case model.currentModel of
+        SortAlgorithmsModel subModel -> 
+            List.map (Sub.map SubPageMsg) [Algorithms.subscriptions subModel] 
+            |> Sub.batch
