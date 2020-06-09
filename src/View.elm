@@ -7,7 +7,7 @@ import Html.Attributes exposing (src)
 import Html.Events exposing (..)
 import Model exposing (Model, CurrentModel(..))
 import Svg.Attributes exposing (..)
-import Update exposing (Msg(..))
+import Update exposing (Msg(..), SubPageMsg(..))
 import Algorithms.Visualization.SortView as SortView
 
 
@@ -15,7 +15,10 @@ view : Model -> Browser.Document Msg
 view model =
     let
         currentPage = case model.currentModel of
-            SortAlgorithmsModel sortmodel -> Html.map SubPageMsg (SortView.view sortmodel)
+            SortAlgorithmsModel sortmodel -> 
+                 SortView.view sortmodel
+                 |> Html.map AlgorithmsMsg
+                 |> Html.map SubPageMsg
 
     in
     { title = "Sort algorithms"

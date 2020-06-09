@@ -5,7 +5,7 @@ import Browser.Navigation as Nav
 import Model exposing (Model, initModel)
 import Random
 import Subscriptions exposing (subscriptions)
-import Update exposing (Msg(..), update)
+import Update exposing (Msg(..), update, SubPageMsg(..))
 import Url
 import View exposing (view)
 import Algorithms.Visualization.Update as Algorithms
@@ -32,6 +32,6 @@ main =
 init : () -> Url.Url -> Nav.Key -> ( Model, Cmd Msg )
 init _ url key =
     ( Model.initModel url key
-    , List.map (Cmd.map SubPageMsg) [Random.generate Algorithms.NewSeedStart (Random.int 1 1000000)] 
+    , List.map (\s -> Cmd.map AlgorithmsMsg s |> Cmd.map SubPageMsg) [Random.generate Algorithms.NewSeedStart (Random.int 1 1000000)] 
             |> Cmd.batch
     )

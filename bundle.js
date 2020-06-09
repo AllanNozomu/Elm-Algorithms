@@ -5233,6 +5233,9 @@ var $elm$core$Task$perform = F2(
 				A2($elm$core$Task$map, toMessage, task)));
 	});
 var $elm$browser$Browser$application = _Browser_application;
+var $author$project$Update$AlgorithmsMsg = function (a) {
+	return {$: 'AlgorithmsMsg', a: a};
+};
 var $author$project$Algorithms$Visualization$Update$NewSeedStart = function (a) {
 	return {$: 'NewSeedStart', a: a};
 };
@@ -5410,7 +5413,12 @@ var $author$project$Main$init = F3(
 			$elm$core$Platform$Cmd$batch(
 				A2(
 					$elm$core$List$map,
-					$elm$core$Platform$Cmd$map($author$project$Update$SubPageMsg),
+					function (s) {
+						return A2(
+							$elm$core$Platform$Cmd$map,
+							$author$project$Update$SubPageMsg,
+							A2($elm$core$Platform$Cmd$map, $author$project$Update$AlgorithmsMsg, s));
+					},
 					_List_fromArray(
 						[
 							A2(
@@ -5832,7 +5840,12 @@ var $author$project$Subscriptions$subscriptions = function (model) {
 	return $elm$core$Platform$Sub$batch(
 		A2(
 			$elm$core$List$map,
-			$elm$core$Platform$Sub$map($author$project$Update$SubPageMsg),
+			function (s) {
+				return A2(
+					$elm$core$Platform$Sub$map,
+					$author$project$Update$SubPageMsg,
+					A2($elm$core$Platform$Sub$map, $author$project$Update$AlgorithmsMsg, s));
+			},
 			_List_fromArray(
 				[
 					$author$project$Algorithms$Visualization$Subscriptions$subscriptions(subModel)
@@ -6624,10 +6637,11 @@ var $author$project$Update$update = F2(
 						$elm$browser$Browser$Navigation$load(href));
 				}
 			default:
-				var subMsg = _v0.a.a;
-				var _v2 = model.currentModel;
-				var subModel = _v2.a;
-				var _v3 = A2($author$project$Algorithms$Visualization$Update$update, subMsg, subModel);
+				var subPageMsg = _v0.a.a;
+				var _v2 = _Utils_Tuple2(subPageMsg, model.currentModel);
+				var algortihmMsg = _v2.a.a;
+				var subModel = _v2.b.a;
+				var _v3 = A2($author$project$Algorithms$Visualization$Update$update, algortihmMsg, subModel);
 				var newModel = _v3.a;
 				var subCmd = _v3.b;
 				return _Utils_Tuple2(
@@ -6636,7 +6650,10 @@ var $author$project$Update$update = F2(
 						{
 							currentModel: $author$project$Model$SortAlgorithmsModel(newModel)
 						}),
-					A2($elm$core$Platform$Cmd$map, $author$project$Update$SubPageMsg, subCmd));
+					A2(
+						$elm$core$Platform$Cmd$map,
+						$author$project$Update$SubPageMsg,
+						A2($elm$core$Platform$Cmd$map, $author$project$Update$AlgorithmsMsg, subCmd)));
 		}
 	});
 var $elm$json$Json$Encode$string = _Json_wrap;
@@ -7917,7 +7934,10 @@ var $author$project$View$view = function (model) {
 		return A2(
 			$elm$html$Html$map,
 			$author$project$Update$SubPageMsg,
-			$author$project$Algorithms$Visualization$SortView$view(sortmodel));
+			A2(
+				$elm$html$Html$map,
+				$author$project$Update$AlgorithmsMsg,
+				$author$project$Algorithms$Visualization$SortView$view(sortmodel)));
 	}();
 	return {
 		body: _List_fromArray(

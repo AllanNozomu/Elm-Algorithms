@@ -1,4 +1,4 @@
-module Update exposing (update, Msg(..))
+module Update exposing (update, Msg(..), SubPageMsg(..))
 
 import Browser
 import Browser.Navigation as Nav
@@ -11,7 +11,10 @@ type Msg
     = 
     LinkClicked Browser.UrlRequest
     | UrlChanged Url.Url
-    | SubPageMsg Algorithms.Msg
+    | SubPageMsg SubPageMsg
+
+type SubPageMsg 
+    = AlgorithmsMsg Algorithms.Msg
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
@@ -26,10 +29,10 @@ update msg model =
                 Browser.External href ->
                     (model, Nav.load href)
 
-        (SubPageMsg subMsg, _) -> 
-            case model.currentModel of
-                SortAlgorithmsModel subModel ->
+        (SubPageMsg subPageMsg, _) ->
+            case (subPageMsg, model.currentModel) of
+                (AlgorithmsMsg algortihmMsg, SortAlgorithmsModel subModel) ->
                     let
-                        (newModel, subCmd) = Algorithms.update subMsg subModel
+                        (newModel, subCmd) = Algorithms.update algortihmMsg subModel
                     in
-                        ({model | currentModel = SortAlgorithmsModel newModel}, Cmd.map SubPageMsg subCmd)
+                        ({model | currentModel = SortAlgorithmsModel newModel}, Cmd.map SubPageMsg (Cmd.map AlgorithmsMsg subCmd))

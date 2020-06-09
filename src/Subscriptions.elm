@@ -1,12 +1,13 @@
 module Subscriptions exposing (subscriptions)
 
 import Model exposing (Model, CurrentModel(..))
-import Update exposing (Msg(..))
+import Update exposing (Msg(..), SubPageMsg(..))
 import Algorithms.Visualization.Subscriptions as Algorithms
 
 subscriptions : Model -> Sub Msg
 subscriptions model =
     case model.currentModel of
-        SortAlgorithmsModel subModel -> 
-            List.map (Sub.map SubPageMsg) [Algorithms.subscriptions subModel] 
+        SortAlgorithmsModel subModel ->
+            [Algorithms.subscriptions subModel]  
+            |> List.map (\s -> Sub.map AlgorithmsMsg s |> Sub.map SubPageMsg) 
             |> Sub.batch
