@@ -6256,7 +6256,7 @@ var $author$project$Algorithms$Visualization$SelectionSort$selectionSortStepsAux
 					function (p) {
 						return A3($elm$core$Tuple$mapBoth, addI, addI, p);
 					},
-					minSteps);
+					$elm$core$List$reverse(minSteps));
 				var newSteps = A2(
 					$elm$core$List$cons,
 					_Utils_Tuple2(

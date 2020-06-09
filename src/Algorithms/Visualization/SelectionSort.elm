@@ -21,7 +21,7 @@ selectionSortStepsAux l index orderedList steps =
 
                 addI = (+) index
 
-                newMinSteps = List.map(\p -> Tuple.mapBoth addI addI p) minSteps
+                newMinSteps = minSteps |> List.reverse |> List.map(\p -> Tuple.mapBoth addI addI p) 
                 newSteps = ( orderedList ++ l, newMinSteps ) :: steps
             in
             selectionSortStepsAux changedSubList (index + 1) (orderedList ++ [minValue]) newSteps
