@@ -9,13 +9,13 @@ import List
 
 type Route 
     = Home
-    | SortAlgorithmsPage (Maybe String)
+    | SortAlgorithmsPage String
 
 parser : Parser (Route -> a) a
 parser =
     oneOf [
         Parser.map Home Parser.top,
-        Parser.map SortAlgorithmsPage (s "sortAlgorithms" </> fragment identity)
+        Parser.map SortAlgorithmsPage (s "sortAlgorithms" </> string)
     ]
 
 fromUrl : Url -> Maybe Route
@@ -37,4 +37,4 @@ routeToPieces page =
             []
 
         SortAlgorithmsPage algorithm->
-            ["sortAlgorithms", Maybe.withDefault "" algorithm]
+            ["sortAlgorithms", algorithm]
