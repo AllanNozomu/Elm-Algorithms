@@ -1,0 +1,3 @@
+[submodule "libraries/elm-css"]
+	path = libraries/elm-css
+	url = git@github.com:AllanNozomu/elm-css.git
