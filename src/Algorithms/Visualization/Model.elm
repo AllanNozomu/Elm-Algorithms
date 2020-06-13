@@ -5,10 +5,10 @@ import Array exposing (Array)
 type alias Model =
     { seed : Int
     , listToBeSorted : List Int
-    , orderedList : List Int
-    , steps : Array (List Int)
+    , orderedList : Array Int
+    , steps : Array (Array Int)
     , sortType : SortType
-    , currentStep : List Int
+    , currentStep : Array Int
     , leftRightSequence : Array ( Int, Int )
     , currentLeft : Int
     , currentRight : Int
@@ -23,8 +23,8 @@ initModel =
     , listToBeSorted = []
     , steps = Array.empty
     , sortType = MergeSort
-    , currentStep = []
-    , orderedList = []
+    , currentStep = Array.empty
+    , orderedList = Array.empty
     , leftRightSequence = Array.empty
     , currentLeft = 0
     , currentRight = 0

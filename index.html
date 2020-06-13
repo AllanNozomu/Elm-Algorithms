@@ -12,6 +12,23 @@
       var app = Elm.Main.init({
         node: document.getElementById("elm-node")
       })
+
+      a=new AudioContext() // browsers limit the number of concurrent audio contexts, so you better re-use'em
+
+      function beep(freq, duration){
+        v=a.createOscillator()
+        u=a.createGain()
+        v.connect(u)
+        v.frequency.value=freq
+        v.type="sine"
+        u.connect(a.destination)
+        v.start(a.currentTime)
+        v.stop(a.currentTime+duration*0.001)
+      }
+
+      app.ports.beep.subscribe(function(a) {
+        beep(a[0], a[1])
+      });
     </script>
   </body>
 </html>

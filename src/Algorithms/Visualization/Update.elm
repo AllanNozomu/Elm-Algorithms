@@ -1,8 +1,8 @@
-module Algorithms.Visualization.Update exposing (..)
+port module Algorithms.Visualization.Update exposing (..)
 
 import Algorithms.Visualization.Model exposing (Model, SortType(..))
 import Time
-import Array
+import Array exposing (Array)
 import Random
 import Random.List
 import Algorithms.Visualization.MergeSort as MergeSort
@@ -19,6 +19,8 @@ type Msg =
     | NewSeed Int
     | NewSeedStart Int
 
+port beep : (Int, Int) -> Cmd msg
+
 shuffle : List comparable -> Int -> List comparable
 shuffle l seed =
     let
@@ -28,7 +30,7 @@ shuffle l seed =
     newl
 
 
-getListParameters : Model -> List comparable -> (List (List comparable), List (Int, Int))
+getListParameters : Model -> List comparable -> (Array (Array comparable), Array (Int, Int))
 getListParameters model l =
     case model.sortType of
         SelectionSort ->
@@ -37,10 +39,11 @@ getListParameters model l =
                     SelectionSort.selectionSortSteps l
                 
                 leftRightSequence = List.map (\(_, lr) -> lr ) selectionSortSteps 
-                    |> List.concat
+                    |> List.concat |> Array.fromList
 
                 steps = List.map(\(st, lr) ->  List.repeat (List.length lr) st) selectionSortSteps
                     |> List.concat
+                    |> List.map (\x -> Array.fromList x) |> Array.fromList
             in
                 (steps, leftRightSequence)
         MergeSort ->
@@ -48,8 +51,12 @@ getListParameters model l =
                     ( _, steps, leftRightSequence ) =
                         MergeSort.mergeSortSteps l
 
+                    stepsArray = List.map (\x -> Array.fromList x) steps |> Array.fromList
+
+                    leftRightSequenceArray = Array.fromList leftRightSequence
+
                 in
-                (steps, leftRightSequence)
+                (stepsArray, leftRightSequenceArray)
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -68,9 +75,9 @@ update msg model =
             in
             ( { model
                 | listToBeSorted = shuffledList
-                , orderedList = List.sort shuffledList
-                , steps = Array.fromList steps
-                , leftRightSequence = Array.fromList leftRightSequence
+                , orderedList = List.sort shuffledList |> Array.fromList
+                , steps = steps
+                , leftRightSequence = leftRightSequence
                 , index = 0
               }
             , Random.generate NewSeed (Random.int 1 100000)
@@ -93,6 +100,8 @@ update msg model =
 
                 ( newLeft, newRight ) =
                     Array.get newIndex model.leftRightSequence |> Maybe.withDefault ( model.currentLeft, model.currentRight )
+
+                soundFreq = Array.get newLeft newCurr |> Maybe.withDefault 0 
             in
             ( { model
                 | index = newIndex
@@ -100,7 +109,10 @@ update msg model =
                 , currentLeft = newLeft
                 , currentRight = newRight
               }
-            , Cmd.none
+            , if model.pause || model.index + 1 > Array.length model.steps then 
+                Cmd.none
+              else
+                beep (soundFreq * 5, 20)
             )
 
         Pause ->

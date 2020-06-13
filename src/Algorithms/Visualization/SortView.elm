@@ -100,12 +100,13 @@ view model =
                     , SvgAttrs.height "512"
                     , SvgAttrs.viewBox "0 0 1024 512"
                     ]
-                    (List.indexedMap
+                    (Array.indexedMap
                         (\index barHeight ->
                             svgRect index barHeight model
                         )
                         model.currentStep
-                    )
+                        |> Array.toList
+                    ) 
                 ]
             ]
         , div []
