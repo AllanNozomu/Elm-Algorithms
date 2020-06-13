@@ -1,4 +1,4 @@
-module Update exposing (update, Msg(..), SubPageMsg(..), changeRouteTo)
+module Update exposing (update, Msg(..), SubPageMsg(..), changeRouteTo, init)
 
 import Browser
 import Browser.Navigation as Nav
@@ -17,6 +17,10 @@ type Msg
 
 type SubPageMsg 
     = AlgorithmsMsg Algorithms.Msg
+
+init : () -> Url.Url -> Nav.Key -> ( Model, Cmd Msg )
+init _ url key =
+    changeRouteTo (Route.fromUrl url) (Model.initModel url key)
 
 changeRouteTo : Maybe Route -> Model -> ( Model, Cmd Msg )
 changeRouteTo url model  =

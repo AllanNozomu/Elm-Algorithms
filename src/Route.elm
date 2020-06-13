@@ -1,10 +1,10 @@
 module Route exposing (Route(..), fromUrl, href)
 
-import Html.Attributes as Attr
 import Url exposing (Url)
 import Url.Parser as Parser exposing ((</>), Parser, oneOf, s, string, fragment)
 import Model exposing (CurrentModel(..))
-import Html exposing (Attribute)
+import Html.Styled exposing (Attribute)
+import Html.Styled.Attributes as Attr
 import List
 
 type Route 

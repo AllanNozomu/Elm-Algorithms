@@ -1,8 +1,7 @@
 module Pages.Home exposing (view)
 
 import Algorithms.Visualization.Model exposing (SortType(..))
-import Bootstrap.Grid as Grid
-import Html exposing (..)
+import Html.Styled exposing (..)
 import Update exposing (Msg(..))
 import Route exposing (href, Route(..))
 
@@ -10,8 +9,8 @@ import Route exposing (href, Route(..))
 view : Html Msg
 view =
     div []
-        [ Grid.row []
-            [ Grid.col []
+        [ div []
+            [ div []
                 [ h1 []
                     [ text "Algorithms in elm" ],
                     a  [ href (Route.SortAlgorithmsPage "mergeSort")] [ text "Sort algorithms" ]

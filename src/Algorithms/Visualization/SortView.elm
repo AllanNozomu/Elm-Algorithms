@@ -1,39 +1,29 @@
 module Algorithms.Visualization.SortView exposing (view)
 
 import Array
-import Bootstrap.Button as Button
-import Bootstrap.Card as Card
-import Bootstrap.Card.Block as Block
-import Bootstrap.Grid as Grid
-import Bootstrap.Grid.Col as Col
-import Bootstrap.ListGroup as Listgroup
-import Bootstrap.Modal as Modal
-import Bootstrap.Navbar as Navbar
-import Bootstrap.Utilities.Spacing as Spacing
-import Browser
-import Html exposing (..)
-import Html.Attributes exposing (src)
-import Html.Events exposing (..)
+import Css exposing (..)
+import Html.Styled exposing (..)
+import Html.Styled.Attributes exposing (css, href, src, class)
+import Html.Styled.Events exposing (onClick)
 import Algorithms.Visualization.Model exposing (Model, SortType(..))
-import Svg
-import Svg.Attributes exposing (..)
-import Svg.Keyed as Keyed
-import Svg.Lazy as Lazy
+import Svg.Styled as Svg
+import Svg.Styled.Attributes as SvgAttrs
+import Svg.Styled.Keyed as SvgKeyed
+import Svg.Styled.Lazy as SvgLazy
 import Algorithms.Visualization.Update exposing (Msg(..))
-
 
 getColor index barHeight left right =
     if index == left then
-        fill "red"
+        SvgAttrs.fill "red"
 
     else if index == right then
-        fill "yellow"
+        SvgAttrs.fill "yellow"
 
     else if index == barHeight then
-        fill "green"
+        SvgAttrs.fill "green"
 
     else
-        fill "black"
+        SvgAttrs.fill "black"
 
 
 svgRect2 index barHeight left right sortType =
@@ -42,7 +32,7 @@ svgRect2 index barHeight left right sortType =
             sortType == SelectionSort
     in
     Svg.rect
-        [ x <|
+        [ SvgAttrs.x <|
             String.fromInt <|
                 (index
                     * (if bigger then
@@ -52,7 +42,7 @@ svgRect2 index barHeight left right sortType =
                         2
                       )
                 )
-        , y <|
+        , SvgAttrs.y <|
             String.fromInt
                 ((512
                     - barHeight
@@ -65,14 +55,14 @@ svgRect2 index barHeight left right sortType =
                  )
                     - 4
                 )
-        , width <|
+        , SvgAttrs.width <|
             if bigger then
                 "8"
 
             else
                 "2"
         , getColor index barHeight left right
-        , height <|
+        , SvgAttrs.height <|
             String.fromInt <|
                 barHeight
                     * (if bigger then
@@ -88,14 +78,14 @@ svgRect2 index barHeight left right sortType =
 
 svgRect : Int -> Int -> Model -> ( String, Svg.Svg Msg )
 svgRect index barHeight model =
-    ( String.fromInt index, Lazy.lazy5 svgRect2 index barHeight model.currentLeft model.currentRight model.sortType )
+    ( String.fromInt index, SvgLazy.lazy5 svgRect2 index barHeight model.currentLeft model.currentRight model.sortType )
 
 
 view : Model -> Html Msg
 view model =
     div []
-        [ Grid.row []
-            [ Grid.col []
+        [ div []
+            [ div []
                 [ h1 []
                     [ text <|
                         if model.sortType == MergeSort then
@@ -105,10 +95,10 @@ view model =
                             "Selection Sort"
                     ]
                 , h1 [] [ text <| String.fromInt model.index ++ " Steps" ]
-                , Keyed.node "svg"
-                    [ width "1024"
-                    , height "512"
-                    , viewBox "0 0 1024 512"
+                , SvgKeyed.node "svg"
+                    [ SvgAttrs.width "1024"
+                    , SvgAttrs.height "512"
+                    , SvgAttrs.viewBox "0 0 1024 512"
                     ]
                     (List.indexedMap
                         (\index barHeight ->
@@ -118,19 +108,19 @@ view model =
                     )
                 ]
             ]
-        , Grid.row []
-            [ Grid.col []
-                [ Button.button [ Button.onClick Roll, Button.attrs [ Spacing.ml1 ] ] [ text "Shuffle" ]
-                , Button.button
-                    [ Button.onClick <|
+        , div []
+            [ div []
+                [ button [ onClick Roll, class "btn mx-1"  ] [ text "Shuffle" ]
+                , button
+                    [ onClick <|
                         ChangeSort <|
                             if model.sortType == MergeSort then
                                 SelectionSort
 
                             else
                                 MergeSort
-                    , Button.attrs [ Spacing.ml1 ]
-                    ]
+                    
+                    , class "btn mx-1" ]
                     [ text <|
                         if model.sortType == MergeSort then
                             "SelectionSort"
@@ -138,12 +128,10 @@ view model =
                         else
                             "MergeSort"
                     ]
-                , Button.button
-                    [ Button.onClick Back, Button.disabled (model.index <= 0), Button.attrs [ Spacing.ml1 ] ]
-                    [ text "<" ]
-                , Button.button [ Button.onClick Pause, Button.disabled model.pause, Button.attrs [ Spacing.ml1 ] ] [ text "Pause" ]
-                , Button.button [ Button.onClick Continue, Button.disabled <| not model.pause, Button.attrs [ Spacing.ml1 ] ] [ text "Continue" ]
-                , Button.button [ Button.onClick Advance, Button.disabled (model.index >= Array.length model.steps), Button.attrs [ Spacing.ml1 ] ] [ text ">" ]
+                , button [ onClick Advance, Html.Styled.Attributes.disabled (model.index >= Array.length model.steps), class "btn mx-1 float-right"] [ text ">" ]
+                , button [ onClick Continue, Html.Styled.Attributes.disabled <| not model.pause, class "btn mx-1 float-right" ] [ text "Continue" ]
+                , button [ onClick Pause, Html.Styled.Attributes.disabled model.pause, class "btn mx-1 float-right" ] [ text "Pause" ]
+                , button [ onClick Back, Html.Styled.Attributes.disabled (model.index <= 0), class "btn mx-1 float-right" ] [ text "<" ]
                 ]
             ]
         ]

@@ -1,10 +1,9 @@
 module View exposing (view)
 
-import Bootstrap.Grid as Grid
 import Browser
-import Html exposing (..)
-import Html.Attributes exposing (src)
-import Html.Events exposing (..)
+import Html.Styled as Html exposing (..)
+import Html.Styled.Attributes exposing (src)
+import Html.Styled.Events exposing (..)
 import Model exposing (Model, CurrentModel(..))
 import Svg.Attributes exposing (..)
 import Update exposing (Msg(..), SubPageMsg(..))
@@ -25,8 +24,9 @@ view model =
 
     in
     { title = "Elm algorithms"
-    , body =
-        [ Grid.container []
-            [currentPage]
-        ]
+    , body = 
+        [ div []
+            [currentPage] 
+        ] 
+        |> List.map Html.toUnstyled
     }
