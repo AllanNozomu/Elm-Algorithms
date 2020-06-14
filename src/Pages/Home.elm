@@ -1,19 +1,17 @@
 module Pages.Home exposing (view)
 
-import Algorithms.Visualization.Model exposing (SortType(..))
 import Html.Styled exposing (..)
+import Html.Styled.Attributes exposing (class)
+import Route exposing (Route(..), href)
 import Update exposing (Msg(..))
-import Route exposing (href, Route(..))
 
 
 view : Html Msg
 view =
-    div []
-        [ div []
-            [ div []
-                [ h1 []
-                    [ text "Algorithms in elm" ],
-                    a  [ href (Route.SortAlgorithmsPage "mergeSort")] [ text "Sort algorithms" ]
-                ]
+    div [ class "row" ]
+        [ div [class "col"]
+            [ h1 []
+                [ text "Algorithms in elm" ]
+            , a [ href (Route.SortAlgorithmsPage "mergeSort") ] [ text "Sort algorithms" ]
             ]
         ]
