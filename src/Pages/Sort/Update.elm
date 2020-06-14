@@ -79,10 +79,10 @@ update msg model =
                             64
 
                         _ ->
-                            512
+                            256
 
                 shuffledList =
-                    shuffle (List.range 0 listLength) model.seed
+                    shuffle (List.range 0 (listLength - 1)) model.seed
 
                 ( steps, leftRightSequence ) =
                     getListParameters model shuffledList
