@@ -1,11 +1,11 @@
 module Model exposing (Model, initModel, CurrentModel(..))
 
 import Browser.Navigation as Nav
-import Algorithms.Visualization.Model
+import Pages.Sort.Model
 import Url
 
 type CurrentModel = 
-    SortAlgorithmsModel Algorithms.Visualization.Model.Model
+    SortAlgorithmsModel Pages.Sort.Model.Model
     | HomeModel 
 
 type alias Model =

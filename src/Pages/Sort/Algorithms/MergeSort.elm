@@ -1,4 +1,4 @@
-module Algorithms.Visualization.MergeSort exposing (mergeSortSteps)
+module Pages.Sort.Algorithms.MergeSort exposing (mergeSortSteps)
 import Algorithms.MergeSort as MergeSort
 
 mergeSortSteps: List comparable -> (List comparable, List (List comparable), List (Int, Int))

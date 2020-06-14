@@ -2,7 +2,7 @@ module Subscriptions exposing (subscriptions)
 
 import Model exposing (Model, CurrentModel(..))
 import Update exposing (Msg(..), SubPageMsg(..))
-import Algorithms.Visualization.Subscriptions as Algorithms
+import Pages.Sort.Subscriptions as Algorithms
 
 subscriptions : Model -> Sub Msg
 subscriptions model =

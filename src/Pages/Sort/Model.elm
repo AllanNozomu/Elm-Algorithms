@@ -1,4 +1,4 @@
-module Algorithms.Visualization.Model exposing (Model, SortType(..), initModel)
+module Pages.Sort.Model exposing (Model, SortType(..), initModel)
 
 import Array exposing (Array)
 

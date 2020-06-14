@@ -1,6 +1,6 @@
 module View exposing (view)
 
-import Algorithms.Visualization.SortView as SortView
+import Pages.Sort.View as SortView
 import Browser
 import Html.Styled as Html exposing (..)
 import Html.Styled.Attributes as HtmlAttributes exposing (class, id, disabled)

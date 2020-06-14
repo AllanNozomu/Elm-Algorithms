@@ -1,4 +1,4 @@
-module Algorithms.Visualization.SelectionSort exposing (selectionSortSteps)
+module Pages.Sort.Algorithms.SelectionSort exposing (selectionSortSteps)
 
 selectionSortSteps : List comparable -> ( List comparable, List ( List comparable, List ( Int, Int ) ) )
 selectionSortSteps l =

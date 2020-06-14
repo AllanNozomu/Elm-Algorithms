@@ -1,7 +1,7 @@
 module Update exposing (Msg(..), SubPageMsg(..), changeRouteTo, init, update)
 
-import Algorithms.Visualization.Model as Algorithms
-import Algorithms.Visualization.Update as Algorithms
+import Pages.Sort.Model as Algorithms
+import Pages.Sort.Update as Algorithms
 import Browser
 import Browser.Navigation as Nav
 import Model exposing (CurrentModel(..), Model)

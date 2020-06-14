@@ -1,7 +1,7 @@
-module Algorithms.Visualization.SortView exposing (view)
+module Pages.Sort.View exposing (view)
 
-import Algorithms.Visualization.Model exposing (Model, SortType(..))
-import Algorithms.Visualization.Update exposing (Msg(..))
+import Pages.Sort.Model exposing (Model, SortType(..))
+import Pages.Sort.Update exposing (Msg(..))
 import Array
 import Css exposing (..)
 import Html.Styled exposing (..)

@@ -1,12 +1,12 @@
-port module Algorithms.Visualization.Update exposing (..)
+port module Pages.Sort.Update exposing (..)
 
-import Algorithms.Visualization.Model exposing (Model, SortType(..))
+import Pages.Sort.Model exposing (Model, SortType(..))
 import Time
 import Array exposing (Array)
 import Random
 import Random.List
-import Algorithms.Visualization.MergeSort as MergeSort
-import Algorithms.Visualization.SelectionSort as SelectionSort
+import Pages.Sort.Algorithms.MergeSort as MergeSort
+import Pages.Sort.Algorithms.SelectionSort as SelectionSort
 
 type Msg = 
     Roll
