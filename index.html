@@ -20,8 +20,9 @@
         u=a.createGain()
         v.connect(u)
         v.frequency.value=freq
-        v.type="sine"
+        v.type="square"
         u.connect(a.destination)
+        u.gain.value=0.02
         v.start(a.currentTime)
         v.stop(a.currentTime+duration*0.001)
       }

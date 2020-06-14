@@ -112,7 +112,7 @@ update msg model =
             , if model.pause || model.index + 1 > Array.length model.steps then 
                 Cmd.none
               else
-                beep (soundFreq * 5, 20)
+                beep (soundFreq * 5, 10)
             )
 
         Pause ->
