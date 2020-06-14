@@ -1,15 +1,16 @@
 port module Pages.Sort.Update exposing (..)
 
-import Pages.Sort.Model exposing (Model, SortType(..))
-import Time
 import Array exposing (Array)
-import Random
-import Random.List
 import Pages.Sort.Algorithms.MergeSort as MergeSort
 import Pages.Sort.Algorithms.SelectionSort as SelectionSort
+import Pages.Sort.Model exposing (Model, SortType(..))
+import Random
+import Random.List
+import Time
 
-type Msg = 
-    Roll
+
+type Msg
+    = Roll
     | ChangeSort SortType
     | Pause
     | Continue
@@ -19,7 +20,9 @@ type Msg =
     | NewSeed Int
     | NewSeedStart Int
 
-port beep : (Int, Int) -> Cmd msg
+
+port beep : ( Int, Int ) -> Cmd msg
+
 
 shuffle : List comparable -> Int -> List comparable
 shuffle l seed =
@@ -30,33 +33,39 @@ shuffle l seed =
     newl
 
 
-getListParameters : Model -> List comparable -> (Array (Array comparable), Array (Int, Int))
+getListParameters : Model -> List comparable -> ( Array (Array comparable), Array ( Int, Int ) )
 getListParameters model l =
     case model.sortType of
         SelectionSort ->
             let
                 ( _, selectionSortSteps ) =
                     SelectionSort.selectionSortSteps l
-                
-                leftRightSequence = List.map (\(_, lr) -> lr ) selectionSortSteps 
-                    |> List.concat |> Array.fromList
 
-                steps = List.map(\(st, lr) ->  List.repeat (List.length lr) st) selectionSortSteps
-                    |> List.concat
-                    |> List.map (\x -> Array.fromList x) |> Array.fromList
+                leftRightSequence =
+                    List.map (\( _, lr ) -> lr) selectionSortSteps
+                        |> List.concat
+                        |> Array.fromList
+
+                steps =
+                    List.map (\( st, lr ) -> List.repeat (List.length lr) st) selectionSortSteps
+                        |> List.concat
+                        |> List.map (\x -> Array.fromList x)
+                        |> Array.fromList
             in
-                (steps, leftRightSequence)
+            ( steps, leftRightSequence )
+
         MergeSort ->
-                let
-                    ( _, steps, leftRightSequence ) =
-                        MergeSort.mergeSortSteps l
+            let
+                ( _, steps, leftRightSequence ) =
+                    MergeSort.mergeSortSteps l
 
-                    stepsArray = List.map (\x -> Array.fromList x) steps |> Array.fromList
+                stepsArray =
+                    List.map (\x -> Array.fromList x) steps |> Array.fromList
 
-                    leftRightSequenceArray = Array.fromList leftRightSequence
-
-                in
-                (stepsArray, leftRightSequenceArray)
+                leftRightSequenceArray =
+                    Array.fromList leftRightSequence
+            in
+            ( stepsArray, leftRightSequenceArray )
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -64,56 +73,38 @@ update msg model =
     case msg of
         Roll ->
             let
-                listLength = 
+                listLength =
                     case model.sortType of
-                        SelectionSort -> 64
-                        _ -> 512
+                        SelectionSort ->
+                            64
+
+                        _ ->
+                            512
+
                 shuffledList =
                     shuffle (List.range 0 listLength) model.seed
 
-                (steps, leftRightSequence) = getListParameters model shuffledList
+                ( steps, leftRightSequence ) =
+                    getListParameters model shuffledList
+                (newModel, _) = update Back { model
+                    | listToBeSorted = shuffledList
+                    , orderedList = List.sort shuffledList |> Array.fromList
+                    , steps = steps
+                    , leftRightSequence = leftRightSequence
+                    , index = 0
+                    }
             in
-            ( { model
-                | listToBeSorted = shuffledList
-                , orderedList = List.sort shuffledList |> Array.fromList
-                , steps = steps
-                , leftRightSequence = leftRightSequence
-                , index = 0
-              }
-            , Random.generate NewSeed (Random.int 1 100000)
-            )
+            ( newModel, Random.generate NewSeed (Random.int 1 100000))
 
         ChangeSort sortType ->
-            update Roll {model | sortType = sortType}
+            update Roll { model | sortType = sortType }
 
         Tick _ ->
             let
-                newIndex =
-                    if model.index + 1 > Array.length model.steps || model.pause then
-                        model.index
-
-                    else
-                        model.index + 1
-
-                newCurr =
-                    Array.get newIndex model.steps |> Maybe.withDefault model.currentStep
-
-                ( newLeft, newRight ) =
-                    Array.get newIndex model.leftRightSequence |> Maybe.withDefault ( model.currentLeft, model.currentRight )
-
-                soundFreq = Array.get newLeft newCurr |> Maybe.withDefault 0 
+                newModel =
+                    updateIndex model (model.index + 1)
             in
-            if model.pause || model.index + 1 > Array.length model.steps then
-                (model, Cmd.none)
-            else
-            ( { model
-                | index = newIndex
-                , currentStep = newCurr
-                , currentLeft = newLeft
-                , currentRight = newRight
-              }
-            , beep (soundFreq * 5, 10)
-            )
+                ( newModel, beep ( getSoundFreq newModel, 10 ))
 
         Pause ->
             ( { model
@@ -130,21 +121,53 @@ update msg model =
             )
 
         Back ->
-            ( { model
-                | index = Basics.max 0 (model.index - 1)
-              }
-            , Cmd.none
-            )
+            let
+                newModel =
+                    updateIndex model (model.index - 1)
+            in
+                ( newModel, beep ( getSoundFreq newModel, 10 ))
 
         Advance ->
-            ( { model
-                | index = Basics.min (Array.length model.steps) (model.index + 1)
-              }
-            , Cmd.none
-            )
+            let
+                newModel =
+                    updateIndex model (model.index + 1)
+            in
+                ( newModel, beep ( getSoundFreq newModel, 10 ))
 
         NewSeed newFace ->
-                ({ model | seed = newFace }, Cmd.none) 
-        
+            ( { model | seed = newFace }, Cmd.none )
+
         NewSeedStart newFace ->
-                update Roll { model | seed = newFace }
+            update Roll { model | seed = newFace }
+
+getSoundFreq : Model -> Int
+getSoundFreq model =
+    Array.get model.currentLeft model.currentStep 
+    |> Maybe.withDefault 0
+    |> (*) 5 
+
+updateIndex : Model -> Int -> Model
+updateIndex model index =
+    let
+        newIndex =
+            if index > model.index then
+                Basics.min (Array.length model.steps) index
+
+            else
+                Basics.max 0 index
+
+        newCurr =
+            Array.get newIndex model.steps |> Maybe.withDefault model.currentStep
+
+        ( newLeft, newRight ) =
+            Array.get newIndex model.leftRightSequence |> Maybe.withDefault ( model.currentLeft, model.currentRight )
+
+        newPause = model.pause || newIndex == Array.length model.steps
+    in
+    { model
+        | currentLeft = newLeft
+        , currentRight = newRight
+        , currentStep = newCurr
+        , index = newIndex
+        , pause = newPause
+    }
