@@ -47,6 +47,9 @@ navbar url =
                         [ class "nav-link dropdown-toggle"
                         , HtmlAttributes.href <| "#" ++ Maybe.withDefault "" url.fragment
                         , attribute "data-toggle" "dropdown"
+                        , attribute "aria-haspopup" "true"
+                        ,attribute "aria-expanded" "false"
+
                         ]
                         [ text "Sort Algorithms" ]
                     , div [ class "dropdown-menu" ]

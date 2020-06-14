@@ -37,7 +37,7 @@ svgRect2 index barHeight left right sortType =
             String.fromInt <|
                 (index
                     * (if bigger then
-                        8
+                        16
 
                        else
                         2
@@ -46,33 +46,31 @@ svgRect2 index barHeight left right sortType =
         , SvgAttrs.y <|
             String.fromInt
                 ((512
-                    - barHeight
+                    - (barHeight + 1)
                     * (if bigger then
-                        4
+                        8
 
                        else
                         1
                       )
                  )
-                    - 4
                 )
         , SvgAttrs.width <|
             if bigger then
-                "8"
+                "16"
 
             else
                 "2"
         , getColor index barHeight left right
         , SvgAttrs.height <|
             String.fromInt <|
-                barHeight
+                (barHeight + 1)
                     * (if bigger then
-                        4
+                        8
 
                        else
-                        2
+                        1
                       )
-                    + 4
         ]
         []
 
@@ -96,11 +94,20 @@ view model =
                             "Selection Sort"
                     ]
                 , h1 [] [ text <| String.fromInt model.index ++ " Steps" ]
-                , div [ css [displayFlex, alignItems center, justifyContent center, margin (px 5) ] ]
+                , div
+                    [ css
+                        [ displayFlex
+                        , alignItems center
+                        , justifyContent center
+                        , margin (px 5)
+                        , width (pct 100)
+                        ]
+                    ]
                     [ SvgKeyed.node "svg"
-                        [ SvgAttrs.width "1024"
-                        , SvgAttrs.height "512"
+                        [ SvgAttrs.width "100%"
+                        , SvgAttrs.height "100%"
                         , SvgAttrs.viewBox "0 0 1024 512"
+                        
                         ]
                         (Array.indexedMap
                             (\index barHeight ->
@@ -113,28 +120,29 @@ view model =
                 ]
             ]
         , div [ class "row" ]
-            [ div[class "col"][ button [ onClick Roll, class "btn mx-1" ] [ text "Shuffle" ]
-            , button
-                [ onClick <|
-                    ChangeSort <|
+            [ div [ class "col" ]
+                [ button [ onClick Roll, class "btn mx-1" ] [ text "Shuffle" ]
+                , button
+                    [ onClick <|
+                        ChangeSort <|
+                            if model.sortType == MergeSort then
+                                SelectionSort
+
+                            else
+                                MergeSort
+                    , class "btn mx-1"
+                    ]
+                    [ text <|
                         if model.sortType == MergeSort then
-                            SelectionSort
+                            "SelectionSort"
 
                         else
-                            MergeSort
-                , class "btn mx-1"
+                            "MergeSort"
+                    ]
+                , button [ onClick Advance, Html.Styled.Attributes.disabled (model.index >= Array.length model.steps), class "btn mx-1 float-right" ] [ text ">" ]
+                , button [ onClick Continue, Html.Styled.Attributes.disabled <| not model.pause, class "btn mx-1 float-right" ] [ text "Continue" ]
+                , button [ onClick Pause, Html.Styled.Attributes.disabled model.pause, class "btn mx-1 float-right" ] [ text "Pause" ]
+                , button [ onClick Back, Html.Styled.Attributes.disabled (model.index <= 0), class "btn mx-1 float-right" ] [ text "<" ]
                 ]
-                [ text <|
-                    if model.sortType == MergeSort then
-                        "SelectionSort"
-
-                    else
-                        "MergeSort"
-                ]
-            , button [ onClick Advance, Html.Styled.Attributes.disabled (model.index >= Array.length model.steps), class "btn mx-1 float-right" ] [ text ">" ]
-            , button [ onClick Continue, Html.Styled.Attributes.disabled <| not model.pause, class "btn mx-1 float-right" ] [ text "Continue" ]
-            , button [ onClick Pause, Html.Styled.Attributes.disabled model.pause, class "btn mx-1 float-right" ] [ text "Pause" ]
-            , button [ onClick Back, Html.Styled.Attributes.disabled (model.index <= 0), class "btn mx-1 float-right" ] [ text "<" ]
-            ]]
+            ]
         ]
-        
