@@ -66,7 +66,7 @@ update msg model =
             let
                 listLength = 
                     case model.sortType of
-                        SelectionSort -> 96
+                        SelectionSort -> 64
                         _ -> 512
                 shuffledList =
                     shuffle (List.range 0 listLength) model.seed
@@ -103,16 +103,16 @@ update msg model =
 
                 soundFreq = Array.get newLeft newCurr |> Maybe.withDefault 0 
             in
+            if model.pause || model.index + 1 > Array.length model.steps then
+                (model, Cmd.none)
+            else
             ( { model
                 | index = newIndex
                 , currentStep = newCurr
                 , currentLeft = newLeft
                 , currentRight = newRight
               }
-            , if model.pause || model.index + 1 > Array.length model.steps then 
-                Cmd.none
-              else
-                beep (soundFreq * 5, 10)
+            , beep (soundFreq * 5, 10)
             )
 
         Pause ->
