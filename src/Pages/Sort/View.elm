@@ -27,57 +27,28 @@ getColor index barHeight left right =
         SvgAttrs.fill "black"
 
 
-svgRect2 index barHeight left right sortType =
+svgRect2 index barHeight left right qty =
     let
-        bigger =
-            sortType == SelectionSort
+        h = 512 // qty
+        w = 1024 // qty
     in
     Svg.rect
         [ SvgAttrs.x <|
-            String.fromInt <|
-                (index
-                    * (if bigger then
-                        16
-
-                       else
-                        2
-                      )
-                )
+            String.fromInt <| (index * w)
         , SvgAttrs.y <|
-            String.fromInt
-                ((512
-                    - (barHeight + 1)
-                    * (if bigger then
-                        8
-
-                       else
-                        1
-                      )
-                 )
-                )
-        , SvgAttrs.width <|
-            if bigger then
-                "16"
-
-            else
-                "2"
-        , getColor index barHeight left right
+            String.fromInt (512 - (barHeight + 1) * h)
+        , SvgAttrs.width <| String.fromInt w
         , SvgAttrs.height <|
             String.fromInt <|
-                (barHeight + 1)
-                    * (if bigger then
-                        8
-
-                       else
-                        1
-                      )
+                (barHeight + 1) * h
+        , getColor index barHeight left right
         ]
         []
 
 
-svgRect : Int -> Int -> Model -> ( String, Svg.Svg Msg )
-svgRect index barHeight model =
-    ( String.fromInt index, SvgLazy.lazy5 svgRect2 index barHeight model.currentLeft model.currentRight model.sortType )
+svgRect : Int -> Int -> Int -> (Int, Int) -> ( String, Svg.Svg Msg )
+svgRect index barHeight qty (currentLeft, currentRight) =
+    ( String.fromInt index, SvgLazy.lazy5 svgRect2 index barHeight currentLeft currentRight qty)
 
 
 view : Model -> Html Msg
@@ -93,7 +64,7 @@ view model =
                         else
                             "Selection Sort"
                     ]
-                , h1 [] [ text <| String.fromInt model.index ++ " Steps" ]
+                , h1 [] [ text <| String.fromInt model.index  ++ " Steps" ]
                 , div
                     [ css
                         [ displayFlex
@@ -111,7 +82,7 @@ view model =
                         ]
                         (Array.indexedMap
                             (\index barHeight ->
-                                svgRect index barHeight model
+                                svgRect index barHeight (Array.length model.currentStep) (model.currentLeft, model.currentRight)
                             )
                             model.currentStep
                             |> Array.toList
