@@ -84,34 +84,36 @@ svgRect index barHeight model =
 
 view : Model -> Html Msg
 view model =
-    div [ class "row" ]
-        [ div [ class "col" ]
-            [ h1 []
-                [ text <|
-                    if model.sortType == MergeSort then
-                        "Merge sort"
+    div []
+        [ div [ class "row" ]
+            [ div [ class "col" ]
+                [ h1 []
+                    [ text <|
+                        if model.sortType == MergeSort then
+                            "Merge sort"
 
-                    else
-                        "Selection Sort"
-                ]
-            , h1 [] [ text <| String.fromInt model.index ++ " Steps" ]
-            , div [ css [displayFlex, alignItems center, justifyContent center, margin (px 10)]]
-                [ SvgKeyed.node "svg"
-                    [ SvgAttrs.width "1024"
-                    , SvgAttrs.height "512"
-                    , SvgAttrs.viewBox "0 0 1024 512"
+                        else
+                            "Selection Sort"
                     ]
-                    (Array.indexedMap
-                        (\index barHeight ->
-                            svgRect index barHeight model
+                , h1 [] [ text <| String.fromInt model.index ++ " Steps" ]
+                , div [ css [displayFlex, alignItems center, justifyContent center, margin (px 5) ] ]
+                    [ SvgKeyed.node "svg"
+                        [ SvgAttrs.width "1024"
+                        , SvgAttrs.height "512"
+                        , SvgAttrs.viewBox "0 0 1024 512"
+                        ]
+                        (Array.indexedMap
+                            (\index barHeight ->
+                                svgRect index barHeight model
+                            )
+                            model.currentStep
+                            |> Array.toList
                         )
-                        model.currentStep
-                        |> Array.toList
-                    )
+                    ]
                 ]
             ]
-        , div [ class "col" ]
-            [ button [ onClick Roll, class "btn mx-1" ] [ text "Shuffle" ]
+        , div [ class "row" ]
+            [ div[class "col"][ button [ onClick Roll, class "btn mx-1" ] [ text "Shuffle" ]
             , button
                 [ onClick <|
                     ChangeSort <|
@@ -133,5 +135,6 @@ view model =
             , button [ onClick Continue, Html.Styled.Attributes.disabled <| not model.pause, class "btn mx-1 float-right" ] [ text "Continue" ]
             , button [ onClick Pause, Html.Styled.Attributes.disabled model.pause, class "btn mx-1 float-right" ] [ text "Pause" ]
             , button [ onClick Back, Html.Styled.Attributes.disabled (model.index <= 0), class "btn mx-1 float-right" ] [ text "<" ]
-            ]
+            ]]
         ]
+        
