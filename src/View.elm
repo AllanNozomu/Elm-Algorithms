@@ -93,7 +93,7 @@ footerBar =
                 [ text "Made with "
                 , i [ class "devicon-elm-plain" ] []
                 , text " by "
-                , a [ HtmlAttributes.href "https://github.com/allannozomu/tictactoe" ] [ text "allannozomu" ]
+                , a [ HtmlAttributes.href "https://github.com/allannozomu/Elm-algorithms" ] [ text "allannozomu" ]
                 ]
             ]
         ]
