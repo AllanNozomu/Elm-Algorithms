@@ -16,6 +16,7 @@ type Msg
     | Continue
     | Back
     | Advance
+    | ChangeLength String
     | Tick Time.Posix
     | NewSeed Int
     | NewSeedStart Int
@@ -76,63 +77,85 @@ update msg model =
                 listLength =
                     case model.sortType of
                         SelectionSort ->
-                            64
+                            model.listLength
 
                         _ ->
-                            256
+                            model.listLength
 
                 shuffledList =
                     shuffle (List.range 0 (listLength - 1)) model.seed
 
-                ( steps, leftRightSequence ) =
-                    getListParameters model shuffledList
-                (newModel, _) = update Back { model
-                    | listToBeSorted = shuffledList
-                    , orderedList = List.sort shuffledList |> Array.fromList
-                    , steps = steps
-                    , leftRightSequence = leftRightSequence
-                    , index = 0
-                    }
+                ( newModel, _ ) =
+                    update Back
+                        { model
+                            | listToBeSorted = shuffledList
+                            , orderedList = List.sort shuffledList |> Array.fromList
+                            , index = 0
+                            , currentLeft = 0
+                            , currentRight = 0
+                            , currentStep = Array.empty
+                            , steps = Array.empty
+                            , leftRightSequence = Array.empty
+                        }
             in
-            ( newModel, Random.generate NewSeed (Random.int 1 100000))
+            ( newModel, Random.generate NewSeed (Random.int 1 100000) )
 
         ChangeSort sortType ->
-            update Roll { model | sortType = sortType }
+            let
+                newListLength = case sortType of
+                    SelectionSort -> 64   
+                    _ -> 256
+            in
+            update Roll { model | sortType = sortType, listLength = newListLength }
+
+        ChangeLength newLength ->
+            let
+                newListLength =
+                    String.toInt newLength
+                        |> Maybe.withDefault 0
+            in
+            update Roll { model | listLength = newListLength }
 
         Tick _ ->
             let
                 newModel =
                     updateIndex model (model.index + 1)
             in
-                ( newModel, beep ( getSoundFreq newModel, 10 ))
+            ( newModel, beep ( getSoundFreq newModel, 10 ) )
 
         Pause ->
-            ( { model
-                | pause = True
-              }
-            , Cmd.none
-            )
+            ( { model| pause = True}, Cmd.none)
 
         Continue ->
-            ( { model
-                | pause = False
-              }
-            , Cmd.none
-            )
+            if Array.isEmpty model.steps then
+                let
+                    ( steps, leftRightSequence ) =
+                        getListParameters model model.listToBeSorted
+                in
+                ( { model
+                    | pause = False
+                    , steps = steps
+                    , leftRightSequence = leftRightSequence
+                  }
+                , Cmd.none
+                )
+
+            else
+                ( { model | pause = False }, Cmd.none )
 
         Back ->
             let
                 newModel =
                     updateIndex model (model.index - 1)
             in
-                ( newModel, beep ( getSoundFreq newModel, 10 ))
+            ( newModel, beep ( getSoundFreq newModel, 10 ) )
 
         Advance ->
             let
                 newModel =
                     updateIndex model (model.index + 1)
             in
-                ( newModel, beep ( getSoundFreq newModel, 10 ))
+            ( newModel, beep ( getSoundFreq newModel, 10 ) )
 
         NewSeed newFace ->
             ( { model | seed = newFace }, Cmd.none )
@@ -140,15 +163,22 @@ update msg model =
         NewSeedStart newFace ->
             update Roll { model | seed = newFace }
 
+
 getSoundFreq : Model -> Int
 getSoundFreq model =
-    Array.get model.currentLeft model.currentStep 
-    |> Maybe.withDefault 0
-    |> (*) 5 
+    Array.get model.currentLeft model.currentStep
+        |> Maybe.withDefault 0
+        |> (*) 5
 
 updateIndex : Model -> Int -> Model
 updateIndex model index =
     let
+
+        ( steps, leftRightSequence ) = if Array.isEmpty model.steps then
+            getListParameters model model.listToBeSorted
+            else
+                (model.steps, model.leftRightSequence)
+
         newIndex =
             if index > model.index then
                 Basics.min (Array.length model.steps) index
@@ -157,12 +187,13 @@ updateIndex model index =
                 Basics.max 0 index
 
         newCurr =
-            Array.get newIndex model.steps |> Maybe.withDefault model.currentStep
+            Array.get newIndex steps |> Maybe.withDefault model.currentStep
 
         ( newLeft, newRight ) =
-            Array.get newIndex model.leftRightSequence |> Maybe.withDefault ( model.currentLeft, model.currentRight )
+            Array.get newIndex leftRightSequence |> Maybe.withDefault ( model.currentLeft, model.currentRight )
 
-        newPause = model.pause || newIndex == Array.length model.steps
+        newPause =
+            model.pause || newIndex == Array.length model.steps
     in
     { model
         | currentLeft = newLeft
@@ -170,4 +201,6 @@ updateIndex model index =
         , currentStep = newCurr
         , index = newIndex
         , pause = newPause
+        , steps = steps
+        , leftRightSequence = leftRightSequence
     }

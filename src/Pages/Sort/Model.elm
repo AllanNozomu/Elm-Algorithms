@@ -9,6 +9,7 @@ type alias Model =
     , steps : Array (Array Int)
     , sortType : SortType
     , currentStep : Array Int
+    , listLength : Int
     , leftRightSequence : Array ( Int, Int )
     , currentLeft : Int
     , currentRight : Int
@@ -24,6 +25,7 @@ initModel =
     , steps = Array.empty
     , sortType = MergeSort
     , currentStep = Array.empty
+    , listLength = 256
     , orderedList = Array.empty
     , leftRightSequence = Array.empty
     , currentLeft = 0

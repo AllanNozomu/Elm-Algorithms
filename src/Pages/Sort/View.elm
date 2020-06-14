@@ -1,12 +1,12 @@
 module Pages.Sort.View exposing (view)
 
-import Pages.Sort.Model exposing (Model, SortType(..))
-import Pages.Sort.Update exposing (Msg(..))
 import Array
 import Css exposing (..)
 import Html.Styled exposing (..)
-import Html.Styled.Attributes exposing (class, css)
-import Html.Styled.Events exposing (onClick)
+import Html.Styled.Attributes as HtmlAttributes exposing (attribute, class, css, max, min, step, type_, value)
+import Html.Styled.Events exposing (onClick, onInput)
+import Pages.Sort.Model exposing (Model, SortType(..))
+import Pages.Sort.Update exposing (Msg(..))
 import Svg.Styled as Svg
 import Svg.Styled.Attributes as SvgAttrs
 import Svg.Styled.Keyed as SvgKeyed
@@ -29,30 +29,50 @@ getColor index barHeight left right =
 
 svgRect2 index barHeight left right qty =
     let
-        h = 512 // qty
-        w = 1024 // qty
+        h =
+            512 // qty
+
+        w =
+            1024 // qty
     in
     Svg.rect
         [ SvgAttrs.x <|
-            String.fromInt <| (index * w)
+            String.fromInt <|
+                (index * w)
         , SvgAttrs.y <|
             String.fromInt (512 - (barHeight + 1) * h)
         , SvgAttrs.width <| String.fromInt w
         , SvgAttrs.height <|
             String.fromInt <|
-                (barHeight + 1) * h
+                (barHeight + 1)
+                    * h
         , getColor index barHeight left right
         ]
         []
 
 
-svgRect : Int -> Int -> Int -> (Int, Int) -> ( String, Svg.Svg Msg )
-svgRect index barHeight qty (currentLeft, currentRight) =
-    ( String.fromInt index, SvgLazy.lazy5 svgRect2 index barHeight currentLeft currentRight qty)
+svgRect : Int -> Int -> Int -> ( Int, Int ) -> ( String, Svg.Svg Msg )
+svgRect index barHeight qty ( currentLeft, currentRight ) =
+    ( String.fromInt index, SvgLazy.lazy5 svgRect2 index barHeight currentLeft currentRight qty )
 
 
 view : Model -> Html Msg
 view model =
+    let
+        listToBeSorted =
+            if Array.isEmpty model.currentStep then
+                Array.fromList model.listToBeSorted
+
+            else
+                model.currentStep
+
+        ( inputMin, inputMax ) =
+            if model.sortType == SelectionSort then
+                ( "1", "64" )
+
+            else
+                ( "1", "256" )
+    in
     div []
         [ div [ class "row" ]
             [ div [ class "col" ]
@@ -64,7 +84,18 @@ view model =
                         else
                             "Selection Sort"
                     ]
-                , h1 [] [ text <| String.fromInt model.index  ++ " Steps" ]
+                , h2 [] [ text <| String.fromInt model.listLength ++ " Elementos" ]
+                , input
+                    [ type_ "range"
+                    , class "form-control-range"
+                    , HtmlAttributes.min inputMin
+                    , HtmlAttributes.max inputMax
+                    , step "1"
+                    , onInput ChangeLength
+                    , value <| String.fromInt model.listLength
+                    ]
+                    []
+                , h2 [] [ text <| String.fromInt model.index ++ " Steps" ]
                 , div
                     [ css
                         [ displayFlex
@@ -78,13 +109,12 @@ view model =
                         [ SvgAttrs.width "100%"
                         , SvgAttrs.height "100%"
                         , SvgAttrs.viewBox "0 0 1024 512"
-                        
                         ]
                         (Array.indexedMap
                             (\index barHeight ->
-                                svgRect index barHeight (Array.length model.currentStep) (model.currentLeft, model.currentRight)
+                                svgRect index barHeight (Array.length listToBeSorted) ( model.currentLeft, model.currentRight )
                             )
-                            model.currentStep
+                            listToBeSorted
                             |> Array.toList
                         )
                     ]
@@ -110,10 +140,12 @@ view model =
                         else
                             "MergeSort"
                     ]
-                , button [ onClick Advance, Html.Styled.Attributes.disabled (model.index >= Array.length model.steps), class "btn mx-1 float-right" ] [ text ">" ]
-                , button [ onClick Continue, Html.Styled.Attributes.disabled <| not model.pause, class "btn mx-1 float-right" ] [ text "Continue" ]
-                , button [ onClick Pause, Html.Styled.Attributes.disabled model.pause, class "btn mx-1 float-right" ] [ text "Pause" ]
-                , button [ onClick Back, Html.Styled.Attributes.disabled (model.index <= 0), class "btn mx-1 float-right" ] [ text "<" ]
+
+                -- <input type="range" class="form-control-range" id="formControlRange">
+                , button [ onClick Advance, HtmlAttributes.disabled (model.index >= Array.length model.steps || Array.isEmpty model.steps), class "btn mx-1 float-right" ] [ text ">" ]
+                , button [ onClick Continue, HtmlAttributes.disabled <| not model.pause, class "btn mx-1 float-right" ] [ text "Continue" ]
+                , button [ onClick Pause, HtmlAttributes.disabled model.pause, class "btn mx-1 float-right" ] [ text "Pause" ]
+                , button [ onClick Back, HtmlAttributes.disabled (model.index <= 0), class "btn mx-1 float-right" ] [ text "<" ]
                 ]
             ]
         ]
