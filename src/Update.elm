@@ -1,7 +1,7 @@
 module Update exposing (Msg(..), SubPageMsg(..), changeRouteTo, init, update)
 
-import Pages.Sort.Model as Algorithms
-import Pages.Sort.Update as Algorithms
+import Pages.Sort.Model as SortModel
+import Pages.Sort.Update as SortUpdate
 import Browser
 import Browser.Navigation as Nav
 import Model exposing (CurrentModel(..), Model)
@@ -16,7 +16,7 @@ type Msg
     | SubPageMsg SubPageMsg
 
 type SubPageMsg
-    = AlgorithmsMsg Algorithms.Msg
+    = SortMsg SortUpdate.Msg
 
 init : () -> Url.Url -> Nav.Key -> ( Model, Cmd Msg )
 init _ url key =
@@ -29,9 +29,9 @@ changeRouteTo url model =
         Just Home ->
             ( { model | currentModel = HomeModel }, Cmd.none )
 
-        Just (SortAlgorithmsPage _) ->
-            ( { model | currentModel = SortAlgorithmsModel Algorithms.initModel }
-            , List.map (\s -> Cmd.map AlgorithmsMsg s |> Cmd.map SubPageMsg) [ Random.generate Algorithms.NewSeedStart (Random.int 1 1000000) ] |> Cmd.batch
+        Just (SortAlgorithmsPage sortAlgorithmName) ->
+            ( { model | currentModel = SortAlgorithmsModel (SortModel.initModel (SortModel.stringToSortType sortAlgorithmName)) }
+            , List.map (\s -> Cmd.map SortMsg s |> Cmd.map SubPageMsg) [ Random.generate SortUpdate.NewSeedStart (Random.int 1 1000000) ] |> Cmd.batch
             )
 
         _ ->
@@ -58,12 +58,12 @@ update msg model =
 
         ( SubPageMsg subPageMsg, _ ) ->
             case ( subPageMsg, model.currentModel ) of
-                ( AlgorithmsMsg algortihmMsg, SortAlgorithmsModel subModel ) ->
+                ( SortMsg algortihmMsg, SortAlgorithmsModel subModel ) ->
                     let
                         ( newModel, subCmd ) =
-                            Algorithms.update algortihmMsg subModel
+                            SortUpdate.update algortihmMsg subModel
                     in
-                    ( { model | currentModel = SortAlgorithmsModel newModel }, Cmd.map SubPageMsg (Cmd.map AlgorithmsMsg subCmd) )
+                    ( { model | currentModel = SortAlgorithmsModel newModel }, Cmd.map SubPageMsg (Cmd.map SortMsg subCmd) )
 
                 ( _, HomeModel ) ->
                     ( model, Cmd.none )

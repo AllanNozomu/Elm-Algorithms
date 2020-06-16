@@ -9,7 +9,7 @@ subscriptions model =
     case model.currentModel of
         SortAlgorithmsModel subModel ->
             [Algorithms.subscriptions subModel]  
-            |> List.map (\s -> Sub.map AlgorithmsMsg s |> Sub.map SubPageMsg) 
+            |> List.map (\s -> Sub.map SortMsg s |> Sub.map SubPageMsg) 
             |> Sub.batch
         HomeModel ->
             Sub.none

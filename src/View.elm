@@ -8,6 +8,7 @@ import Html.Styled.Events exposing (onClick)
 import Model exposing (CurrentModel(..), Model)
 import Pages.Home as Home
 import Pages.Sort.View as SortView
+import Pages.Sort.Model as SortModel
 import Route exposing (Route(..), href)
 import Update exposing (Msg(..), SubPageMsg(..))
 import Url
@@ -21,7 +22,7 @@ view model =
             case model.currentModel of
                 SortAlgorithmsModel sortmodel ->
                     SortView.view sortmodel
-                        |> Html.map AlgorithmsMsg
+                        |> Html.map SortMsg
                         |> Html.map SubPageMsg
 
                 HomeModel ->
@@ -56,8 +57,8 @@ navbar url =
                         ]
                         [ text "Sort Algorithms" ]
                     , div [ class "dropdown-menu" ]
-                        [ a [ class "dropdown-item", href (Route.SortAlgorithmsPage "mergeSort") ] [ text "Merge Sort" ]
-
+                        [ a [ class "dropdown-item", href (Route.SortAlgorithmsPage (SortModel.sortTypeToString SortModel.MergeSort)) ] [ text "Merge Sort" ]
+                        , a [ class "dropdown-item", href (Route.SortAlgorithmsPage (SortModel.sortTypeToString SortModel.SelectionSort)) ] [ text "Selection Sort" ]
                         -- , a [ class "dropdown-item", href (Route.SortAlgorithmsPage "selectionSort") ] [ text "Merge Sort" ]
                         ]
                     ]

@@ -1,4 +1,4 @@
-module Pages.Sort.Model exposing (Model, SortType(..), initModel)
+module Pages.Sort.Model exposing (Model, SortType(..), initModel, sortTypeToString, stringToSortType)
 
 import Array exposing (Array)
 
@@ -18,14 +18,14 @@ type alias Model =
     }
 
 
-initModel : Model
-initModel =
+initModel : SortType -> Model
+initModel sortType =
     { seed = 0
     , listToBeSorted = []
     , steps = Array.empty
-    , sortType = MergeSort
+    , sortType = sortType
     , currentStep = Array.empty
-    , listLength = 256
+    , listLength = sortTypeLength sortType
     , orderedList = Array.empty
     , leftRightSequence = Array.empty
     , currentLeft = 0
@@ -38,3 +38,22 @@ initModel =
 type SortType
     = MergeSort
     | SelectionSort
+
+sortTypeLength : SortType -> Int
+sortTypeLength sortType =
+    case sortType of
+       MergeSort -> 256
+       SelectionSort -> 64
+
+sortTypeToString : SortType -> String
+sortTypeToString sortType = 
+    case sortType of
+       MergeSort -> "MergeSort"
+       SelectionSort -> "SelectionSort"
+
+stringToSortType : String -> SortType
+stringToSortType str = 
+    case str of
+       "MergeSort" -> MergeSort
+       "SelectionSort" -> SelectionSort
+       _ -> MergeSort
