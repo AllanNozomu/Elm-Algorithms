@@ -122,30 +122,13 @@ view model =
             ]
         , div [ class "row" ]
             [ div [ class "col" ]
-                [ button [ onClick Roll, class "btn mx-1" ] [ text "Shuffle" ]
-                , button
-                    [ onClick <|
-                        ChangeSort <|
-                            if model.sortType == MergeSort then
-                                SelectionSort
-
-                            else
-                                MergeSort
-                    , class "btn mx-1"
-                    ]
-                    [ text <|
-                        if model.sortType == MergeSort then
-                            "SelectionSort"
-
-                        else
-                            "MergeSort"
-                    ]
+                [ button [ onClick Roll, class "btn mx-1 btn-dark" ] [ text "Shuffle" ]
 
                 -- <input type="range" class="form-control-range" id="formControlRange">
-                , button [ onClick Advance, HtmlAttributes.disabled (model.index >= Array.length model.steps || Array.isEmpty model.steps), class "btn mx-1 float-right" ] [ text ">" ]
-                , button [ onClick Continue, HtmlAttributes.disabled <| not model.pause, class "btn mx-1 float-right" ] [ text "Continue" ]
-                , button [ onClick Pause, HtmlAttributes.disabled model.pause, class "btn mx-1 float-right" ] [ text "Pause" ]
-                , button [ onClick Back, HtmlAttributes.disabled (model.index <= 0), class "btn mx-1 float-right" ] [ text "<" ]
+                , button [ onClick Back, HtmlAttributes.disabled (model.index <= 0), class "btn mx-1 btn-dark" ] [ text "<" ]
+                , button [ onClick Pause, HtmlAttributes.disabled model.pause, class "btn mx-1 btn-dark" ] [ text "Pause" ]
+                , button [ onClick Continue, HtmlAttributes.disabled <| not model.pause, class "btn mx-1 btn-dark" ] [ text "Continue" ]
+                , button [ onClick Advance, HtmlAttributes.disabled (model.index >= Array.length model.steps || Array.isEmpty model.steps), class "btn mx-1 btn-dark" ] [ text ">" ]
                 ]
             ]
         ]
