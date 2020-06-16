@@ -36,36 +36,20 @@ shuffle l seed =
 
 getListParameters : Model -> List comparable -> ( Array (Array comparable), Array ( Int, Int ) )
 getListParameters model l =
-    case model.sortType of
-        SelectionSort ->
-            let
-                ( _, selectionSortSteps ) =
-                    SelectionSort.selectionSortSteps l
-
-                leftRightSequence =
-                    List.map (\( _, lr ) -> lr) selectionSortSteps
-                        |> List.concat
-                        |> Array.fromList
-
-                steps =
-                    List.map (\( st, lr ) -> List.repeat (List.length lr) st) selectionSortSteps
-                        |> List.concat
-                        |> List.map (\x -> Array.fromList x)
-                        |> Array.fromList
-            in
-            ( steps, leftRightSequence )
-
-        MergeSort ->
-            let
-                ( _, steps, leftRightSequence ) =
+    let
+        ( _, steps, leftRightSequence ) =
+            case model.sortType of 
+                MergeSort ->
                     MergeSort.mergeSortSteps l
+                SelectionSort ->
+                    SelectionSort.selectionSortSteps l
+                
+        stepsArray =
+            List.map (\x -> Array.fromList x) steps |> Array.fromList
 
-                stepsArray =
-                    List.map (\x -> Array.fromList x) steps |> Array.fromList
-
-                leftRightSequenceArray =
-                    Array.fromList leftRightSequence
-            in
+        leftRightSequenceArray =
+            Array.fromList leftRightSequence
+    in
             ( stepsArray, leftRightSequenceArray )
 
 

@@ -1,11 +1,19 @@
 module Pages.Sort.Algorithms.SelectionSort exposing (selectionSortSteps)
 
-selectionSortSteps : List comparable -> ( List comparable, List ( List comparable, List ( Int, Int ) ) )
+selectionSortSteps : List comparable -> (List comparable, List (List comparable), List (Int, Int))
 selectionSortSteps l =
     let 
-        (sortedList, steps) = selectionSortStepsAux l 0 [] []
+        (sortedList, allSteps) = selectionSortStepsAux l 0 [] []
+            |> Tuple.mapSecond List.reverse
+    
+        leftRightSequence =
+                    List.map (\( _, lr ) -> lr) allSteps
+                        |> List.concat
+        steps = List.map (\( st, lr ) -> List.repeat (List.length lr) st) allSteps
+                        |> List.concat
     in
-    (sortedList, List.reverse steps)
+        (sortedList, steps, leftRightSequence)
+
 selectionSortStepsAux : List comparable -> Int -> List comparable -> List ( List comparable, List ( Int, Int ) ) -> ( List comparable, List ( List comparable, List ( Int, Int ) ) )
 selectionSortStepsAux l index orderedList steps =
     case l of
