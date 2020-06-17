@@ -1,4 +1,4 @@
-module Pages.Sort.Model exposing (Model, SortType(..), initModel, sortTypeToString, stringToSortType)
+module Pages.Sort.Model exposing (Model, SortType(..), initModel, sortTypeToString, stringToSortType, sortTypeLength)
 
 import Array exposing (Array)
 
@@ -38,22 +38,26 @@ initModel sortType =
 type SortType
     = MergeSort
     | SelectionSort
+    | BubbleSort
 
 sortTypeLength : SortType -> Int
 sortTypeLength sortType =
     case sortType of
        MergeSort -> 256
        SelectionSort -> 64
+       BubbleSort -> 64
 
 sortTypeToString : SortType -> String
 sortTypeToString sortType = 
     case sortType of
        MergeSort -> "MergeSort"
        SelectionSort -> "SelectionSort"
+       BubbleSort -> "BubbleSort"
 
 stringToSortType : String -> SortType
 stringToSortType str = 
     case str of
        "MergeSort" -> MergeSort
        "SelectionSort" -> SelectionSort
+       "BubbleSort" -> BubbleSort
        _ -> MergeSort

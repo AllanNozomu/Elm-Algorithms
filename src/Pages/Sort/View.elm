@@ -5,7 +5,7 @@ import Css exposing (..)
 import Html.Styled exposing (..)
 import Html.Styled.Attributes as HtmlAttributes exposing (attribute, class, css, max, min, step, type_, value)
 import Html.Styled.Events exposing (onClick, onInput)
-import Pages.Sort.Model exposing (Model, SortType(..))
+import Pages.Sort.Model exposing (Model, SortType(..), sortTypeToString, sortTypeLength)
 import Pages.Sort.Update exposing (Msg(..))
 import Svg.Styled as Svg
 import Svg.Styled.Attributes as SvgAttrs
@@ -65,31 +65,18 @@ view model =
 
             else
                 model.currentStep
-
-        ( inputMin, inputMax ) =
-            if model.sortType == SelectionSort then
-                ( "1", "64" )
-
-            else
-                ( "1", "256" )
     in
     div []
         [ div [ class "row" ]
             [ div [ class "col" ]
                 [ h1 []
-                    [ text <|
-                        if model.sortType == MergeSort then
-                            "Merge sort"
-
-                        else
-                            "Selection Sort"
-                    ]
+                    [ text <| sortTypeToString model.sortType]
                 , h2 [] [ text <| String.fromInt model.listLength ++ " Elementos" ]
                 , input
                     [ type_ "range"
                     , class "form-control-range"
-                    , HtmlAttributes.min inputMin
-                    , HtmlAttributes.max inputMax
+                    , HtmlAttributes.min "1"
+                    , HtmlAttributes.max <| String.fromInt <| sortTypeLength model.sortType
                     , step "1"
                     , onInput ChangeLength
                     , value <| String.fromInt model.listLength

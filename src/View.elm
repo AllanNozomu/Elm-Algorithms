@@ -59,6 +59,7 @@ navbar url =
                     , div [ class "dropdown-menu" ]
                         [ a [ class "dropdown-item", href (Route.SortAlgorithmsPage (SortModel.sortTypeToString SortModel.MergeSort)) ] [ text "Merge Sort" ]
                         , a [ class "dropdown-item", href (Route.SortAlgorithmsPage (SortModel.sortTypeToString SortModel.SelectionSort)) ] [ text "Selection Sort" ]
+                        , a [ class "dropdown-item", href (Route.SortAlgorithmsPage (SortModel.sortTypeToString SortModel.BubbleSort)) ] [ text "Bubble Sort" ]
                         -- , a [ class "dropdown-item", href (Route.SortAlgorithmsPage "selectionSort") ] [ text "Merge Sort" ]
                         ]
                     ]
