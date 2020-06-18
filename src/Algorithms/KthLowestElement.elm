@@ -1,13 +1,13 @@
 module Algorithms.KthLowestElement exposing (kthLowestElement)
 
 import List
-lessOrEqual : List comparable -> comparable -> List comparable
-lessOrEqual l i =
-    List.foldr (\ele acc -> if ele <= i then ele :: acc else acc) [] l
+lessOrEqual : comparable -> List comparable -> List comparable
+lessOrEqual i =
+    List.foldr (\ele acc -> if ele <= i then ele :: acc else acc) []
 
-greaterThan : List comparable -> comparable -> List comparable
-greaterThan l i =
-    List.foldr (\ele acc -> if ele > i then ele :: acc else acc) [] l
+greaterThan : comparable -> List comparable ->  List comparable
+greaterThan i =
+    List.foldr (\ele acc -> if ele > i then ele :: acc else acc) []
 
 kthLowestElement : List comparable -> Int -> Maybe comparable
 kthLowestElement l k = 
@@ -15,8 +15,8 @@ kthLowestElement l k =
         [] -> Nothing
         x :: r ->
             let
-                left = lessOrEqual r x
-                right = greaterThan r x
+                left = lessOrEqual x r 
+                right = greaterThan x r 
             in
             if k - 1 == List.length left  then
                 Just x
