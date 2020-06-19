@@ -7,8 +7,8 @@ import Html.Styled.Attributes as HtmlAttributes exposing (class, css, disabled, 
 import Html.Styled.Events exposing (onClick)
 import Model exposing (CurrentModel(..), Model)
 import Pages.Home as Home
-import Pages.Sort.View as SortView
 import Pages.Sort.Model as SortModel
+import Pages.Sort.View as SortView
 import Route exposing (Route(..), href)
 import Update exposing (Msg(..), SubPageMsg(..))
 import Url
@@ -30,12 +30,12 @@ view model =
     in
     { title = "Elm algorithms"
     , body =
-        [ div [css [marginBottom (px 25)]]
-        [ navbar model.url
-        , div [ class "container" ]
-            [ currentPage ]
-        , footerBar
-        ]
+        [ div [ css [ marginBottom (px 25) ] ]
+            [ navbar model.url
+            , div [ class "container" ]
+                [ currentPage ]
+            , footerBar
+            ]
         ]
             |> List.map Html.toUnstyled
     }
@@ -43,6 +43,14 @@ view model =
 
 navbar : Url.Url -> Html Msg
 navbar url =
+    let
+        sortMethods =
+            List.map SortModel.sortTypeToString [ SortModel.MergeSort
+            , SortModel.SelectionSort
+            , SortModel.BubbleSort
+            , SortModel.QuickSort
+            ]
+    in
     nav [ class "navbar navbar-expand-lg navbar-dark bg-dark" ]
         [ a [ class "navbar-brand" ] [ text "Algorithms in Elm" ]
         , div [ class "collapse navbar-collapse" ]
@@ -57,11 +65,10 @@ navbar url =
                         ]
                         [ text "Sort Algorithms" ]
                     , div [ class "dropdown-menu" ]
-                        [ a [ class "dropdown-item", href (Route.SortAlgorithmsPage (SortModel.sortTypeToString SortModel.MergeSort)) ] [ text "Merge Sort" ]
-                        , a [ class "dropdown-item", href (Route.SortAlgorithmsPage (SortModel.sortTypeToString SortModel.SelectionSort)) ] [ text "Selection Sort" ]
-                        , a [ class "dropdown-item", href (Route.SortAlgorithmsPage (SortModel.sortTypeToString SortModel.BubbleSort)) ] [ text "Bubble Sort" ]
-                        -- , a [ class "dropdown-item", href (Route.SortAlgorithmsPage "selectionSort") ] [ text "Merge Sort" ]
-                        ]
+                        (List.map
+                            (\sm -> a [ class "dropdown-item", href (Route.SortAlgorithmsPage sm) ] [ text sm ])
+                            sortMethods
+                        )
                     ]
                 , li [ class "nav-item" ]
                     [ a [ class "nav-link disabled" ]
