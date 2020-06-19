@@ -4,6 +4,7 @@ import Array exposing (Array)
 import Pages.Sort.Algorithms.MergeSort as MergeSort
 import Pages.Sort.Algorithms.SelectionSort as SelectionSort
 import Pages.Sort.Algorithms.BubbleSort as BubbleSort
+import Pages.Sort.Algorithms.QuickSort as QuickSort
 import Pages.Sort.Model exposing (Model, SortType(..))
 import Random
 import Random.List
@@ -46,6 +47,8 @@ getListParameters model l =
                     SelectionSort.selectionSortSteps l
                 BubbleSort -> 
                     BubbleSort.bubbleSortSteps l
+                QuickSort ->
+                    QuickSort.quickSortSteps l
                 
         stepsArray =
             List.map (\x -> Array.fromList x) steps |> Array.fromList

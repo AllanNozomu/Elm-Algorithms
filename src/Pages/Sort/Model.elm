@@ -39,6 +39,7 @@ type SortType
     = MergeSort
     | SelectionSort
     | BubbleSort
+    | QuickSort
 
 sortTypeLength : SortType -> Int
 sortTypeLength sortType =
@@ -46,6 +47,7 @@ sortTypeLength sortType =
        MergeSort -> 256
        SelectionSort -> 64
        BubbleSort -> 64
+       QuickSort -> 256
 
 sortTypeToString : SortType -> String
 sortTypeToString sortType = 
@@ -53,6 +55,7 @@ sortTypeToString sortType =
        MergeSort -> "MergeSort"
        SelectionSort -> "SelectionSort"
        BubbleSort -> "BubbleSort"
+       QuickSort -> "QuickSort"
 
 stringToSortType : String -> SortType
 stringToSortType str = 
@@ -60,4 +63,5 @@ stringToSortType str =
        "MergeSort" -> MergeSort
        "SelectionSort" -> SelectionSort
        "BubbleSort" -> BubbleSort
+       "QuickSort" -> QuickSort
        _ -> MergeSort
