@@ -1,5 +1,15 @@
 #!/bin/sh
 set -e
+
+if [ -z "$1" ] 
+then
+    echo "No argument supplied"
+    exit
+fi
+
+git checkout --orphan gh-pages
+git reset
+
 js="bundle.js"
 min="bundle.min.js"
 elm make --optimize --output=$js $@
@@ -7,3 +17,10 @@ uglifyjs $js --compress "pure_funcs=[F2,F3,F4,F5,F6,F7,F8,F9,A2,A3,A4,A5,A6,A7,A
 echo "Initial size: $(cat $js | wc -c) bytes  ($js)"
 echo "Minified size:$(cat $min | wc -c) bytes  ($min)"
 echo "Gzipped size: $(cat $min | gzip -c | wc -c) bytes"
+
+git add index.html src/assets bundle.* -f
+git commit -m "Deploying to gh-pages"
+git push origin gh-pages -f
+git reset --hard master
+git checkout master
+git branch -D gh-pages
