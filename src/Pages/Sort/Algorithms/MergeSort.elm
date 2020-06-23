@@ -38,10 +38,10 @@ mergeSteps : List comparable -> List comparable -> Int -> Int -> ( List comparab
 mergeSteps l1 l2 i1 i2 =
     case ( l1, l2 ) of
         ( [], _ ) ->
-            ( l2, [], [] )
+            ( l2, [l2], [(i1, i2)] )
 
         ( _, [] ) ->
-            ( l1, [], [] )
+            ( l1, [l1], [(i1, i2)] )
 
         ( e1 :: r1, e2 :: r2 ) ->
             if e1 < e2 then

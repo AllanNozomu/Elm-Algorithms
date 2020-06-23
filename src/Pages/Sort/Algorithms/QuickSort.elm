@@ -29,7 +29,7 @@ splitSteps pivot l =
                             ((acc, steps ++ [acc], lr ++ [(i - j, lastPos j)]), j)
                         else
                             ((swap (i - j) (lastPos j) acc, steps ++ [swap (i - j) (lastPos j) acc ], lr ++ [(i - j, lastPos j)] ), j+1)
-                    ) ((arr, [arr], [(0, lastPos 0)]), 0)
+                    ) ((arr, [], []), 0)
         lastStep = 
             swap (listLen - resI - 1) (listLen - 1) resA 
         
