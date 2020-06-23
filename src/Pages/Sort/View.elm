@@ -8,7 +8,7 @@ import Html.Styled.Events exposing (onClick, onInput)
 import Html.Styled.Keyed as HtmlKeyed
 import Html.Styled.Lazy as HtmlLazy
 import Pages.Sort.Algorithms.QuickSort exposing (strCode)
-import Pages.Sort.Model exposing (Model, SortType(..), sortTypeToString, sortTypeLength)
+import Pages.Sort.Model exposing (Model, SortType(..), sortTypeLength, sortTypeToString)
 import Pages.Sort.Update exposing (Msg(..))
 import Svg.Styled as Svg
 import Svg.Styled.Attributes as SvgAttrs
@@ -16,20 +16,7 @@ import Svg.Styled.Keyed as SvgKeyed
 import Svg.Styled.Lazy as SvgLazy
 
 
-getColor index barHeight left right =
-    if index == left then
-        SvgAttrs.fill "red"
-
-    else if index == right then
-        SvgAttrs.fill "yellow"
-
-    else if index == barHeight then
-        SvgAttrs.fill "green"
-
-    else
-        SvgAttrs.fill "black"
-
-
+svgRect2 : Int -> Int -> Int -> Int -> Int -> Svg.Svg Msg
 svgRect2 index barHeight left right qty =
     let
         h =
@@ -37,18 +24,25 @@ svgRect2 index barHeight left right qty =
 
         w =
             1024 // qty
+
+        getColor i bh l r =
+            if i == l then
+                SvgAttrs.fill "red"
+
+            else if i == r then
+                SvgAttrs.fill "yellow"
+
+            else if i == bh then
+                SvgAttrs.fill "green"
+
+            else
+                SvgAttrs.fill "black"
     in
     Svg.rect
-        [ SvgAttrs.x <|
-            String.fromInt <|
-                (index * w)
-        , SvgAttrs.y <|
-            String.fromInt (512 - (barHeight + 1) * h)
+        [ SvgAttrs.x <| String.fromInt <| (index * w)
+        , SvgAttrs.y <| String.fromInt (512 - (barHeight + 1) * h)
         , SvgAttrs.width <| String.fromInt w
-        , SvgAttrs.height <|
-            String.fromInt <|
-                (barHeight + 1)
-                    * h
+        , SvgAttrs.height <| String.fromInt <| (barHeight + 1) * h
         , getColor index barHeight left right
         ]
         []
@@ -58,12 +52,14 @@ svgRect : Int -> Int -> Int -> ( Int, Int ) -> ( String, Svg.Svg Msg )
 svgRect index barHeight qty ( currentLeft, currentRight ) =
     ( String.fromInt index, SvgLazy.lazy5 svgRect2 index barHeight currentLeft currentRight qty )
 
-showCode : String -> (String, Html Msg)
-showCode strCode = 
+
+showCode : String -> ( String, Html Msg )
+showCode strCode =
     let
-        f x = code [class "elm"][text x]
+        f x =
+            code [ class "elm" ] [ text x ]
     in
-    (strCode, HtmlLazy.lazy f strCode)
+    ( strCode, HtmlLazy.lazy f strCode )
 
 
 view : Model -> Html Msg
@@ -80,7 +76,7 @@ view model =
         [ div [ class "row" ]
             [ div [ class "col" ]
                 [ h1 []
-                    [ text <| sortTypeToString model.sortType]
+                    [ text <| sortTypeToString model.sortType ]
                 , h2 [] [ text <| String.fromInt model.listLength ++ " Elementos" ]
                 , input
                     [ type_ "range"
