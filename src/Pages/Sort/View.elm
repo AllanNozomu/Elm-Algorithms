@@ -113,10 +113,8 @@ view model =
                     ]
                 ]
             ]
-            -- <pre><code class="html">...</code></pre>
-            , div [class "row"][
-                HtmlKeyed.node "pre" [][ showCode model.code]
-            ]
+
+        -- <pre><code class="html">...</code></pre>
         , div [ class "row" ]
             [ div [ class "col" ]
                 [ button [ onClick Roll, class "btn mx-1 btn-dark" ] [ text "Shuffle" ]
@@ -126,6 +124,12 @@ view model =
                 , button [ onClick Pause, HtmlAttributes.disabled model.pause, class "btn mx-1 btn-dark" ] [ text "Pause" ]
                 , button [ onClick Continue, HtmlAttributes.disabled <| not model.pause, class "btn mx-1 btn-dark" ] [ text "Continue" ]
                 , button [ onClick Advance, HtmlAttributes.disabled (model.index >= Array.length model.steps || Array.isEmpty model.steps), class "btn mx-1 btn-dark" ] [ text ">" ]
+                ]
+            ]
+        , div [ class "row" ]
+            [ div [ class "col" ]
+                [ h2 [] [ text "Code" ]
+                , HtmlKeyed.node "pre" [] [ showCode model.code ]
                 ]
             ]
         ]
