@@ -5,6 +5,9 @@ import Css exposing (..)
 import Html.Styled exposing (..)
 import Html.Styled.Attributes as HtmlAttributes exposing (attribute, class, css, max, min, step, type_, value)
 import Html.Styled.Events exposing (onClick, onInput)
+import Html.Styled.Keyed as HtmlKeyed
+import Html.Styled.Lazy as HtmlLazy
+import Pages.Sort.Algorithms.QuickSort exposing (strCode)
 import Pages.Sort.Model exposing (Model, SortType(..), sortTypeToString, sortTypeLength)
 import Pages.Sort.Update exposing (Msg(..))
 import Svg.Styled as Svg
@@ -54,6 +57,13 @@ svgRect2 index barHeight left right qty =
 svgRect : Int -> Int -> Int -> ( Int, Int ) -> ( String, Svg.Svg Msg )
 svgRect index barHeight qty ( currentLeft, currentRight ) =
     ( String.fromInt index, SvgLazy.lazy5 svgRect2 index barHeight currentLeft currentRight qty )
+
+showCode : String -> (String, Html Msg)
+showCode strCode = 
+    let
+        f x = code [class "elm"][text x]
+    in
+    (strCode, HtmlLazy.lazy f strCode)
 
 
 view : Model -> Html Msg
@@ -106,6 +116,10 @@ view model =
                         )
                     ]
                 ]
+            ]
+            -- <pre><code class="html">...</code></pre>
+            , div [class "row"][
+                HtmlKeyed.node "pre" [][ showCode model.code]
             ]
         , div [ class "row" ]
             [ div [ class "col" ]
