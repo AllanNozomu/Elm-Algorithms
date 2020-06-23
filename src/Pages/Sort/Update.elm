@@ -1,11 +1,12 @@
 port module Pages.Sort.Update exposing (..)
 
 import Array exposing (Array)
-import Pages.Sort.Algorithms.MergeSort as MergeSort
-import Pages.Sort.Algorithms.SelectionSort as SelectionSort
+import Http
 import Pages.Sort.Algorithms.BubbleSort as BubbleSort
+import Pages.Sort.Algorithms.MergeSort as MergeSort
 import Pages.Sort.Algorithms.QuickSort as QuickSort
-import Pages.Sort.Model exposing (Model, SortType(..))
+import Pages.Sort.Algorithms.SelectionSort as SelectionSort
+import Pages.Sort.Model exposing (Model, SortType(..), sortTypeToCode)
 import Random
 import Random.List
 import Time
@@ -13,7 +14,6 @@ import Time
 
 type Msg
     = Roll
-    | ChangeSort SortType
     | Pause
     | Continue
     | Back
@@ -26,6 +26,7 @@ type Msg
 
 port beep : ( Int, Int ) -> Cmd msg
 
+port highlight : () -> Cmd msg
 
 shuffle : List comparable -> Int -> List comparable
 shuffle l seed =
@@ -40,24 +41,26 @@ getListParameters : Model -> List comparable -> ( Array (Array comparable), Arra
 getListParameters model l =
     let
         ( _, steps, leftRightSequence ) =
-            case model.sortType of 
+            case model.sortType of
                 MergeSort ->
                     MergeSort.mergeSortSteps l
+
                 SelectionSort ->
                     SelectionSort.selectionSortSteps l
-                BubbleSort -> 
+
+                BubbleSort ->
                     BubbleSort.bubbleSortSteps l
+
                 QuickSort ->
                     QuickSort.quickSortSteps l
-                
+
         stepsArray =
             List.map (\x -> Array.fromList x) steps |> Array.fromList
 
         leftRightSequenceArray =
             Array.fromList leftRightSequence
     in
-            ( stepsArray, leftRightSequenceArray )
-
+    ( stepsArray, leftRightSequenceArray )
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
@@ -86,17 +89,10 @@ update msg model =
                             , currentStep = Array.empty
                             , steps = Array.empty
                             , leftRightSequence = Array.empty
+                            , code = sortTypeToCode model.sortType
                         }
             in
-            ( newModel, Random.generate NewSeed (Random.int 1 100000) )
-
-        ChangeSort sortType ->
-            let
-                newListLength = case sortType of
-                    SelectionSort -> 64   
-                    _ -> 256
-            in
-            update Roll { model | sortType = sortType, listLength = newListLength }
+            ( newModel, Cmd.batch [Random.generate NewSeed (Random.int 1 100000), highlight ()] )
 
         ChangeLength newLength ->
             let
@@ -114,7 +110,7 @@ update msg model =
             ( newModel, beep ( getSoundFreq newModel, 10 ) )
 
         Pause ->
-            ( { model| pause = True}, Cmd.none)
+            ( { model | pause = True }, Cmd.none )
 
         Continue ->
             if Array.isEmpty model.steps then
@@ -160,14 +156,16 @@ getSoundFreq model =
         |> Maybe.withDefault 0
         |> (*) 5
 
+
 updateIndex : Model -> Int -> Model
 updateIndex model index =
     let
+        ( steps, leftRightSequence ) =
+            if Array.isEmpty model.steps then
+                getListParameters model model.listToBeSorted
 
-        ( steps, leftRightSequence ) = if Array.isEmpty model.steps then
-            getListParameters model model.listToBeSorted
             else
-                (model.steps, model.leftRightSequence)
+                ( model.steps, model.leftRightSequence )
 
         newIndex =
             if index > model.index then

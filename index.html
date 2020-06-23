@@ -42,6 +42,15 @@
         v.stop(a.currentTime+duration*0.001)
       }
 
+      
+      app.ports.highlight.subscribe(function(a) {
+        requestAnimationFrame(function () {
+          document.querySelectorAll('pre code').forEach((block) => {
+            hljs.highlightBlock(block);
+          });
+        });
+      });
+
       app.ports.beep.subscribe(function(a) {
         beep(a[0], a[1])
       });
