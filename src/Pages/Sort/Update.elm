@@ -75,9 +75,9 @@ update msg model =
     case msg of
         Shuffle ->
             let
-                shuffledList = shuffle model.listToBeSorted model.seed
+                newListToBeSorted = shuffle model.listToBeSorted model.seed
             in
-            ( { model | listToBeSorted = shuffledList }, Cmd.none)
+            ( { model | listToBeSorted = newListToBeSorted, index = 0, steps = Array.empty, pause=True }, Cmd.none)
 
         ChangeLength newLength ->
             let
