@@ -26,18 +26,18 @@ type alias Model =
 initModel : SortType -> Model
 initModel sortType =
     { seed = 0
-    , listToBeSorted = []
+    , listToBeSorted = List.range 0 (sortTypeLength sortType - 1) 
     , steps = Array.empty
     , sortType = sortType
     , currentStep = Array.empty
     , listLength = sortTypeLength sortType
-    , orderedList = Array.empty
+    , orderedList = List.range 0 (sortTypeLength sortType - 1) |> Array.fromList
     , leftRightSequence = Array.empty
     , currentLeft = 0
     , currentRight = 0
     , index = 0
     , pause = True
-    , code = ""
+    , code = sortTypeToCode sortType
     }
 
 

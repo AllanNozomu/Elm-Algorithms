@@ -66,7 +66,7 @@ view : Model -> Html Msg
 view model =
     let
         listToBeSorted =
-            if Array.isEmpty model.currentStep then
+            if Array.isEmpty model.steps then
                 Array.fromList model.listToBeSorted
 
             else
@@ -117,9 +117,7 @@ view model =
         -- <pre><code class="html">...</code></pre>
         , div [ class "row" ]
             [ div [ class "col" ]
-                [ button [ onClick Roll, class "btn mx-1 btn-dark" ] [ text "Shuffle" ]
-
-                -- <input type="range" class="form-control-range" id="formControlRange">
+                [ button [ onClick Shuffle, class "btn mx-1 btn-dark" ] [ text "Shuffle" ]
                 , button [ onClick Back, HtmlAttributes.disabled (model.index <= 0), class "btn mx-1 btn-dark" ] [ text "<" ]
                 , button [ onClick Pause, HtmlAttributes.disabled model.pause, class "btn mx-1 btn-dark" ] [ text "Pause" ]
                 , button [ onClick Continue, HtmlAttributes.disabled <| not model.pause, class "btn mx-1 btn-dark" ] [ text "Continue" ]

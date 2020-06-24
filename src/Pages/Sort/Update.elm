@@ -6,35 +6,34 @@ import Pages.Sort.Algorithms.BubbleSort as BubbleSort
 import Pages.Sort.Algorithms.MergeSort as MergeSort
 import Pages.Sort.Algorithms.QuickSort as QuickSort
 import Pages.Sort.Algorithms.SelectionSort as SelectionSort
-import Pages.Sort.Model exposing (Model, SortType(..), sortTypeToCode)
+import Pages.Sort.Model exposing (Model, SortType(..), initModel, sortTypeToCode)
 import Random
 import Random.List
 import Time
 
 
 type Msg
-    = Roll
+    = Shuffle
     | Pause
     | Continue
     | Back
     | Advance
     | ChangeLength String
     | Tick Time.Posix
-    | NewSeed Int
     | NewSeedStart Int
 
 
 port beep : ( Int, Int ) -> Cmd msg
 
+
 port highlight : () -> Cmd msg
+
 
 shuffle : List comparable -> Int -> List comparable
 shuffle l seed =
-    let
-        ( newl, _ ) =
-            Random.step (Random.List.shuffle l) (Random.initialSeed seed)
-    in
-    newl
+    Random.initialSeed seed
+        |> Random.step (Random.List.shuffle l)
+        |> Tuple.first
 
 
 getListParameters : Model -> List comparable -> ( Array (Array comparable), Array ( Int, Int ) )
@@ -62,45 +61,22 @@ getListParameters model l =
     in
     ( stepsArray, leftRightSequenceArray )
 
+
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
-        Roll ->
+        Shuffle ->
             let
-                listLength =
-                    case model.sortType of
-                        SelectionSort ->
-                            model.listLength
-
-                        _ ->
-                            model.listLength
-
-                shuffledList =
-                    shuffle (List.range 0 (listLength - 1)) model.seed
-
-                ( newModel, _ ) =
-                    update Back
-                        { model
-                            | listToBeSorted = shuffledList
-                            , orderedList = List.sort shuffledList |> Array.fromList
-                            , index = 0
-                            , currentLeft = 0
-                            , currentRight = 0
-                            , currentStep = Array.empty
-                            , steps = Array.empty
-                            , leftRightSequence = Array.empty
-                            , code = sortTypeToCode model.sortType
-                        }
+                shuffledList = shuffle model.listToBeSorted model.seed
             in
-            ( newModel, Cmd.batch [Random.generate NewSeed (Random.int 1 100000), highlight ()] )
+            ( { model | listToBeSorted = shuffledList }, Cmd.none)
 
         ChangeLength newLength ->
             let
-                newListLength =
-                    String.toInt newLength
-                        |> Maybe.withDefault 0
+                newListLength = String.toInt newLength |> Maybe.withDefault 0
+                newListToBeSorted = shuffle (List.range 0 (newListLength - 1)) model.seed
             in
-            update Roll { model | listLength = newListLength }
+            ({ model | listLength = newListLength, listToBeSorted = newListToBeSorted, index = 0, steps = Array.empty, pause=True }, Cmd.none)
 
         Tick _ ->
             let
@@ -113,21 +89,11 @@ update msg model =
             ( { model | pause = True }, Cmd.none )
 
         Continue ->
-            if Array.isEmpty model.steps then
-                let
-                    ( steps, leftRightSequence ) =
-                        getListParameters model model.listToBeSorted
-                in
-                ( { model
-                    | pause = False
-                    , steps = steps
-                    , leftRightSequence = leftRightSequence
-                  }
-                , Cmd.none
-                )
-
-            else
-                ( { model | pause = False }, Cmd.none )
+            let
+                newModel =
+                    updateIndex model model.index
+            in
+                ( { newModel | pause = False }, Cmd.none )
 
         Back ->
             let
@@ -143,11 +109,12 @@ update msg model =
             in
             ( newModel, beep ( getSoundFreq newModel, 10 ) )
 
-        NewSeed newFace ->
-            ( { model | seed = newFace }, Cmd.none )
+        NewSeedStart newSeed ->
+            let
+                (newModel, cmd) = update Shuffle { model | seed = newSeed }
+            in
 
-        NewSeedStart newFace ->
-            update Roll { model | seed = newFace }
+            (newModel, Cmd.batch [highlight(), cmd])
 
 
 getSoundFreq : Model -> Int
