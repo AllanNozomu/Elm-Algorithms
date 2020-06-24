@@ -7,7 +7,6 @@ import Html.Styled.Attributes as HtmlAttributes exposing (attribute, class, css,
 import Html.Styled.Events exposing (onClick, onInput)
 import Html.Styled.Keyed as HtmlKeyed
 import Html.Styled.Lazy as HtmlLazy
-import Pages.Sort.Algorithms.QuickSort exposing (strCode)
 import Pages.Sort.Model exposing (Model, SortType(..), sortTypeLength, sortTypeToString)
 import Pages.Sort.Update exposing (Msg(..))
 import Svg.Styled as Svg

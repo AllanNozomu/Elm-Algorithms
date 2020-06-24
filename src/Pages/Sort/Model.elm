@@ -1,10 +1,6 @@
-module Pages.Sort.Model exposing (Model, SortType(..), initModel, sortTypeToString, stringToSortType, sortTypeLength, sortTypeToCode)
+module Pages.Sort.Model exposing (Model, SortType(..), initModel, sortTypeToString, stringToSortType, sortTypeLength, sortTypeToCodeUrl)
 
 import Array exposing (Array)
-import Pages.Sort.Algorithms.BubbleSort as BubbleSort exposing (strCode)
-import Pages.Sort.Algorithms.MergeSort as MergeSort exposing (strCode)
-import Pages.Sort.Algorithms.QuickSort as QuickSort exposing (strCode)
-import Pages.Sort.Algorithms.SelectionSort as SelectionSort exposing (strCode)
 
 type alias Model =
     { seed : Int
@@ -37,7 +33,7 @@ initModel sortType =
     , currentRight = 0
     , index = 0
     , pause = True
-    , code = sortTypeToCode sortType
+    , code = ""
     }
 
 
@@ -72,10 +68,10 @@ stringToSortType str =
        "QuickSort" -> QuickSort
        _ -> MergeSort
 
-sortTypeToCode : SortType -> String
-sortTypeToCode sortType = 
+sortTypeToCodeUrl : SortType -> String
+sortTypeToCodeUrl sortType = 
     case sortType of
-       MergeSort -> MergeSort.strCode
-       SelectionSort -> SelectionSort.strCode
-       BubbleSort -> BubbleSort.strCode
-       QuickSort -> QuickSort.strCode
+       MergeSort -> "src/Algorithms/MergeSort.elm"
+       SelectionSort ->  "src/Algorithms/SelectionSort.elm"
+       BubbleSort ->  "src/Algorithms/BubbleSort.elm"
+       QuickSort ->  "src/Algorithms/QuickSort.elm"

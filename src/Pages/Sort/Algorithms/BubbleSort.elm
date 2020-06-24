@@ -1,4 +1,4 @@
-module Pages.Sort.Algorithms.BubbleSort exposing (bubbleSortSteps, strCode)
+module Pages.Sort.Algorithms.BubbleSort exposing (bubbleSortSteps)
 
 
 bubbleSortSteps : List comparable -> ( List comparable, List (List comparable), List ( Int, Int ) )
@@ -46,34 +46,3 @@ bubbleSortAuxSteps i j ord l =
                     bubbleSortAuxSteps (i + 1) (j - 1) (ord ++ [ smaller ]) (bigger :: r)
             in
             ( smaller :: ordered, (ord ++ l) :: steps, ( i, i + 1 ) :: lr )
-
-strCode : String
-strCode =
-    """bubbleSort : List comparable -> List comparable
-bubbleSort l =
-    let
-        bubbleSortWrapper i ll =
-            let
-                newList = bubbleSortAux (i - 1) ll
-            in
-            if newList == ll then
-                newList
-            else
-                bubbleSortWrapper (i - 1) newList
-    in
-    bubbleSortWrapper (List.length l) l
-
-bubbleSortAux : Int -> List comparable -> List comparable
-bubbleSortAux i l =
-    if i == 0 then
-        l
-    else case l of
-        [] -> []
-        a :: [] -> [a]
-        a :: b :: r ->
-            if a > b then
-                b :: bubbleSortAux (i-1) (a :: r)
-            else
-                a :: bubbleSortAux (i-1) (b :: r)
-
--- """

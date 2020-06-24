@@ -6,7 +6,7 @@ import Pages.Sort.Algorithms.BubbleSort as BubbleSort
 import Pages.Sort.Algorithms.MergeSort as MergeSort
 import Pages.Sort.Algorithms.QuickSort as QuickSort
 import Pages.Sort.Algorithms.SelectionSort as SelectionSort
-import Pages.Sort.Model exposing (Model, SortType(..), initModel, sortTypeToCode)
+import Pages.Sort.Model exposing (Model, SortType(..), initModel, sortTypeToCodeUrl)
 import Random
 import Random.List
 import Time
@@ -21,12 +21,20 @@ type Msg
     | ChangeLength String
     | Tick Time.Posix
     | NewSeedStart Int
+    | GotText (Result Http.Error String)
 
 
 port beep : ( Int, Int ) -> Cmd msg
 
 
 port highlight : () -> Cmd msg
+
+getSourceCode : Model -> Cmd Msg
+getSourceCode model =
+  Http.get
+    { url = sortTypeToCodeUrl model.sortType
+    , expect = Http.expectString GotText
+    }
 
 
 shuffle : List comparable -> Int -> List comparable
@@ -109,12 +117,20 @@ update msg model =
             in
             ( newModel, beep ( getSoundFreq newModel, 10 ) )
 
+        GotText result ->
+            case result of 
+                Ok code ->
+                    ({model | code = code}, highlight())
+
+                Err _ ->
+                    ({model | code = "Error"}, Cmd.none)
+
         NewSeedStart newSeed ->
             let
                 (newModel, cmd) = update Shuffle { model | seed = newSeed }
             in
 
-            (newModel, Cmd.batch [highlight(), cmd])
+            (newModel, Cmd.batch [cmd, getSourceCode model])
 
 
 getSoundFreq : Model -> Int

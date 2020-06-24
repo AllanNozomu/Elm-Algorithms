@@ -1,4 +1,4 @@
-module Pages.Sort.Algorithms.QuickSort exposing (quickSortSteps, strCode)
+module Pages.Sort.Algorithms.QuickSort exposing (quickSortSteps)
 
 import Array exposing (Array)
 import Random
@@ -69,22 +69,3 @@ quickSort  l  =
                 (left ++ pivot :: right, 
                 steps ++ List.map (\x -> x ++ pivot :: semiOrderedRight) leftSteps ++ List.map (\x -> left ++ pivot :: x) rightSteps,
                 leftRight ++ leftLr ++ List.map (\p -> Tuple.mapBoth ((+) pivotIndex) ((+) pivotIndex) p) rightLr )
-
-strCode : String
-strCode =
-    """module Algorithms.QuickSort exposing (quickSort)
-
-quickSort : List comparable -> List comparable
-quickSort l = 
-    case l of
-        [] -> []
-        [a] -> [a]
-        a :: r ->  
-            let
-                left = List.filter ((>) a) r
-                    |> quickSort 
-                right = List.filter ((<=) a) r
-                    |> quickSort 
-            in
-                left ++ a :: right
--- """
