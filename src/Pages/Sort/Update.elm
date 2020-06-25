@@ -26,6 +26,7 @@ type Msg
 
 port beep : ( Int, Int ) -> Cmd msg
 
+port tooltip : () -> Cmd msg
 
 port highlight : () -> Cmd msg
 
@@ -130,7 +131,7 @@ update msg model =
                 (newModel, cmd) = update Shuffle { model | seed = newSeed }
             in
 
-            (newModel, Cmd.batch [cmd, getSourceCode model])
+            (newModel, Cmd.batch [cmd, getSourceCode model, tooltip ()])
 
 
 getSoundFreq : Model -> Int

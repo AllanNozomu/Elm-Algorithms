@@ -2,6 +2,7 @@ module Pages.Sort.View exposing (view)
 
 import Array
 import Css exposing (..)
+import FeatherIcons
 import Html.Styled exposing (..)
 import Html.Styled.Attributes as HtmlAttributes exposing (attribute, class, css, max, min, step, type_, value)
 import Html.Styled.Events exposing (onClick, onInput)
@@ -13,6 +14,7 @@ import Svg.Styled as Svg
 import Svg.Styled.Attributes as SvgAttrs
 import Svg.Styled.Keyed as SvgKeyed
 import Svg.Styled.Lazy as SvgLazy
+import Utils.IconUtils exposing (toStyledHtml)
 
 
 svgRect2 : Int -> Int -> Int -> Int -> Int -> Svg.Svg Msg
@@ -76,7 +78,7 @@ view model =
             [ div [ class "col" ]
                 [ h1 []
                     [ text <| sortTypeToString model.sortType ]
-                , h2 [] [ text <| String.fromInt model.listLength ++ " Elementos" ]
+                , h2 [] [ text <| String.fromInt model.listLength ++ " Elements" ]
                 , input
                     [ type_ "range"
                     , class "form-control-range"
@@ -87,7 +89,17 @@ view model =
                     , value <| String.fromInt model.listLength
                     ]
                     []
-                , h2 [] [ text <| String.fromInt model.index ++ " Steps" ]
+                , h2 []
+                    [ text <| String.fromInt model.index ++ " Steps "
+                    , span
+                        [ attribute "data-toggle" "tooltip"
+                        , attribute "data-placement" "right"
+                        , attribute "title" "This number is a estimate number only and does not reflect the real number of steps. I just generate all steps and iterate to create an animation."
+                        ]
+                        [ FeatherIcons.info
+                            |> toStyledHtml
+                        ]
+                    ]
                 , div
                     [ css
                         [ displayFlex
@@ -112,8 +124,6 @@ view model =
                     ]
                 ]
             ]
-
-        -- <pre><code class="html">...</code></pre>
         , div [ class "row" ]
             [ div [ class "col" ]
                 [ button [ onClick Shuffle, class "btn mx-1 btn-dark" ] [ text "Shuffle" ]
@@ -125,7 +135,17 @@ view model =
             ]
         , div [ class "row" ]
             [ div [ class "col" ]
-                [ h2 [] [ text "Code" ]
+                [ h2 []
+                    [ text "Code "
+                    , span
+                        [ attribute "data-toggle" "tooltip"
+                        , attribute "data-placement" "right"
+                        , attribute "title" "The steps above is not implemented using the code below. it implements a messy code in the repository. Check it out ;D"
+                        ]
+                        [ FeatherIcons.info
+                            |> toStyledHtml
+                        ]
+                    ]
                 , HtmlKeyed.node "pre" [] [ showCode model.code ]
                 ]
             ]

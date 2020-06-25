@@ -42,7 +42,7 @@
       }
 
       
-      app.ports.highlight.subscribe(function(a) {
+      app.ports.highlight.subscribe(function() {
         requestAnimationFrame(function () {
           document.querySelectorAll('pre code').forEach((block) => {
             hljs.highlightBlock(block);
@@ -52,6 +52,12 @@
 
       app.ports.beep.subscribe(function(a) {
         beep(a[0], a[1])
+      });
+
+      app.ports.tooltip.subscribe(function() {
+        requestAnimationFrame(function () {
+          $('[data-toggle="tooltip"]').tooltip();   
+        });
       });
     </script>
   </body>
