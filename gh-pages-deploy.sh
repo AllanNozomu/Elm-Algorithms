@@ -18,7 +18,7 @@ echo "Initial size: $(cat $js | wc -c) bytes  ($js)"
 echo "Minified size:$(cat $min | wc -c) bytes  ($min)"
 echo "Gzipped size: $(cat $min | gzip -c | wc -c) bytes"
 
-git add index.html src/assets bundle.* -f
+git add index.html src/Algorithms src/assets bundle.* -f
 git commit -m "Deploying to gh-pages"
 git push origin gh-pages -f
 git reset --hard master
