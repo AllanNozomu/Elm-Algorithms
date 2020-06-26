@@ -7,18 +7,18 @@ mergeSort l =
         a :: [] -> [ a ]
         _ ->  
             case split l |> Tuple.mapBoth mergeSort mergeSort of 
-            (x,y) ->  merge x y
+            (x,y) ->  merge (x, y)
 
-merge : List comparable -> List comparable -> List comparable
-merge l1 l2 =
+merge : (List comparable, List comparable) -> List comparable
+merge (l1, l2) =
     case ( l1, l2 ) of
         ( [], _ ) -> l2
         ( _, [] ) -> l1
         ( e1 :: r1, e2 :: r2 ) ->
             if e1 < e2 then
-                e1 :: merge r1 (e2 :: r2)
+                e1 :: merge (r1, e2 :: r2)
             else
-                e2 :: merge (e1 :: r1) r2
+                e2 :: merge (e1 :: r1, r2)
 
 split : List a -> (List a, List a)
 split l =
