@@ -8,7 +8,7 @@ import Html.Styled.Attributes as HtmlAttributes exposing (attribute, class, css,
 import Html.Styled.Events exposing (onClick, onInput)
 import Html.Styled.Keyed as HtmlKeyed
 import Html.Styled.Lazy as HtmlLazy
-import Pages.Sort.Model exposing (Model, SortType(..), sortTypeLength, sortTypeToString)
+import Pages.Sort.Model exposing (Model, SortType(..))
 import Pages.Sort.Update exposing (Msg(..))
 import Svg.Styled as Svg
 import Svg.Styled.Attributes as SvgAttrs
@@ -72,18 +72,21 @@ view model =
 
             else
                 model.currentStep
+
+        { sortInfo } =
+            model
     in
     div []
         [ div [ class "row" ]
             [ div [ class "col" ]
                 [ h1 []
-                    [ text <| sortTypeToString model.sortType ]
+                    [ text <| sortInfo.sortName ]
                 , h2 [] [ text <| String.fromInt model.listLength ++ " Elements" ]
                 , input
                     [ type_ "range"
                     , class "form-control-range"
                     , HtmlAttributes.min "1"
-                    , HtmlAttributes.max <| String.fromInt <| sortTypeLength model.sortType
+                    , HtmlAttributes.max <| String.fromInt <| sortInfo.maxLength
                     , step "1"
                     , onInput ChangeLength
                     , value <| String.fromInt model.listLength

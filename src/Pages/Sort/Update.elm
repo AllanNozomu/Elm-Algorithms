@@ -2,11 +2,7 @@ port module Pages.Sort.Update exposing (..)
 
 import Array exposing (Array)
 import Http
-import Pages.Sort.Algorithms.BubbleSort as BubbleSort
-import Pages.Sort.Algorithms.MergeSort as MergeSort
-import Pages.Sort.Algorithms.QuickSort as QuickSort
-import Pages.Sort.Algorithms.SelectionSort as SelectionSort
-import Pages.Sort.Model exposing (Model, SortType(..), initModel, sortTypeToCodeUrl)
+import Pages.Sort.Model exposing (Model, SortInfo, SortType(..), initModel)
 import Random
 import Random.List
 import Time
@@ -26,16 +22,19 @@ type Msg
 
 port beep : ( Int, Int ) -> Cmd msg
 
+
 port tooltip : () -> Cmd msg
+
 
 port highlight : () -> Cmd msg
 
-getSourceCode : Model -> Cmd Msg
-getSourceCode model =
-  Http.get
-    { url = sortTypeToCodeUrl model.sortType
-    , expect = Http.expectString GotText
-    }
+
+getSourceCode : SortInfo -> Cmd Msg
+getSourceCode sortInfo =
+    Http.get
+        { url = sortInfo.codeUrl
+        , expect = Http.expectString GotText
+        }
 
 
 shuffle : List comparable -> Int -> List comparable
@@ -45,22 +44,11 @@ shuffle l seed =
         |> Tuple.first
 
 
-getListParameters : Model -> List comparable -> ( Array (Array comparable), Array ( Int, Int ) )
+getListParameters : Model -> List Int -> ( Array (Array Int), Array ( Int, Int ) )
 getListParameters model l =
     let
         ( _, steps, leftRightSequence ) =
-            case model.sortType of
-                MergeSort ->
-                    MergeSort.mergeSortSteps l
-
-                SelectionSort ->
-                    SelectionSort.selectionSortSteps l
-
-                BubbleSort ->
-                    BubbleSort.bubbleSortSteps l
-
-                QuickSort ->
-                    QuickSort.quickSortSteps l
+            model.sortInfo.stepsFunction l
 
         stepsArray =
             List.map (\x -> Array.fromList x) steps |> Array.fromList
@@ -76,16 +64,20 @@ update msg model =
     case msg of
         Shuffle ->
             let
-                newListToBeSorted = shuffle model.listToBeSorted model.seed
+                newListToBeSorted =
+                    shuffle model.listToBeSorted model.seed
             in
-            ( { model | listToBeSorted = newListToBeSorted, index = 0, steps = Array.empty, pause=True }, Cmd.none)
+            ( { model | listToBeSorted = newListToBeSorted, index = 0, steps = Array.empty, pause = True }, Cmd.none )
 
         ChangeLength newLength ->
             let
-                newListLength = String.toInt newLength |> Maybe.withDefault 0
-                newListToBeSorted = shuffle (List.range 0 (newListLength - 1)) model.seed
+                newListLength =
+                    String.toInt newLength |> Maybe.withDefault 0
+
+                newListToBeSorted =
+                    shuffle (List.range 0 (newListLength - 1)) model.seed
             in
-            ({ model | listLength = newListLength, listToBeSorted = newListToBeSorted, index = 0, steps = Array.empty, pause=True }, Cmd.none)
+            ( { model | listLength = newListLength, listToBeSorted = newListToBeSorted, index = 0, steps = Array.empty, pause = True }, Cmd.none )
 
         Tick _ ->
             let
@@ -102,7 +94,7 @@ update msg model =
                 newModel =
                     updateIndex model model.index
             in
-                ( { newModel | pause = False }, Cmd.none )
+            ( { newModel | pause = False }, Cmd.none )
 
         Back ->
             let
@@ -119,19 +111,19 @@ update msg model =
             ( newModel, beep ( getSoundFreq newModel, 10 ) )
 
         GotText result ->
-            case result of 
+            case result of
                 Ok code ->
-                    ({model | code = code}, highlight())
+                    ( { model | code = code }, highlight () )
 
                 Err _ ->
-                    ({model | code = "Error"}, Cmd.none)
+                    ( { model | code = "Error" }, Cmd.none )
 
         NewSeedStart newSeed ->
             let
-                (newModel, cmd) = update Shuffle { model | seed = newSeed }
+                ( newModel, cmd ) =
+                    update Shuffle { model | seed = newSeed }
             in
-
-            (newModel, Cmd.batch [cmd, getSourceCode model, tooltip ()])
+            ( newModel, Cmd.batch [ cmd, getSourceCode model.sortInfo, tooltip () ] )
 
 
 getSoundFreq : Model -> Int

@@ -30,7 +30,7 @@ changeRouteTo url model =
             ( { model | currentModel = HomeModel }, Cmd.none )
 
         Just (SortAlgorithmsPage sortAlgorithmName) ->
-            ( { model | currentModel = SortAlgorithmsModel (SortModel.initModel (SortModel.stringToSortType sortAlgorithmName)) }
+            ( { model | currentModel = SortAlgorithmsModel (SortModel.initModel sortAlgorithmName) }
             , List.map (\s -> Cmd.map SortMsg s |> Cmd.map SubPageMsg) [ Random.generate SortUpdate.NewSeedStart (Random.int 1 1000000) ] |> Cmd.batch
             )
 

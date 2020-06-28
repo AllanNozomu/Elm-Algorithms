@@ -1,6 +1,7 @@
 module View exposing (view)
 
 import Browser
+import Dict
 import Css exposing (..)
 import Html.Styled as Html exposing (..)
 import Html.Styled.Attributes as HtmlAttributes exposing (class, css, disabled, id)
@@ -45,11 +46,8 @@ navbar : Url.Url -> Html Msg
 navbar url =
     let
         sortMethods =
-            List.map SortModel.sortTypeToString [ SortModel.MergeSort
-            , SortModel.SelectionSort
-            , SortModel.BubbleSort
-            , SortModel.QuickSort
-            ]
+            Dict.toList SortModel.sortInfos
+            |> List.map (\(_, {sortName}) -> sortName) 
     in
     nav [ class "navbar navbar-expand-lg navbar-dark bg-dark" ]
         [ a [ class "navbar-brand" ] [ text "Algorithms in Elm" ]
