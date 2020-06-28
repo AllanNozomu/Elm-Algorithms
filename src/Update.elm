@@ -2,6 +2,8 @@ module Update exposing (Msg(..), SubPageMsg(..), changeRouteTo, init, update)
 
 import Pages.Sort.Model as SortModel
 import Pages.Sort.Update as SortUpdate
+import Pages.Graph.Model as GraphModel
+import Pages.Graph.Update as GraphUpdate
 import Browser
 import Browser.Navigation as Nav
 import Model exposing (CurrentModel(..), Model)
@@ -17,6 +19,7 @@ type Msg
 
 type SubPageMsg
     = SortMsg SortUpdate.Msg
+    | GraphMsg GraphUpdate.Msg
 
 init : () -> Url.Url -> Nav.Key -> ( Model, Cmd Msg )
 init _ url key =
@@ -34,7 +37,12 @@ changeRouteTo url model =
             , List.map (\s -> Cmd.map SortMsg s |> Cmd.map SubPageMsg) [ Random.generate SortUpdate.NewSeedStart (Random.int 1 1000000) ] |> Cmd.batch
             )
 
-        _ ->
+        Just (GraphAlgorithmsPage graphAlgorithmName) ->
+            ( { model | currentModel = GraphAlgorithmModel GraphModel.initModel }
+            , List.map (\s -> Cmd.map GraphMsg s |> Cmd.map SubPageMsg) [] |> Cmd.batch
+            )
+
+        Nothing ->
             ( model, Cmd.none )
 
 
@@ -65,5 +73,12 @@ update msg model =
                     in
                     ( { model | currentModel = SortAlgorithmsModel newModel }, Cmd.map SubPageMsg (Cmd.map SortMsg subCmd) )
 
-                ( _, HomeModel ) ->
+                ( GraphMsg algortihmMsg, GraphAlgorithmModel subModel ) ->
+                    let
+                        ( newModel, subCmd ) =
+                            GraphUpdate.update algortihmMsg subModel
+                    in
+                    ( { model | currentModel = GraphAlgorithmModel newModel }, Cmd.map SubPageMsg (Cmd.map GraphMsg subCmd) )
+
+                ( _, _ ) ->
                     ( model, Cmd.none )

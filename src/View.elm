@@ -10,6 +10,8 @@ import Model exposing (CurrentModel(..), Model)
 import Pages.Home as Home
 import Pages.Sort.Model as SortModel
 import Pages.Sort.View as SortView
+import Pages.Graph.Model as GraphView
+import Pages.Graph.View as GraphView
 import Route exposing (Route(..), href)
 import Update exposing (Msg(..), SubPageMsg(..))
 import Url
@@ -24,6 +26,11 @@ view model =
                 SortAlgorithmsModel sortmodel ->
                     SortView.view sortmodel
                         |> Html.map SortMsg
+                        |> Html.map SubPageMsg
+
+                GraphAlgorithmModel graphModel ->
+                    GraphView.view graphModel
+                        |> Html.map GraphMsg
                         |> Html.map SubPageMsg
 
                 HomeModel ->
