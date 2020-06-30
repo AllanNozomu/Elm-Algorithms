@@ -64,8 +64,8 @@ generatePairs { width, height } =
             )
         |> List.concat
 
-generateMaze : Dimension -> Int -> Maze
-generateMaze dimension seedNumber =
+generatePath : Dimension -> Int -> Path
+generatePath dimension seedNumber =
     let
         { width, height } =
             dimension
@@ -73,17 +73,16 @@ generateMaze dimension seedNumber =
     in
     case ( width, height ) of
         ( 0, _ ) ->
-            Array.empty
+            []
 
         ( _, 0 ) ->
-            Array.empty
+            []
             
 
         _ ->
             Random.step (Random.List.shuffle (generatePairs dimension)) initialSeed
             |> Tuple.first
-            |> getPath dimension
-            |> pathToMaze dimension
+            |> getPathFromPairs dimension
 
 mazeToString : Maze -> String
 mazeToString maze =
@@ -156,46 +155,47 @@ pathToMaze dimension path =
     List.foldl (\edge acc -> setOccupied acc edge) initMaze path
 
 
-getPath : Dimension -> List Edge -> Path
-getPath dimension allEdges =
+getPathFromPairs : Dimension -> List Edge -> Path
+getPathFromPairs dimension allEdges =
     let
         { width, height } =
             dimension
     in
-    getPathAux dimension allEdges (Array.initialize (width * height) identity) []
+    getPathFromPairsAux dimension allEdges (Array.initialize (width * height) identity) []
 
-
-getPathAux : Dimension -> List Edge -> Array Int -> Path -> Path
-getPathAux dimension edges pivots acc =
+getPivotAndCompress : Int -> Array Int -> (Int, Array Int)
+getPivotAndCompress index arr =
     let
-        getPivot pos =
-            Array.get (pos.y * dimension.height + pos.x) pivots |> Maybe.withDefault 0
-
-        samePivot a b =
-            getPivot a == getPivot b
+        current =
+            Array.get index arr |> Maybe.withDefault 0
     in
+    if index == current then
+        (index, arr)
+    else
+        let
+            (res, newArr) = getPivotAndCompress current arr
+        in
+        (res, Array.set index res newArr)
+
+getPathFromPairsAux : Dimension -> List Edge -> Array Int -> Path -> Path
+getPathFromPairsAux dimension edges pivots acc =
     case edges of
         [] ->
             acc
 
         { from, to } :: r ->
-            if samePivot from to then
-                getPathAux dimension r pivots acc
+            let
+                fromIndex = from.y * dimension.width + from.x
+                toIndex = to.y * dimension.width + to.x
+                (pivotFrom, pivotsFrom) =
+                    getPivotAndCompress fromIndex pivots
+                (pivotTo, pivotsTo) =
+                    getPivotAndCompress toIndex pivotsFrom
 
+                newEdge =
+                    Edge from to
+            in
+            if pivotTo == pivotFrom then
+                getPathFromPairsAux dimension r pivots acc
             else
-                let
-                    newPivots =
-                        Array.map
-                            (\p ->
-                                if p == getPivot from then
-                                    getPivot to
-
-                                else
-                                    p
-                            )
-                            pivots
-
-                    newEdge =
-                        Edge from to
-                in
-                getPathAux dimension r newPivots (newEdge :: acc)
+                getPathFromPairsAux dimension r (Array.set pivotFrom pivotTo pivotsTo) (newEdge :: acc)
