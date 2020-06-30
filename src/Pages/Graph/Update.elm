@@ -1,4 +1,4 @@
-port module Pages.Graph.Update exposing (..)
+module Pages.Graph.Update exposing (..)
 
 import Array exposing (Array)
 import Http
@@ -10,16 +10,6 @@ import Time
 
 type Msg
     = None
-
-
-port beep : ( Int, Int ) -> Cmd msg
-
-
-port tooltip : () -> Cmd msg
-
-
-port highlight : () -> Cmd msg
-
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =

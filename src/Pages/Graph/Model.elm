@@ -1,13 +1,18 @@
 module Pages.Graph.Model exposing (Model, initModel)
 
-import Algorithms.Graphs.MazeGenerator exposing (Maze, Dimension, generateMaze)
+import Algorithms.Graphs.MazeGenerator exposing (Maze, Dimension, Path, generatePath, pathToMaze)
 
 
 type alias Model =
-    { maze : Maze}
+    { maze : Maze,
+    path : Path }
 
 initModel : Model
 initModel  =
+    let
+        dimension = Dimension 62 62
+    in
     { 
-        maze = generateMaze (Dimension 20 20) 1
+        path = generatePath dimension 1,
+        maze = generatePath dimension 1 |> pathToMaze dimension
     }

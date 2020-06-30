@@ -1,36 +1,75 @@
 module Pages.Graph.View exposing (view)
 
+import Algorithms.Graphs.MazeGenerator exposing (Tile(..), mazeToString)
 import Array
+import Canvas exposing (..)
+import Canvas.Settings exposing (..)
+import Color
 import Css exposing (..)
-import FeatherIcons
+import Html.Attributes
 import Html.Styled exposing (..)
 import Html.Styled.Attributes as HtmlAttributes exposing (attribute, class, css, max, min, step, type_, value)
 import Html.Styled.Events exposing (onClick, onInput)
-import Html.Styled.Keyed as HtmlKeyed
-import Html.Styled.Lazy as HtmlLazy
-import Algorithms.Graphs.MazeGenerator exposing (mazeToString, Tile(..))
 import Pages.Graph.Model exposing (Model)
 import Pages.Graph.Update exposing (Msg(..))
-import Svg.Styled as Svg
-import Svg.Styled.Attributes as SvgAttrs
-import Svg.Styled.Keyed as SvgKeyed
-import Svg.Styled.Lazy as SvgLazy
 import Utils.IconUtils exposing (toStyledHtml)
 
-drawLine lineIndex line = 
-    Array.indexedMap (\index x ->
-        case x of
-            Free -> Svg.rect [][] 
-            Occupied -> 
-                Svg.rect
-                    [ SvgAttrs.x <| String.fromInt <| (index * 16)
-                    , SvgAttrs.y <| String.fromInt (1024 - ((lineIndex + 1) * 16))
-                    , SvgAttrs.width "16"
-                    , SvgAttrs.height "16"
-                    , SvgAttrs.fill "black"
-                    ]
-                    []) line
-                    |> Array.toList
+
+whiteColorAttr =
+    Canvas.Settings.fill (Color.rgba 255 255 255 1)
+
+
+blackColortAttr =
+    Canvas.Settings.fill (Color.rgba 0 0 0 1)
+
+
+colorAttr tile =
+    case tile of
+        Free ->
+            whiteColorAttr
+
+        Occupied ->
+            blackColortAttr
+
+
+drawLine lineIndex line =
+    Array.indexedMap
+        (\index tile ->
+            shapes [ colorAttr tile ]
+                [ rect ( toFloat index * 16, toFloat lineIndex * 16 ) 16 16 ]
+        )
+        line
+        |> Array.toList
+
+
+drawMazeFromListEdges =
+    List.map
+        (\{ from, to } ->
+            let
+                x =
+                    Basics.min from.x to.x |> (+) 1 |>  toFloat
+
+                y =
+                    Basics.min from.y to.y |> (+) 1 |> toFloat
+
+                width =
+                    if from.x == to.x then
+                        14 
+
+                    else
+                        14 * 2 + 2
+
+                height =
+                    if from.x == to.x then
+                        14 * 2 + 2
+
+                    else
+                        14 
+            in
+            shapes [ whiteColorAttr ]
+                [ rect ( x * 16, y * 16 ) width height ]
+        )
+
 
 view : Model -> Html Msg
 view model =
@@ -38,8 +77,7 @@ view model =
         [ div [ class "row" ]
             [ div [ class "col" ]
                 [ h1 []
-                    [ text <| "Maze" ]
-    
+                    [ Html.Styled.text <| "Maze" ]
                 , div
                     [ css
                         [ displayFlex
@@ -49,13 +87,15 @@ view model =
                         , width (pct 100)
                         ]
                     ]
-                    [
-                        Svg.svg
-                        [ SvgAttrs.width "100%"
-                        , SvgAttrs.height "100%"
-                        , SvgAttrs.viewBox "0 0 1024 1024"
-                        ]
-                        (Array.indexedMap drawLine model.maze |> Array.toList |> List.concat)
+                    [ Html.Styled.fromUnstyled <|
+                        Canvas.toHtml ( 1024, 1024 )
+                            [ Html.Attributes.style "border" "1px solid black" ]
+                            (shapes [ blackColortAttr ]
+                                [ rect ( 0, 0 ) 1024 1024 ] 
+                                :: drawMazeFromListEdges model.path
+                            )
+
+                    -- (Array.indexedMap drawLine model.maze |> Array.toList |> List.concat)
                     ]
                 ]
             ]
