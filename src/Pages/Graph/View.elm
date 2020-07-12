@@ -32,18 +32,14 @@ colorAttr tile =
             blackColortAttr
 
 
-drawLine lineIndex line =
-    Array.indexedMap
-        (\index tile ->
-            shapes [ colorAttr tile ]
-                [ rect ( toFloat index * 16, toFloat lineIndex * 16 ) 16 16 ]
-        )
-        line
-        |> Array.toList
-
-
-drawMazeFromListEdges =
-    List.map
+drawMazeFromListEdges edgeLen path =
+    let
+        cellLen = List.length path |> Basics.toFloat |> Basics.sqrt
+        edgeSize = edgeLen / (cellLen + 2) |> Basics.round |> Basics.toFloat
+    in
+    shapes [ blackColortAttr ]
+    [ rect (0, 0) (edgeSize * (cellLen + 2)) (edgeSize * (cellLen + 2)) ]
+    :: List.map
         (\{ from, to } ->
             let
                 x =
@@ -54,21 +50,21 @@ drawMazeFromListEdges =
 
                 width =
                     if from.x == to.x then
-                        14 
+                        edgeSize - 2
 
                     else
-                        14 * 2 + 2
+                        (edgeSize - 2) * 2 + 2
 
                 height =
                     if from.x == to.x then
-                        14 * 2 + 2
+                        (edgeSize - 2) * 2 + 2
 
                     else
-                        14 
+                        edgeSize - 2
             in
             shapes [ whiteColorAttr ]
-                [ rect ( x * 16, y * 16 ) width height ]
-        )
+                [ rect ( x * edgeSize, y * edgeSize ) width height ]
+        ) path
 
 
 view : Model -> Html Msg
@@ -86,16 +82,15 @@ view model =
                         , margin (px 5)
                         , width (pct 100)
                         ]
+                        ,HtmlAttributes.id "canvaAnimation"
                     ]
                     [ Html.Styled.fromUnstyled <|
-                        Canvas.toHtml ( 1024, 1024 )
-                            [ Html.Attributes.style "border" "1px solid black" ]
-                            (shapes [ blackColortAttr ]
-                                [ rect ( 0, 0 ) 1024 1024 ] 
-                                :: drawMazeFromListEdges model.path
+                        Canvas.toHtml ( Basics.floor model.edgeLen, Basics.floor  model.edgeLen )
+                            [ ]
+                            (shapes [ ]
+                                [] 
+                                :: drawMazeFromListEdges model.edgeLen model.path
                             )
-
-                    -- (Array.indexedMap drawLine model.maze |> Array.toList |> List.concat)
                     ]
                 ]
             ]

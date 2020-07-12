@@ -1,4 +1,4 @@
-module Update exposing (Msg(..), SubPageMsg(..), changeRouteTo, init, update)
+port module Update exposing (Msg(..), SubPageMsg(..), changeRouteTo, init, update)
 
 import Pages.Sort.Model as SortModel
 import Pages.Sort.Update as SortUpdate
@@ -11,6 +11,7 @@ import Random
 import Route exposing (Route(..))
 import Url
 
+port getCanvasWidth : () -> Cmd msg
 
 type Msg
     = LinkClicked Browser.UrlRequest
@@ -34,12 +35,16 @@ changeRouteTo url model =
 
         Just (SortAlgorithmsPage sortAlgorithmName) ->
             ( { model | currentModel = SortAlgorithmsModel (SortModel.initModel sortAlgorithmName) }
-            , List.map (\s -> Cmd.map SortMsg s |> Cmd.map SubPageMsg) [ Random.generate SortUpdate.NewSeedStart (Random.int 1 1000000) ] |> Cmd.batch
+            , List.map (\s -> Cmd.map SortMsg s |> Cmd.map SubPageMsg) [ Random.generate SortUpdate.NewSeedStart (Random.int 1 1000000)] 
+            ++ [getCanvasWidth ()]
+            |> Cmd.batch
             )
 
         Just (GraphAlgorithmsPage graphAlgorithmName) ->
             ( { model | currentModel = GraphAlgorithmModel GraphModel.initModel }
-            , List.map (\s -> Cmd.map GraphMsg s |> Cmd.map SubPageMsg) [] |> Cmd.batch
+            , List.map (\s -> Cmd.map GraphMsg s |> Cmd.map SubPageMsg) [] 
+            ++ [getCanvasWidth ()] 
+            |> Cmd.batch
             )
 
         Nothing ->

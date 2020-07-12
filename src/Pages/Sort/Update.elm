@@ -29,8 +29,6 @@ port tooltip : () -> Cmd msg
 
 port highlight : () -> Cmd msg
 
-port getCanvasWidth : () -> Cmd msg
-
 
 getSourceCode : SortInfo -> Cmd Msg
 getSourceCode sortInfo =
@@ -129,7 +127,7 @@ update msg model =
                 ( newModel, cmd ) =
                     update Shuffle { model | seed = newSeed }
             in
-            ( newModel, Cmd.batch [ cmd, getSourceCode model.sortInfo, tooltip (), getCanvasWidth () ] )
+            ( newModel, Cmd.batch [ cmd, getSourceCode model.sortInfo, tooltip ()] )
 
 
 getSoundFreq : Model -> Int
