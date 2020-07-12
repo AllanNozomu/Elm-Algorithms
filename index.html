@@ -30,18 +30,26 @@
         node: document.getElementById("elm-node")
       })
 
-      a=new AudioContext() // browsers limit the number of concurrent audio contexts, so you better re-use'em
+      let audioContext = null;
+      try { 
+        audioContext = new AudioContext() // browsers limit the number of concurrent audio contexts, so you better re-use'em
+      } catch (Exception) {
+
+      }
 
       function beep(freq, duration){
-        v=a.createOscillator()
-        u=a.createGain()
+        if (audioContext == null)
+          return;
+
+        v=audioContext.createOscillator()
+        u=audioContext.createGain()
         v.connect(u)
         v.frequency.value=freq
         v.type="square"
-        u.connect(a.destination)
         u.gain.value=0.02
-        v.start(a.currentTime)
-        v.stop(a.currentTime+duration*0.001)
+        u.connect(audioContext.destination)
+        v.start(audioContext.currentTime)
+        v.stop(audioContext.currentTime+duration*0.001)
       }
 
       
