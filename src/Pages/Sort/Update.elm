@@ -38,11 +38,9 @@ getSourceCode sortInfo =
         }
 
 
-shuffle : List comparable -> Int -> List comparable
+shuffle : List comparable -> Random.Seed -> (List comparable, Random.Seed)
 shuffle l seed =
-    Random.initialSeed seed
-        |> Random.step (Random.List.shuffle l)
-        |> Tuple.first
+    Random.step (Random.List.shuffle l) seed
 
 
 getListParameters : Model -> List Int -> ( Array (Array Int), Array ( Int, Int ) )
@@ -65,18 +63,18 @@ update msg model =
     case msg of
         Shuffle ->
             let
-                newListToBeSorted =
+                (newListToBeSorted, newSeed) =
                     shuffle model.listToBeSorted model.seed
             in
-            ( { model | listToBeSorted = newListToBeSorted, index = 0, steps = Array.empty, pause = True }, Cmd.none )
+            ( { model | listToBeSorted = newListToBeSorted, index = 0, steps = Array.empty, pause = True, seed = newSeed }, Cmd.none )
 
         ChangeLength newLength ->
             let
                 newListLength =
                     String.toInt newLength |> Maybe.withDefault 0
 
-                newListToBeSorted =
-                    shuffle (List.range 0 (newListLength - 1)) model.seed
+                (newListToBeSorted, newSeed) =
+                    shuffle model.listToBeSorted model.seed
             in
             ( { model | listLength = newListLength, listToBeSorted = newListToBeSorted, index = 0, steps = Array.empty, pause = True }, Cmd.none )
 
@@ -125,7 +123,7 @@ update msg model =
         NewSeedStart newSeed ->
             let
                 ( newModel, cmd ) =
-                    update Shuffle { model | seed = newSeed }
+                    update Shuffle { model | seed = Random.initialSeed newSeed }
             in
             ( newModel, Cmd.batch [ cmd, getSourceCode model.sortInfo, tooltip ()] )
 

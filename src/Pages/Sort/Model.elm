@@ -6,10 +6,10 @@ import Pages.Sort.Algorithms.BubbleSort exposing (bubbleSortSteps)
 import Pages.Sort.Algorithms.MergeSort exposing (mergeSortSteps)
 import Pages.Sort.Algorithms.QuickSort exposing (quickSortSteps)
 import Pages.Sort.Algorithms.SelectionSort exposing (selectionSortSteps)
-
+import Random
 
 type alias Model =
-    { seed : Int
+    { seed : Random.Seed
     , listToBeSorted : List Int
     , orderedList : Array Int
     , steps : Array (Array Int)
@@ -56,7 +56,7 @@ initModel sortType =
         sortInfo =
             getSortInfo sortType
     in
-    { seed = 0
+    { seed = Random.initialSeed 1
     , listToBeSorted = List.range 0 (sortInfo.maxLength - 1)
     , steps = Array.empty
     , currentStep = Array.empty
