@@ -32,14 +32,14 @@ getColor i bh l r =
     else
         Canvas.Settings.fill (Color.rgb 0 0 0)
 
-drawRects listToBeSorted left right =
+drawRects listToBeSorted left right width =
     let
         qty = List.length listToBeSorted |> Basics.toFloat
         h =
-            256 / qty
+            512 / qty
 
         w =
-            512 / qty
+            width / qty
 
     in
     List.indexedMap(\index barHeight ->
@@ -48,7 +48,7 @@ drawRects listToBeSorted left right =
             floatIndex = Basics.toFloat index
         in
         shapes [getColor index barHeight left right][
-            rect (floatIndex * w, 256 - (floatBarHeight + 1) * h) w ((floatBarHeight + 1) * h)
+            rect (floatIndex * w, 512 - (floatBarHeight + 1) * h) w ((floatBarHeight + 1) * h)
         ]
     ) listToBeSorted
 
@@ -91,7 +91,7 @@ view model =
                     ]
                     []
                 , h2 []
-                    [ Html.text <| String.fromInt model.index ++ " Steps "
+                    [ Html.text <| String.fromFloat model.width ++ " Steps "
                     , span
                         [ attribute "data-toggle" "tooltip"
                         , attribute "data-placement" "right"
@@ -109,14 +109,14 @@ view model =
                         , margin (px 5)
                         , width (pct 100)
                         ],
-                        HtmlAttributes.id "teste"
+                        HtmlAttributes.id "canvaAnimation"
                     ]
                     [ Html.fromUnstyled <|
-                        Canvas.toHtml ( 512, 256 )
+                        Canvas.toHtml ( Basics.round model.width, 512 )
                             []
                             (shapes [ whiteColorAttr ]
-                                [ rect ( 0, 0 ) 512 256 ] ::
-                                drawRects currentStep model.currentLeft model.currentRight
+                                [ rect ( 0, 0 ) model.width 512 ] ::
+                                drawRects currentStep model.currentLeft model.currentRight model.width
                             )
                     ]
                 ]

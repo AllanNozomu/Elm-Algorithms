@@ -22,6 +22,7 @@ type alias Model =
     , pause : Basics.Bool
     , sortInfo : SortInfo
     , code : String
+    , width : Float
     }
 
 
@@ -68,6 +69,7 @@ initModel sortType =
     , pause = True
     , sortInfo = sortInfo
     , code = ""
+    , width = 255
     }
 
 

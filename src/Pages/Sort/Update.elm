@@ -18,6 +18,7 @@ type Msg
     | Tick Time.Posix
     | NewSeedStart Int
     | GotText (Result Http.Error String)
+    | CanvasWidthReceiver Float
 
 
 port beep : ( Int, Int ) -> Cmd msg
@@ -27,6 +28,8 @@ port tooltip : () -> Cmd msg
 
 
 port highlight : () -> Cmd msg
+
+port getCanvasWidth : () -> Cmd msg
 
 
 getSourceCode : SortInfo -> Cmd Msg
@@ -110,6 +113,9 @@ update msg model =
             in
             ( newModel, beep ( getSoundFreq newModel, 10 ) )
 
+        CanvasWidthReceiver newWidth ->
+            ({model | width = newWidth}, Cmd.none)
+
         GotText result ->
             case result of
                 Ok code ->
@@ -123,7 +129,7 @@ update msg model =
                 ( newModel, cmd ) =
                     update Shuffle { model | seed = newSeed }
             in
-            ( newModel, Cmd.batch [ cmd, getSourceCode model.sortInfo, tooltip () ] )
+            ( newModel, Cmd.batch [ cmd, getSourceCode model.sortInfo, tooltip (), getCanvasWidth () ] )
 
 
 getSoundFreq : Model -> Int

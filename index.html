@@ -52,7 +52,22 @@
         v.stop(audioContext.currentTime+duration*0.001)
       }
 
-      
+      app.ports.beep.subscribe(function(a) {
+        beep(a[0], a[1])
+      });
+
+      app.ports.getCanvasWidth.subscribe(function () {
+        width = $("#canvaAnimation").width();
+        if (width)
+          app.ports.getCanvasWidthReceiver.send(width);
+      })
+
+      window.addEventListener('resize', function(event){
+        width = $("#canvaAnimation").width();
+        if (width)
+          app.ports.getCanvasWidthReceiver.send(width);
+      });
+
       app.ports.highlight.subscribe(function() {
         requestAnimationFrame(function () {
           document.querySelectorAll('pre code').forEach((block) => {
@@ -61,9 +76,7 @@
         });
       });
 
-      app.ports.beep.subscribe(function(a) {
-        beep(a[0], a[1])
-      });
+      
 
       app.ports.tooltip.subscribe(function() {
         requestAnimationFrame(function () {
