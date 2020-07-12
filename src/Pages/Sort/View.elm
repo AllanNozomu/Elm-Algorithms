@@ -91,7 +91,7 @@ view model =
                     ]
                     []
                 , h2 []
-                    [ Html.text <| String.fromFloat model.width ++ " Steps "
+                    [ Html.text <| String.fromInt (Array.length model.steps) ++ " Steps "
                     , span
                         [ attribute "data-toggle" "tooltip"
                         , attribute "data-placement" "right"
