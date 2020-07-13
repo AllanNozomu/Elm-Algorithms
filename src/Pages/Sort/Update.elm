@@ -74,9 +74,9 @@ update msg model =
                     String.toInt newLength |> Maybe.withDefault 0
 
                 (newListToBeSorted, newSeed) =
-                    shuffle model.listToBeSorted model.seed
+                    shuffle (List.range 0 (newListLength - 1)) model.seed
             in
-            ( { model | listLength = newListLength, listToBeSorted = newListToBeSorted, index = 0, steps = Array.empty, pause = True }, Cmd.none )
+            ( { model | listLength = newListLength, listToBeSorted = newListToBeSorted, index = 0, steps = Array.empty, pause = True, seed = newSeed }, Cmd.none )
 
         Tick _ ->
             let
