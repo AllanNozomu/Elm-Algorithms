@@ -1,6 +1,7 @@
 module Algorithms.Graphs.MazeGenerator exposing (..)
 
 import Array exposing (Array)
+import Dict exposing (Dict)
 import Random
 import Random.List
 
@@ -34,6 +35,48 @@ type alias Edge =
 type alias Path =
     List Edge
 
+pathToEdgesPerNode : Path -> Dict (Int, Int) (List Position)
+pathToEdgesPerNode path = 
+    let
+        completePath = path ++ List.map (\{from, to} -> {from = to, to = from}) path
+    in
+        List.foldr (\{from, to} acc -> 
+            let
+                edges = to :: (Maybe.withDefault [] <| Dict.get (from.y, from.x) acc)
+            in
+            (
+                Dict.insert (from.y, from.x) edges acc
+            )
+        ) Dict.empty completePath
+
+dfs : Position -> Position -> Dict (Int, Int) (List Position) -> Path
+dfs f t e =
+    let
+        dfsAux from to edges visited =
+            if from == to then
+                ([to],[])
+            else if Maybe.withDefault False (Dict.get (from.y, from.x) visited) then
+                ([],[])
+            else 
+                let
+                    new_visited = Dict.insert (from.y, from.x) True visited
+                    results = Maybe.withDefault [] (Dict.get (from.y, from.x) edges)
+                        |> List.map (\neighbour -> dfsAux neighbour to edges new_visited)
+                        |> List.filter (\(l,m) -> not <| List.isEmpty l)
+                in
+                case results of
+                    [] -> ([],[])
+                    (a,b) :: _ -> (from :: a,[])
+    in
+    dfsAux f t e Dict.empty 
+    |> Tuple.first
+    |> List.foldl (\curr (prev, acc) ->
+        case prev of
+            Nothing -> (Just curr, acc)
+            Just p -> (Just curr, Edge p curr :: acc)
+        ) 
+        (Maybe.Nothing, [])
+    |> Tuple.second
 
 generatePairs : Dimension -> List Edge
 generatePairs { width, height } =
