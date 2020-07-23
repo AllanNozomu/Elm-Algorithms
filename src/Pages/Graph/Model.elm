@@ -1,12 +1,13 @@
 module Pages.Graph.Model exposing (Model, initModel)
 
-import Algorithms.Graphs.MazeGenerator exposing (Dimension, Maze, Path, generatePath, pathToMaze)
-
+import Algorithms.Graphs.MazeGenerator exposing (Dimension, Maze, Path, Position, generatePath, pathToMaze, pathToEdgesPerNode, dfs)
+import Dict
 
 type alias Model =
     { maze : Maze
     , path : Path
     , edgeLen : Float
+    , beginEndPath : Path
     }
 
 
@@ -15,8 +16,12 @@ initModel =
     let
         dimension =
             Dimension 62 62
+        path = 
+            generatePath dimension 272
+        beginEndPath = dfs (Position 0 0) (Position 61 61) (pathToEdgesPerNode path)
     in
-    { path = generatePath dimension 1
-    , maze = generatePath dimension 1 |> pathToMaze dimension
+    { path = path
+    , maze = path |> pathToMaze dimension
     , edgeLen = 512
+    ,beginEndPath = beginEndPath
     }

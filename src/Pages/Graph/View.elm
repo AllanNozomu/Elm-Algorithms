@@ -16,11 +16,13 @@ import Utils.IconUtils exposing (toStyledHtml)
 
 
 whiteColorAttr =
-    Canvas.Settings.fill (Color.rgba 255 255 255 1)
+    Canvas.Settings.fill (Color.rgb 1 1 1 )
 
+blueCollorAttr =
+    Canvas.Settings.fill (Color.rgb 0 0 1 )
 
 blackColortAttr =
-    Canvas.Settings.fill (Color.rgba 0 0 0 1)
+    Canvas.Settings.fill (Color.rgb 0 0 0 )
 
 
 colorAttr tile =
@@ -31,14 +33,12 @@ colorAttr tile =
         Occupied ->
             blackColortAttr
 
+calcCellLen path =
+    List.length path |> Basics.toFloat |> Basics.sqrt
 
-drawMazeFromListEdges edgeLen path =
-    let
-        cellLen = List.length path |> Basics.toFloat |> Basics.sqrt
-        edgeSize = edgeLen / (cellLen + 2) |> Basics.round |> Basics.toFloat
-    in
-    shapes [ blackColortAttr ]
-    [ rect (0, 0) (edgeSize * (cellLen + 2)) (edgeSize * (cellLen + 2)) ]
+drawMazeFromListEdges edgeSize path beginEnd =
+    shapes [  ]
+    [  ]
     :: List.map
         (\{ from, to } ->
             let
@@ -48,27 +48,36 @@ drawMazeFromListEdges edgeLen path =
                 y =
                     Basics.min from.y to.y |> (+) 1 |> toFloat
 
-                width =
-                    if from.x == to.x then
-                        edgeSize - 2
+                middle = edgeSize / 2
 
+                (width, height) =
+                    if beginEnd then
+                        if from.x == to.x then
+                            (2, edgeSize + 1)
+
+                        else
+                            (edgeSize + 1 , 2)
                     else
-                        (edgeSize - 2) * 2 + 2
+                        if from.x == to.x then
+                            (edgeSize - 2, (edgeSize - 2) * 2 + 2)
 
-                height =
-                    if from.x == to.x then
-                        (edgeSize - 2) * 2 + 2
-
-                    else
-                        edgeSize - 2
+                        else
+                            ((edgeSize - 2) * 2 + 2, edgeSize - 2)
+                        
             in
-            shapes [ whiteColorAttr ]
-                [ rect ( x * edgeSize, y * edgeSize ) width height ]
+            shapes [ if beginEnd then blueCollorAttr else whiteColorAttr  ]
+                [ rect ( x * edgeSize + (if beginEnd then middle - 1 else 0), y * edgeSize + (if beginEnd then middle - 1 else 0)) width height ]
         ) path
 
 
 view : Model -> Html Msg
 view model =
+    let
+        cellLen = List.length model.path |> Basics.toFloat |> Basics.sqrt
+        edgeSize = model.edgeLen / (cellLen + 2) |> Basics.floor |> Basics.toFloat
+
+        canvaLen = edgeSize * (cellLen + 2)
+    in
     div []
         [ div [ class "row" ]
             [ div [ class "col" ]
@@ -87,9 +96,12 @@ view model =
                     [ Html.Styled.fromUnstyled <|
                         Canvas.toHtml ( Basics.floor model.edgeLen, Basics.floor  model.edgeLen )
                             [ ]
-                            (shapes [ ]
-                                [] 
-                                :: drawMazeFromListEdges model.edgeLen model.path
+                            
+                            (shapes [ blackColortAttr ]
+                                
+                                [ rect (0, 0) canvaLen canvaLen ] 
+                                :: drawMazeFromListEdges edgeSize model.path False
+                                ++ drawMazeFromListEdges edgeSize model.beginEndPath True
                             )
                     ]
                 ]
