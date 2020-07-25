@@ -2,8 +2,6 @@ module Pages.Graph.View exposing (view)
 
 import Algorithms.Graphs.MazeGenerator exposing (Tile(..), mazeToString)
 import Array
-import Canvas exposing (..)
-import Canvas.Settings exposing (..)
 import Color
 import Css exposing (..)
 import Html.Attributes
@@ -12,43 +10,36 @@ import Html.Styled.Attributes as HtmlAttributes exposing (attribute, class, css,
 import Html.Styled.Events exposing (onClick, onInput)
 import Pages.Graph.Model exposing (Model)
 import Pages.Graph.Update exposing (Msg(..))
+import Svg.Styled as Svg
+import Svg.Styled.Attributes as SvgAttrs
+import Svg.Styled.Keyed as SvgKeyed
+import Svg.Styled.Lazy as SvgLazy
 import Utils.IconUtils exposing (toStyledHtml)
 
+edgeSize = 16
+
+svgSize = "512"
 
 whiteColorAttr =
-    Canvas.Settings.fill (Color.rgb 1 1 1 )
+    SvgAttrs.fill "white"
 
 blueCollorAttr =
-    Canvas.Settings.fill (Color.rgb 0 0 1 )
+    SvgAttrs.fill "blue"
 
 blackColortAttr =
-    Canvas.Settings.fill (Color.rgb 0 0 0 )
+    SvgAttrs.fill "black"
 
-
-colorAttr tile =
-    case tile of
-        Free ->
-            whiteColorAttr
-
-        Occupied ->
-            blackColortAttr
-
-calcCellLen path =
-    List.length path |> Basics.toFloat |> Basics.sqrt
-
-drawMazeFromListEdges edgeSize path beginEnd =
-    shapes [  ]
-    [  ]
-    :: List.map
-        (\{ from, to } ->
+drawMazeFromListEdges path beginEnd =
+    let
+        drawRect from to = 
             let
                 x =
-                    Basics.min from.x to.x |> (+) 1 |>  toFloat
+                    Basics.min from.x to.x + 1
 
                 y =
-                    Basics.min from.y to.y |> (+) 1 |> toFloat
+                    Basics.min from.y to.y + 1
 
-                middle = edgeSize / 2
+                middle = edgeSize // 2
 
                 (width, height) =
                     if beginEnd then
@@ -63,46 +54,55 @@ drawMazeFromListEdges edgeSize path beginEnd =
 
                         else
                             ((edgeSize - 2) * 2 + 2, edgeSize - 2)
-                        
-            in
-            shapes [ if beginEnd then blueCollorAttr else whiteColorAttr  ]
-                [ rect ( x * edgeSize + (if beginEnd then middle - 1 else 0), y * edgeSize + (if beginEnd then middle - 1 else 0)) width height ]
+            in 
+            Svg.rect [
+                SvgAttrs.x  <| String.fromInt (x * edgeSize + (if beginEnd then middle - 1 else 0)),
+                SvgAttrs.y  <| String.fromInt (y * edgeSize + (if beginEnd then middle - 1 else 0)),
+                SvgAttrs.width <| String.fromFloat width,
+                SvgAttrs.height <| String.fromFloat height,
+                if beginEnd then blueCollorAttr else whiteColorAttr
+                ]
+            []
+    in
+    Svg.svg [
+        SvgAttrs.width svgSize,
+        SvgAttrs.height svgSize
+    ]
+    (List.map
+        (\{ from, to } ->
+            drawRect from to
         ) path
-
+    )
 
 view : Model -> Html Msg
 view model =
-    let
-        cellLen = List.length model.path |> Basics.toFloat |> Basics.sqrt
-        edgeSize = model.edgeLen / (cellLen + 2) |> Basics.floor |> Basics.toFloat
-
-        canvaLen = edgeSize * (cellLen + 2)
-    in
     div []
         [ div [ class "row" ]
             [ div [ class "col" ]
                 [ h1 []
-                    [ Html.Styled.text <| "Maze" ]
+                    [ Html.Styled.text <| "Maze" ++ String.fromInt model.index ]
                 , div
                     [ css
                         [ displayFlex
                         , alignItems center
                         , justifyContent center
-                        , margin (px 5)
-                        , width (pct 100)
+                        , width (pct 50)
                         ]
                         ,HtmlAttributes.id "canvaAnimation"
                     ]
-                    [ Html.Styled.fromUnstyled <|
-                        Canvas.toHtml ( Basics.floor model.edgeLen, Basics.floor  model.edgeLen )
-                            [ ]
-                            
-                            (shapes [ blackColortAttr ]
-                                
-                                [ rect (0, 0) canvaLen canvaLen ] 
-                                :: drawMazeFromListEdges edgeSize model.path False
-                                ++ drawMazeFromListEdges edgeSize model.beginEndPath True
-                            )
+                    [ Svg.svg
+                        [ SvgAttrs.width "100%"
+                        , SvgAttrs.height "100%"
+                        , SvgAttrs.viewBox "0 0 512 512"
+                        ]
+                        [   Svg.rect [
+                                SvgAttrs.width svgSize,
+                                SvgAttrs.height svgSize
+                            ][],
+                            -- drawMazeFromListEdges model.path False,
+                            -- drawMazeFromListEdges (Array.toList (Array.slice 0 model.index model.allSteps)) True
+                            drawMazeFromListEdges model.allSteps False
+                        ]
                     ]
                 ]
             ]

@@ -49,34 +49,50 @@ pathToEdgesPerNode path =
             )
         ) Dict.empty completePath
 
-dfs : Position -> Position -> Dict (Int, Int) (List Position) -> Path
-dfs f t e =
-    let
-        dfsAux from to edges visited =
-            if from == to then
-                ([to],[])
-            else if Maybe.withDefault False (Dict.get (from.y, from.x) visited) then
-                ([],[])
-            else 
-                let
-                    new_visited = Dict.insert (from.y, from.x) True visited
-                    results = Maybe.withDefault [] (Dict.get (from.y, from.x) edges)
-                        |> List.map (\neighbour -> dfsAux neighbour to edges new_visited)
-                        |> List.filter (\(l,m) -> not <| List.isEmpty l)
-                in
-                case results of
-                    [] -> ([],[])
-                    (a,b) :: _ -> (from :: a,[])
-    in
-    dfsAux f t e Dict.empty 
-    |> Tuple.first
-    |> List.foldl (\curr (prev, acc) ->
+listPositionToPath : (List Position) -> Path
+listPositionToPath l =
+    List.foldl (\curr (prev, acc) ->
         case prev of
             Nothing -> (Just curr, acc)
             Just p -> (Just curr, Edge p curr :: acc)
         ) 
-        (Maybe.Nothing, [])
+    (Maybe.Nothing, []) l
     |> Tuple.second
+
+dfs : Position -> Position -> Dict (Int, Int) (List Position) -> (Path, Path)
+dfs f t e =
+    let
+        dfsAux from to edges visited =
+            if from == to then
+                ([to],[to])
+            else if Maybe.withDefault False (Dict.get (from.y, from.x) visited) then
+                ([],[from])
+            else 
+                let
+                    new_visited = Dict.insert (from.y, from.x) True visited
+                    (results, allpaths) = Maybe.withDefault [] (Dict.get (from.y, from.x) edges)
+                        |> List.foldl (\neighbour (accRes, accPaths) -> 
+                            let 
+                                (res, paths) = dfsAux neighbour to edges new_visited
+                            in
+                            if List.isEmpty accRes then
+                                if List.isEmpty res then
+                                    ([], (paths ++ [from]) :: accPaths)
+                                else 
+                                    (res, (paths ++ [from]) :: accPaths)
+                            else
+                                (accRes, accPaths)
+                        ) ([],[])
+                        |> Tuple.mapSecond 
+                            List.concat
+                in
+                case results of
+                    [] -> ([], from :: allpaths)
+                    a -> (from :: a, from :: allpaths)
+    in
+    dfsAux f t e Dict.empty 
+    |> Tuple.mapBoth listPositionToPath listPositionToPath
+    
 
 generatePairs : Dimension -> List Edge
 generatePairs { width, height } =
