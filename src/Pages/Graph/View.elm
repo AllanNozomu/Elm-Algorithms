@@ -80,7 +80,7 @@ view model =
         [ div [ class "row" ]
             [ div [ class "col" ]
                 [ h1 []
-                    [ Html.Styled.text <| "Maze" ++ String.fromInt model.index ]
+                    [ Html.Styled.text <| "Maze" ++ (String.fromInt <| List.length model.toDrawPath) ]
                 , div
                     [ css
                         [ displayFlex
@@ -101,7 +101,7 @@ view model =
                             ][],
                             -- drawMazeFromListEdges model.path False,
                             -- drawMazeFromListEdges (Array.toList (Array.slice 0 model.index model.allSteps)) True
-                            drawMazeFromListEdges model.allSteps False
+                            drawMazeFromListEdges model.drawedSteps False
                         ]
                     ]
                 ]

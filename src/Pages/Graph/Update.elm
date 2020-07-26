@@ -16,10 +16,10 @@ update msg model =
 
         Tick _ -> 
             let
-                (newAllsteps, newPath) = 
-                    case model.path of
-                    [] -> (model.allSteps, model.path)
-                    a :: r -> (model.allSteps ++ [a], r)
+                (newDrawedSteps, newToDrawPath) = 
+                    case model.toDrawPath of
+                    [] -> (model.drawedSteps, model.toDrawPath)
+                    a :: r -> (model.drawedSteps ++ [a], r)
             in
-            ({model | index = model.index + 1, allSteps = newAllsteps, path = newPath}, Cmd.none)
+            ({model | index = model.index + 1, drawedSteps = newDrawedSteps, toDrawPath = newToDrawPath}, Cmd.none)
         _ -> (model, Cmd.none) 
