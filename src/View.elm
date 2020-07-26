@@ -75,6 +75,20 @@ navbar url =
                             sortMethods
                         )
                     ]
+                ,li [ class "nav-item dropdown" ]
+                    [ a
+                        [ class "nav-link dropdown-toggle"
+                        , HtmlAttributes.href <| "#" ++ Maybe.withDefault "" url.fragment
+                        , attribute "data-toggle" "dropdown"
+                        , attribute "aria-haspopup" "true"
+                        , attribute "aria-expanded" "false"
+                        ]
+                        [ text "Graph Algorithms" ]
+                    , div [ class "dropdown-menu" ]
+                        [   
+                            a [ class "dropdown-item", href (Route.GraphAlgorithmsPage "x") ] [ text "Maze generator" ]
+                        ]
+                    ]
                 , li [ class "nav-item" ]
                     [ a [ class "nav-link disabled" ]
                         [ text "Under construction" ]
