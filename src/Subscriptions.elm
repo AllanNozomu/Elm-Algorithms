@@ -5,6 +5,8 @@ import Pages.Graph.Subscriptions as GraphAlgorithms
 import Pages.Graph.Update as GraphAlgorithmsUpdate
 import Pages.Sort.Subscriptions as SortAlgorithms
 import Pages.Sort.Update as SortAlgorithmsUpdate
+import Pages.Maze.Subscriptions as MazeAlgorithms
+import Pages.Maze.Update as MazeAlgorithmsUpdate
 import Update exposing (Msg(..), SubPageMsg(..))
 
 
@@ -27,6 +29,14 @@ subscriptions model =
                 GraphAlgorithmsUpdate.CanvasWidthReceiver
             ]
                 |> List.map (\s -> Sub.map GraphMsg s |> Sub.map SubPageMsg)
+                |> Sub.batch
+
+        MazeAlgorithmModel subModel ->
+            [ MazeAlgorithms.subscriptions subModel
+            , getCanvasWidthReceiver
+                MazeAlgorithmsUpdate.CanvasWidthReceiver
+            ]
+                |> List.map (\s -> Sub.map MazeMsg s |> Sub.map SubPageMsg)
                 |> Sub.batch
 
         HomeModel ->

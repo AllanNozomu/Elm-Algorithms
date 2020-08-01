@@ -12,6 +12,7 @@ type Route
     = Home
     | SortAlgorithmsPage String
     | GraphAlgorithmsPage String
+    | MazeAlgorithmsPage String
 
 
 parser : Parser (Route -> a) a
@@ -20,6 +21,7 @@ parser =
         [ Parser.map Home Parser.top
         , Parser.map SortAlgorithmsPage (s "sortAlgorithms" </> string)
         , Parser.map GraphAlgorithmsPage (s "graphAlgorithms" </> string)
+        , Parser.map MazeAlgorithmsPage (s "mazeAlgorithms" </> string)
         ]
 
 
@@ -49,3 +51,6 @@ routeToPieces page =
 
         GraphAlgorithmsPage algorithm ->
             [ "graphAlgorithms", algorithm ]
+
+        MazeAlgorithmsPage algorithm ->
+            [ "mazeAlgorithms", algorithm ]

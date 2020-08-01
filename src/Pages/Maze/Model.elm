@@ -1,4 +1,4 @@
-module Pages.Graph.Model exposing (Model, initModel)
+module Pages.Maze.Model exposing (Model, initModel)
 
 import Algorithms.Graphs.MazeGenerator exposing (Dimension, Maze, Path, Position, Edge, generatePath, pathToMaze, pathToEdgesPerNode, dfs)
 import Dict exposing (Dict)
@@ -26,7 +26,7 @@ initModel =
         (beginEndPath, allSteps) = dfs (Position 0 0) (Position 29 29) (pathToEdgesPerNode path)
     in
     { toDrawPath = path
-    , title = "DFS"
+    , title = "Maze generator"
     , maze = path |> pathToMaze dimension
     , edgeLen = 1024
     , beginEndPath = beginEndPath

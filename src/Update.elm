@@ -4,6 +4,8 @@ import Pages.Sort.Model as SortModel
 import Pages.Sort.Update as SortUpdate
 import Pages.Graph.Model as GraphModel
 import Pages.Graph.Update as GraphUpdate
+import Pages.Maze.Model as MazeModel
+import Pages.Maze.Update as MazeUpdate
 import Browser
 import Browser.Navigation as Nav
 import Model exposing (CurrentModel(..), Model)
@@ -21,6 +23,7 @@ type Msg
 type SubPageMsg
     = SortMsg SortUpdate.Msg
     | GraphMsg GraphUpdate.Msg
+    | MazeMsg MazeUpdate.Msg
 
 init : () -> Url.Url -> Nav.Key -> ( Model, Cmd Msg )
 init _ url key =
@@ -43,6 +46,13 @@ changeRouteTo url model =
         Just (GraphAlgorithmsPage graphAlgorithmName) ->
             ( { model | currentModel = GraphAlgorithmModel GraphModel.initModel }
             , List.map (\s -> Cmd.map GraphMsg s |> Cmd.map SubPageMsg) [] 
+            ++ [getCanvasWidth ()] 
+            |> Cmd.batch
+            )
+
+        Just (MazeAlgorithmsPage mazeAlgorithmName) ->
+            ( { model | currentModel = MazeAlgorithmModel MazeModel.initModel }
+            , List.map (\s -> Cmd.map MazeMsg s |> Cmd.map SubPageMsg) [] 
             ++ [getCanvasWidth ()] 
             |> Cmd.batch
             )
@@ -84,6 +94,13 @@ update msg model =
                             GraphUpdate.update algortihmMsg subModel
                     in
                     ( { model | currentModel = GraphAlgorithmModel newModel }, Cmd.map SubPageMsg (Cmd.map GraphMsg subCmd) )
+
+                ( MazeMsg algortihmMsg, MazeAlgorithmModel subModel ) ->
+                    let
+                        ( newModel, subCmd ) =
+                            MazeUpdate.update algortihmMsg subModel
+                    in
+                    ( { model | currentModel = MazeAlgorithmModel newModel }, Cmd.map SubPageMsg (Cmd.map MazeMsg subCmd) )
 
                 ( _, _ ) ->
                     ( model, Cmd.none )

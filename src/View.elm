@@ -10,8 +10,10 @@ import Model exposing (CurrentModel(..), Model)
 import Pages.Home as Home
 import Pages.Sort.Model as SortModel
 import Pages.Sort.View as SortView
-import Pages.Graph.Model as GraphView
+import Pages.Graph.Model as GraphModel
 import Pages.Graph.View as GraphView
+import Pages.Maze.Model as MazeModel
+import Pages.Maze.View as MazeView
 import Route exposing (Route(..), href)
 import Update exposing (Msg(..), SubPageMsg(..))
 import Url
@@ -31,6 +33,11 @@ view model =
                 GraphAlgorithmModel graphModel ->
                     GraphView.view graphModel
                         |> Html.map GraphMsg
+                        |> Html.map SubPageMsg
+
+                MazeAlgorithmModel mazeModel ->
+                    MazeView.view mazeModel
+                        |> Html.map MazeMsg
                         |> Html.map SubPageMsg
 
                 HomeModel ->
@@ -86,7 +93,21 @@ navbar url =
                         [ text "Graph Algorithms" ]
                     , div [ class "dropdown-menu" ]
                         [   
-                            a [ class "dropdown-item", href (Route.GraphAlgorithmsPage "x") ] [ text "Maze generator" ]
+                            a [ class "dropdown-item", href (Route.GraphAlgorithmsPage "x") ] [ text "DFS" ]
+                        ]
+                    ]
+                ,li [ class "nav-item dropdown" ]
+                    [ a
+                        [ class "nav-link dropdown-toggle"
+                        , HtmlAttributes.href <| "#" ++ Maybe.withDefault "" url.fragment
+                        , attribute "data-toggle" "dropdown"
+                        , attribute "aria-haspopup" "true"
+                        , attribute "aria-expanded" "false"
+                        ]
+                        [ text "Mazes" ]
+                    , div [ class "dropdown-menu" ]
+                        [   
+                            a [ class "dropdown-item", href (Route.MazeAlgorithmsPage "x") ] [ text "Kruskal Maze Generator" ]
                         ]
                     ]
                 , li [ class "nav-item" ]

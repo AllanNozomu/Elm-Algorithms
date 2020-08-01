@@ -1,4 +1,4 @@
-module Pages.Graph.View exposing (view)
+module Pages.Maze.View exposing (view)
 
 import Algorithms.Graphs.MazeGenerator exposing (Tile(..), mazeToString)
 import Array
@@ -8,8 +8,8 @@ import Html.Attributes
 import Html.Styled exposing (..)
 import Html.Styled.Attributes as HtmlAttributes exposing (attribute, class, css, max, min, step, type_, value)
 import Html.Styled.Events exposing (onClick, onInput)
-import Pages.Graph.Model exposing (Model)
-import Pages.Graph.Update exposing (Msg(..))
+import Pages.Maze.Model exposing (Model)
+import Pages.Maze.Update exposing (Msg(..))
 import Svg.Styled as Svg
 import Svg.Styled.Attributes as SvgAttrs
 import Svg.Styled.Keyed as SvgKeyed
