@@ -7,9 +7,9 @@ import Pages.Graph.Update exposing (Msg(..))
 
 subscriptions : Model -> Sub Msg
 subscriptions model =
-    if List.isEmpty model.toDrawPath then
+    if List.isEmpty model.allSteps then
         Sub.none
     else
         Sub.batch [
-            Time.every 1 Tick
+            Time.every 25 Tick
         ]

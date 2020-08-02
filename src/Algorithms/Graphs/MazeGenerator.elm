@@ -62,7 +62,14 @@ listPositionToPath l =
 dfs : Position -> Position -> Dict (Int, Int) (List Position) -> (Path, Path)
 dfs f t e =
     let
-        dfsAux from to edges visited =
+        dfsAux from to visited =
+            let
+                getNotVisited : List Position
+                getNotVisited =
+                    Maybe.withDefault [] (Dict.get (from.y, from.x) e) 
+                        |> List.filter (\neigh -> not <| Maybe.withDefault False (Dict.get (neigh.y, neigh.x) visited))
+            in
+
             if from == to then
                 ([to],[to])
             else if Maybe.withDefault False (Dict.get (from.y, from.x) visited) then
@@ -70,10 +77,10 @@ dfs f t e =
             else 
                 let
                     new_visited = Dict.insert (from.y, from.x) True visited
-                    (results, allpaths) = Maybe.withDefault [] (Dict.get (from.y, from.x) edges)
+                    (results, allpaths) = getNotVisited
                         |> List.foldl (\neighbour (accRes, accPaths) -> 
                             let 
-                                (res, paths) = dfsAux neighbour to edges new_visited
+                                (res, paths) = dfsAux neighbour to new_visited
                             in
                             if List.isEmpty accRes then
                                 if List.isEmpty res then
@@ -90,7 +97,7 @@ dfs f t e =
                     [] -> ([], from :: allpaths)
                     a -> (from :: a, from :: allpaths)
     in
-    dfsAux f t e Dict.empty 
+    dfsAux f t Dict.empty 
     |> Tuple.mapBoth listPositionToPath listPositionToPath
     
 

@@ -15,6 +15,7 @@ import Svg.Styled.Attributes as SvgAttrs
 import Svg.Styled.Keyed as SvgKeyed
 import Svg.Styled.Lazy as SvgLazy
 import Utils.IconUtils exposing (toStyledHtml)
+import Dict
 
 edgeSize = 16
 
@@ -26,10 +27,16 @@ whiteColorAttr =
 blueCollorAttr =
     SvgAttrs.fill "blue"
 
+redCollorAttr =
+    SvgAttrs.fill "red"
+
+greenCollorAttr =
+    SvgAttrs.fill "lightgreen"
+
 blackColortAttr =
     SvgAttrs.fill "black"
 
-drawMazeFromListEdges path beginEnd =
+drawMazeFromListEdges path beginEndPath isPath visited =
     let
         drawRect from to = 
             let
@@ -42,7 +49,7 @@ drawMazeFromListEdges path beginEnd =
                 middle = edgeSize // 2
 
                 (width, height) =
-                    if beginEnd then
+                    if isPath then
                         if from.x == to.x then
                             (2, edgeSize + 1)
 
@@ -56,11 +63,15 @@ drawMazeFromListEdges path beginEnd =
                             ((edgeSize - 2) * 2 + 2, edgeSize - 2)
             in 
             Svg.rect [
-                SvgAttrs.x  <| String.fromInt (x * edgeSize + (if beginEnd then middle - 1 else 0)),
-                SvgAttrs.y  <| String.fromInt (y * edgeSize + (if beginEnd then middle - 1 else 0)),
+                SvgAttrs.x  <| String.fromInt (x * edgeSize + (if isPath then middle - 1 else 0)),
+                SvgAttrs.y  <| String.fromInt (y * edgeSize + (if isPath then middle - 1 else 0)),
                 SvgAttrs.width <| String.fromFloat width,
                 SvgAttrs.height <| String.fromFloat height,
-                if beginEnd then blueCollorAttr else whiteColorAttr
+                if not isPath 
+                    then whiteColorAttr 
+                    else if Maybe.withDefault 0 (Dict.get ((from.x, from.y), (to.x, to.y)) visited) == 0 then blueCollorAttr
+                    else if List.member {from=from, to=to} beginEndPath then greenCollorAttr
+                    else redCollorAttr
                 ]
             []
     in
@@ -100,8 +111,8 @@ view model =
                                 SvgAttrs.height svgSize
                             ][],
                             -- drawMazeFromListEdges model.path False,
-                            -- drawMazeFromListEdges (Array.toList (Array.slice 0 model.index model.allSteps)) True
-                            drawMazeFromListEdges model.drawedSteps False
+                            drawMazeFromListEdges model.maze [] False Dict.empty,
+                            drawMazeFromListEdges model.drawedSteps model.beginEndPath True model.drawed
                         ]
                     ]
                 ]

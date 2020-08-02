@@ -1,12 +1,28 @@
 module Pages.Graph.Update exposing (..)
 
 import Time
+import Algorithms.Graphs.MazeGenerator exposing (Edge, Position)
 import Pages.Graph.Model exposing (Model)
+import Set exposing (Set)
+import Dict exposing (Dict)
 
 type Msg
     = CanvasWidthReceiver Float
     | Tick Time.Posix
     | None
+
+setVisited : Edge -> Dict ((Int, Int), (Int, Int)) Int -> Dict ((Int, Int), (Int, Int)) Int
+setVisited edge l = 
+    let
+        dictSetValue : ((Int, Int), (Int, Int)) -> Dict ((Int, Int), (Int, Int)) Int -> Dict ((Int, Int), (Int, Int)) Int
+        dictSetValue key =
+            Dict.update key
+                (\v -> case v of
+                    Just vv -> Just (vv + 1)
+                    Nothing -> Just 0
+                )
+    in
+    dictSetValue ((edge.from.x, edge.from.y), (edge.to.x, edge.to.y)) l |> dictSetValue ((edge.to.x, edge.to.y), (edge.from.x, edge.from.y))
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
@@ -16,10 +32,10 @@ update msg model =
 
         Tick _ -> 
             let
-                (newDrawedSteps, newToDrawPath) = 
-                    case model.toDrawPath of
-                    [] -> (model.drawedSteps, model.toDrawPath)
-                    a :: r -> (model.drawedSteps ++ [a], r)
+                (newDrawedSteps, newAllSteps, newDrawed) = 
+                    case model.allSteps of
+                    [] -> (model.drawedSteps, model.allSteps, model.drawed)
+                    a :: r -> (model.drawedSteps ++ [a], r, setVisited a model.drawed)
             in
-            ({model | index = model.index + 1, drawedSteps = newDrawedSteps, toDrawPath = newToDrawPath}, Cmd.none)
+            ({model | index = model.index + 1, drawedSteps = newDrawedSteps, allSteps = newAllSteps, drawed = newDrawed}, Cmd.none)
         _ -> (model, Cmd.none) 

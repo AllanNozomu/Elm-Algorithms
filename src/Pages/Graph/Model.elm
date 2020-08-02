@@ -1,17 +1,20 @@
 module Pages.Graph.Model exposing (Model, initModel)
 
 import Algorithms.Graphs.MazeGenerator exposing (Dimension, Maze, Path, Position, Edge, generatePath, pathToMaze, pathToEdgesPerNode, dfs)
+import Set exposing (Set)
 import Dict exposing (Dict)
+import Array exposing (Array)
+import Debug
 
 type alias Model =
-    { maze : Maze
-    , edgeLen : Float
-    , toDrawPath : Path
+    { edgeLen : Float
+    , maze : Path
     , beginEndPath : Path
     , drawedSteps : Path
     , index : Int
-    , drawed : Dict (Position, Position) Int
+    , drawed : Dict ((Int, Int), (Int, Int)) Int
     , title : String
+    , allSteps : Path
     }
 
 
@@ -25,12 +28,12 @@ initModel =
 
         (beginEndPath, allSteps) = dfs (Position 0 0) (Position 29 29) (pathToEdgesPerNode path)
     in
-    { toDrawPath = path
+    { maze = path
     , title = "DFS"
-    , maze = path |> pathToMaze dimension
     , edgeLen = 1024
     , beginEndPath = beginEndPath
     , drawedSteps = []
     , index = 1
     , drawed = Dict.empty
+    , allSteps = allSteps
     }
