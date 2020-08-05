@@ -4,7 +4,6 @@ import Algorithms.Graphs.MazeGenerator exposing (Dimension, Maze, Path, Position
 import Set exposing (Set)
 import Dict exposing (Dict)
 import Array exposing (Array)
-import Debug
 
 type alias Model =
     { edgeLen : Float
@@ -15,7 +14,7 @@ type alias Model =
     , drawed : Dict ((Int, Int), (Int, Int)) Int
     , title : String
     , allSteps : Path
-    , startPosition : Position
+    , beginPosition : Position
     , endPosition : Position
     , dimension : Dimension
     , selectBegin : Bool
@@ -30,13 +29,13 @@ initModel =
         path = 
             generatePath dimension 272
 
-        startPosition = 
+        beginPosition = 
             Position 0 0
 
         endPosition = 
             Position (dimension.height-1) (dimension.width-1)
 
-        (beginEndPath, allSteps) = dfs startPosition endPosition (pathToEdgesPerNode path)
+        (beginEndPath, allSteps) = dfs beginPosition endPosition (pathToEdgesPerNode path)
     in
     { maze = path
     , title = "DFS"
@@ -46,7 +45,7 @@ initModel =
     , index = 1
     , drawed = Dict.empty
     , allSteps = allSteps
-    , startPosition = startPosition
+    , beginPosition = beginPosition
     , endPosition = endPosition
     , dimension = dimension
     , selectBegin = True

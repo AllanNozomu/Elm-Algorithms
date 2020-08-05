@@ -37,7 +37,7 @@ greenCollorAttr =
 blackColortAttr =
     SvgAttrs.fill "black"
 
-drawInvisibleClickableSquares dimension start end =
+drawInvisibleClickableSquares dimension beginPosition endPosition =
     let
         drawRect index = 
             let
@@ -52,9 +52,9 @@ drawInvisibleClickableSquares dimension start end =
                 SvgAttrs.height <| String.fromInt edgeSize,
                 SvgEvents.onClick (SelectTile <| Position posY posX)
                 ] ++ 
-                if posX == start.x && posY == start.y then 
+                if posX == beginPosition.x && posY == beginPosition.y then 
                     [blueCollorAttr, SvgAttrs.fillOpacity "0.4"]
-                else if posX == end.x && posY == end.y then 
+                else if posX == endPosition.x && posY == endPosition.y then 
                     [greenCollorAttr, SvgAttrs.fillOpacity "0.4"]
                 else [] )
                 []
@@ -146,7 +146,7 @@ view model =
                             -- drawMazeFromListEdges model.path False,
                             drawMazeFromListEdges model.maze [] False Dict.empty,
                             drawMazeFromListEdges model.drawedSteps model.beginEndPath True model.drawed,
-                            drawInvisibleClickableSquares model.dimension model.startPosition model.endPosition
+                            drawInvisibleClickableSquares model.dimension model.beginPosition model.endPosition
                         ]
                     ]
                 ]

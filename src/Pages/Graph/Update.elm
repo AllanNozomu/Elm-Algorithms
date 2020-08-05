@@ -52,10 +52,12 @@ update msg model =
 
         SelectTile position ->
             let
-                (newBeginPosition, newEndPosition) = if model.selectBegin then
-                    (position, model.endPosition)
+                ( newBeginPosition, newEndPosition ) =
+                    if model.selectBegin then
+                        ( position, model.endPosition )
+
                     else
-                    (model.startPosition, position)
+                        ( model.beginPosition, position )
 
                 ( beginEndPath, allSteps ) =
                     dfs newBeginPosition newEndPosition (pathToEdgesPerNode model.maze)
@@ -67,7 +69,7 @@ update msg model =
                 , drawed = Dict.empty
                 , beginEndPath = beginEndPath
                 , selectBegin = not model.selectBegin
-                , startPosition = newBeginPosition
+                , beginPosition = newBeginPosition
                 , endPosition = newEndPosition
               }
             , Cmd.none
