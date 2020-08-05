@@ -18,6 +18,7 @@ type alias Model =
     , startPosition : Position
     , endPosition : Position
     , dimension : Dimension
+    , selectBegin : Bool
     }
 
 
@@ -48,4 +49,5 @@ initModel =
     , startPosition = startPosition
     , endPosition = endPosition
     , dimension = dimension
+    , selectBegin = True
     }
