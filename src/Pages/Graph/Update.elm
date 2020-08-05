@@ -1,7 +1,7 @@
 module Pages.Graph.Update exposing (..)
 
 import Time
-import Algorithms.Graphs.MazeGenerator exposing (Edge, Position)
+import Algorithms.Graphs.MazeGenerator exposing (Edge, Position, dfs, pathToEdgesPerNode)
 import Pages.Graph.Model exposing (Model)
 import Set exposing (Set)
 import Dict exposing (Dict)
@@ -9,6 +9,7 @@ import Dict exposing (Dict)
 type Msg
     = CanvasWidthReceiver Float
     | Tick Time.Posix
+    | SelectTile Position
     | None
 
 setVisited : Edge -> Dict ((Int, Int), (Int, Int)) Int -> Dict ((Int, Int), (Int, Int)) Int
@@ -38,4 +39,11 @@ update msg model =
                     a :: r -> (model.drawedSteps ++ [a], r, setVisited a model.drawed)
             in
             ({model | index = model.index + 1, drawedSteps = newDrawedSteps, allSteps = newAllSteps, drawed = newDrawed}, Cmd.none)
+
+        SelectTile position ->
+            let
+                (beginEndPath, allSteps) = dfs (Position 0 0) position (pathToEdgesPerNode model.maze)
+            in
+            ({model | index = 0, drawedSteps = [], allSteps = allSteps, drawed = Dict.empty, beginEndPath = beginEndPath, endPosition=position}, Cmd.none)
+        
         _ -> (model, Cmd.none) 

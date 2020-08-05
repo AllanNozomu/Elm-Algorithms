@@ -1,6 +1,6 @@
 module Pages.Graph.View exposing (view)
 
-import Algorithms.Graphs.MazeGenerator exposing (Tile(..), mazeToString)
+import Algorithms.Graphs.MazeGenerator exposing (Tile(..), mazeToString, Position)
 import Array
 import Color
 import Css exposing (..)
@@ -12,12 +12,13 @@ import Pages.Graph.Model exposing (Model)
 import Pages.Graph.Update exposing (Msg(..))
 import Svg.Styled as Svg
 import Svg.Styled.Attributes as SvgAttrs
+import Svg.Styled.Events as SvgEvents
 import Svg.Styled.Keyed as SvgKeyed
 import Svg.Styled.Lazy as SvgLazy
 import Utils.IconUtils exposing (toStyledHtml)
 import Dict
 
-edgeSize = 16
+edgeSize = 32
 
 svgSize = "512"
 
@@ -35,6 +36,38 @@ greenCollorAttr =
 
 blackColortAttr =
     SvgAttrs.fill "black"
+
+drawInvisibleClickableSquares dimension start end =
+    let
+        drawRect index = 
+            let
+                posX = Basics.remainderBy dimension.width index
+                posY = index // dimension.width
+            in
+            Svg.rect
+                ([SvgAttrs.x  <| String.fromInt <| (posX + 1) * edgeSize,
+                SvgAttrs.y  <| String.fromInt <| (posY + 1) * edgeSize,
+                SvgAttrs.fill "transparent",
+                SvgAttrs.width <| String.fromInt edgeSize,
+                SvgAttrs.height <| String.fromInt edgeSize,
+                SvgEvents.onClick (SelectTile <| Position posY posX)
+                ] ++ 
+                if posX == start.x && posY == start.y then 
+                    [blueCollorAttr, SvgAttrs.fillOpacity "0.4"]
+                else if posX == end.x && posY == end.y then 
+                    [greenCollorAttr, SvgAttrs.fillOpacity "0.4"]
+                else [] )
+                []
+    in
+    Svg.svg [
+        SvgAttrs.width svgSize,
+        SvgAttrs.height svgSize
+    ]
+    (List.range 0 (dimension.width * dimension.height - 1) |> List.map
+        (\i ->
+            drawRect i
+        ) 
+    )
 
 drawMazeFromListEdges path beginEndPath isPath visited =
     let
@@ -112,7 +145,8 @@ view model =
                             ][],
                             -- drawMazeFromListEdges model.path False,
                             drawMazeFromListEdges model.maze [] False Dict.empty,
-                            drawMazeFromListEdges model.drawedSteps model.beginEndPath True model.drawed
+                            drawMazeFromListEdges model.drawedSteps model.beginEndPath True model.drawed,
+                            drawInvisibleClickableSquares model.dimension model.startPosition model.endPosition
                         ]
                     ]
                 ]

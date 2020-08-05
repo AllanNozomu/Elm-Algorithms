@@ -15,6 +15,9 @@ type alias Model =
     , drawed : Dict ((Int, Int), (Int, Int)) Int
     , title : String
     , allSteps : Path
+    , startPosition : Position
+    , endPosition : Position
+    , dimension : Dimension
     }
 
 
@@ -22,11 +25,17 @@ initModel : Model
 initModel =
     let
         dimension =
-            Dimension 30 30
+            Dimension 14 14
         path = 
             generatePath dimension 272
 
-        (beginEndPath, allSteps) = dfs (Position 0 0) (Position 29 29) (pathToEdgesPerNode path)
+        startPosition = 
+            Position 0 0
+
+        endPosition = 
+            Position (dimension.height-1) (dimension.width-1)
+
+        (beginEndPath, allSteps) = dfs startPosition endPosition (pathToEdgesPerNode path)
     in
     { maze = path
     , title = "DFS"
@@ -36,4 +45,7 @@ initModel =
     , index = 1
     , drawed = Dict.empty
     , allSteps = allSteps
+    , startPosition = startPosition
+    , endPosition = endPosition
+    , dimension = dimension
     }
