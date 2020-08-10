@@ -1,19 +1,19 @@
 module View exposing (view)
 
 import Browser
-import Dict
 import Css exposing (..)
+import Dict
 import Html.Styled as Html exposing (..)
 import Html.Styled.Attributes as HtmlAttributes exposing (class, css, disabled, id)
 import Html.Styled.Events exposing (onClick)
 import Model exposing (CurrentModel(..), Model)
-import Pages.Home as Home
-import Pages.Sort.Model as SortModel
-import Pages.Sort.View as SortView
 import Pages.Graph.Model as GraphModel
 import Pages.Graph.View as GraphView
+import Pages.Home as Home
 import Pages.Maze.Model as MazeModel
 import Pages.Maze.View as MazeView
+import Pages.Sort.Model as SortModel
+import Pages.Sort.View as SortView
 import Route exposing (Route(..), href)
 import Update exposing (Msg(..), SubPageMsg(..))
 import Url
@@ -61,11 +61,19 @@ navbar url =
     let
         sortMethods =
             Dict.toList SortModel.sortInfos
-            |> List.map (\(_, {sortName}) -> sortName) 
+                |> List.map (\( _, { sortName } ) -> sortName)
     in
     nav [ class "navbar navbar-expand-lg navbar-dark bg-dark" ]
-        [ a [ class "navbar-brand" ] [ text "Algorithms in Elm" ]
-        , div [ class "collapse navbar-collapse" ]
+        [ a
+            [ class "navbar-brand" ]
+            [ text "Algorithms in Elm" ]
+        , button
+            [ class "navbar-toggler"
+            , attribute "data-toggle" "collapse"
+            , attribute "data-target" "#navbarToggler"
+            ]
+            [ span [ class "navbar-toggler-icon" ] [] ]
+        , div [ class "collapse navbar-collapse", id "navbarToggler" ]
             [ ul [ class "navbar-nav" ]
                 [ li [ class "nav-item dropdown" ]
                     [ a
@@ -82,7 +90,7 @@ navbar url =
                             sortMethods
                         )
                     ]
-                ,li [ class "nav-item dropdown" ]
+                , li [ class "nav-item dropdown" ]
                     [ a
                         [ class "nav-link dropdown-toggle"
                         , HtmlAttributes.href <| "#" ++ Maybe.withDefault "" url.fragment
@@ -92,11 +100,10 @@ navbar url =
                         ]
                         [ text "Graph Algorithms" ]
                     , div [ class "dropdown-menu" ]
-                        [   
-                            a [ class "dropdown-item", href (Route.GraphAlgorithmsPage "x") ] [ text "DFS" ]
+                        [ a [ class "dropdown-item", href (Route.GraphAlgorithmsPage "x") ] [ text "DFS" ]
                         ]
                     ]
-                ,li [ class "nav-item dropdown" ]
+                , li [ class "nav-item dropdown" ]
                     [ a
                         [ class "nav-link dropdown-toggle"
                         , HtmlAttributes.href <| "#" ++ Maybe.withDefault "" url.fragment
@@ -106,8 +113,7 @@ navbar url =
                         ]
                         [ text "Mazes" ]
                     , div [ class "dropdown-menu" ]
-                        [   
-                            a [ class "dropdown-item", href (Route.MazeAlgorithmsPage "x") ] [ text "Kruskal Maze Generator" ]
+                        [ a [ class "dropdown-item", href (Route.MazeAlgorithmsPage "x") ] [ text "Kruskal Maze Generator" ]
                         ]
                     ]
                 , li [ class "nav-item" ]
