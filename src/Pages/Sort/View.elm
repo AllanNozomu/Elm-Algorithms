@@ -8,14 +8,16 @@ import Html.Styled.Attributes as HtmlAttributes exposing (attribute, class, css,
 import Html.Styled.Events exposing (onClick, onInput)
 import Html.Styled.Keyed as HtmlKeyed
 import Html.Styled.Lazy as HtmlLazy
+import Pages.Sort.Model exposing (Model, SortType(..))
+import Pages.Sort.Update exposing (Msg(..))
 import Svg.Styled as Svg
 import Svg.Styled.Attributes as SvgAttrs
 import Svg.Styled.Keyed as SvgKeyed
 import Svg.Styled.Lazy as SvgLazy
-import Pages.Sort.Model exposing (Model, SortType(..))
-import Pages.Sort.Update exposing (Msg(..))
 import Utils.IconUtils exposing (toStyledHtml)
 
+
+getColor : Int -> Int -> Int -> Int -> Svg.Attribute Msg
 getColor i bh l r =
     if i == l then
         SvgAttrs.fill "red"
@@ -29,30 +31,39 @@ getColor i bh l r =
     else
         SvgAttrs.fill "black"
 
+
+drawRects : List Int -> Int -> Int -> Float -> List (Svg.Svg Msg)
 drawRects listToBeSorted left right width =
     let
-        qty = List.length listToBeSorted |> Basics.toFloat
+        qty =
+            List.length listToBeSorted |> Basics.toFloat
+
         h =
             256 / qty
 
         w =
             width / qty
-
     in
-    List.indexedMap(\index barHeight ->
-        let
-            floatBarHeight = Basics.toFloat barHeight
-            floatIndex = Basics.toFloat index
-        in
-        Svg.rect [
-            SvgAttrs.x  <| String.fromFloat (floatIndex * w),
-            SvgAttrs.y  <| String.fromFloat (256 - (floatBarHeight + 1) * h),
-            SvgAttrs.width <| String.fromFloat w,
-            SvgAttrs.height <| String.fromFloat ((floatBarHeight + 1) * h),
-            getColor index barHeight left right
-        ]
-        []
-    ) listToBeSorted
+    List.indexedMap
+        (\index barHeight ->
+            let
+                floatBarHeight =
+                    Basics.toFloat barHeight
+
+                floatIndex =
+                    Basics.toFloat index
+            in
+            Svg.rect
+                [ SvgAttrs.x <| String.fromFloat (floatIndex * w)
+                , SvgAttrs.y <| String.fromFloat (256 - (floatBarHeight + 1) * h)
+                , SvgAttrs.width <| String.fromFloat w
+                , SvgAttrs.height <| String.fromFloat ((floatBarHeight + 1) * h)
+                , getColor index barHeight left right
+                ]
+                []
+        )
+        listToBeSorted
+
 
 showCode : String -> ( String, Html Msg )
 showCode strCode =
@@ -110,8 +121,8 @@ view model =
                         , justifyContent center
                         , margin (px 5)
                         , width (pct 100)
-                        ],
-                        HtmlAttributes.id "canvaAnimation"
+                        ]
+                    , HtmlAttributes.id "canvaAnimation"
                     ]
                     [ Svg.svg
                         [ SvgAttrs.width "100%"
