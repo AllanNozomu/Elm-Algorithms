@@ -141,7 +141,6 @@ view model =
                                 SvgAttrs.width <| String.fromInt svgSize_,
                                 SvgAttrs.height <| String.fromInt svgSize_
                             ][],
-                            -- drawMazeFromListEdges model.path False,
                             drawMazeFromListEdges model.maze [] False Dict.empty,
                             drawMazeFromListEdges model.drawedSteps model.beginEndPath True model.drawed,
                             drawInvisibleClickableSquares model.dimension model.beginPosition model.endPosition
