@@ -1,10 +1,7 @@
 module Pages.Maze.View exposing (view)
 
 import Algorithms.Graphs.MazeGenerator exposing (Tile(..), mazeToString)
-import Array
-import Color
 import Css exposing (..)
-import Html.Attributes
 import Html.Styled exposing (..)
 import Html.Styled.Attributes as HtmlAttributes exposing (attribute, class, css, max, min, step, type_, value)
 import Html.Styled.Events exposing (onClick, onInput)

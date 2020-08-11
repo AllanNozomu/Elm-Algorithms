@@ -2,7 +2,6 @@ module Pages.Graph.View exposing (view)
 
 import Algorithms.Graphs.MazeGenerator exposing (Tile(..), mazeToString, Position)
 import Array
-import Color
 import Css exposing (..)
 import Html.Attributes
 import Html.Styled exposing (..)
