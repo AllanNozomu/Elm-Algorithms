@@ -16,6 +16,11 @@ import Svg.Styled.Keyed as SvgKeyed
 import Svg.Styled.Lazy as SvgLazy
 import Utils.IconUtils exposing (toStyledHtml)
 
+width_ : Int
+width_ = 512
+
+height_ : Int
+height_ = 256
 
 getColor : Int -> Int -> Int -> Int -> Svg.Attribute Msg
 getColor i bh l r =
@@ -32,32 +37,25 @@ getColor i bh l r =
         SvgAttrs.fill "black"
 
 
-drawRects : List Int -> Int -> Int -> Float -> List (Svg.Svg Msg)
-drawRects listToBeSorted left right width =
+drawRects : List Int -> Int -> Int -> List (Svg.Svg Msg)
+drawRects listToBeSorted left right =
     let
         qty =
-            List.length listToBeSorted |> Basics.toFloat
+            List.length listToBeSorted
 
         h =
-            256 / qty
+            height_ // qty
 
         w =
-            width / qty
+            width_ // qty
     in
     List.indexedMap
         (\index barHeight ->
-            let
-                floatBarHeight =
-                    Basics.toFloat barHeight
-
-                floatIndex =
-                    Basics.toFloat index
-            in
             Svg.rect
-                [ SvgAttrs.x <| String.fromFloat (floatIndex * w)
-                , SvgAttrs.y <| String.fromFloat (256 - (floatBarHeight + 1) * h)
-                , SvgAttrs.width <| String.fromFloat w
-                , SvgAttrs.height <| String.fromFloat ((floatBarHeight + 1) * h)
+                [ SvgAttrs.x <| String.fromInt (index * w)
+                , SvgAttrs.y <| String.fromInt (height_ - (barHeight + 1) * h)
+                , SvgAttrs.width <| String.fromInt w
+                , SvgAttrs.height <| String.fromInt ((barHeight + 1) * h)
                 , getColor index barHeight left right
                 ]
                 []
@@ -115,21 +113,13 @@ view model =
                         ]
                     ]
                 , div
-                    [ css
-                        [ displayFlex
-                        , alignItems center
-                        , justifyContent center
-                        , margin (px 5)
-                        , width (pct 100)
-                        ]
-                    , HtmlAttributes.id "canvaAnimation"
-                    ]
+                    []
                     [ Svg.svg
                         [ SvgAttrs.width "100%"
                         , SvgAttrs.height "100%"
-                        , SvgAttrs.viewBox "0 0 512 256"
+                        , SvgAttrs.viewBox ([0, 0, width_, height_] |> List.map String.fromInt |> String.join " ")
                         ]
-                        (drawRects currentStep model.currentLeft model.currentRight model.width)
+                        (drawRects currentStep model.currentLeft model.currentRight)
                     ]
                 ]
             ]
