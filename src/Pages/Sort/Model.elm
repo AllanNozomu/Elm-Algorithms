@@ -69,7 +69,7 @@ initModel sortType =
     , pause = True
     , sortInfo = sortInfo
     , code = ""
-    , width = 255
+    , width = 512
     }
 
 

@@ -3,40 +3,37 @@ module Pages.Sort.View exposing (view)
 import Array
 import Css exposing (..)
 import FeatherIcons
-import Canvas exposing (..)
-import Canvas.Settings exposing (..)
-import Color
 import Html.Styled as Html exposing (..)
 import Html.Styled.Attributes as HtmlAttributes exposing (attribute, class, css, max, min, step, type_, value)
 import Html.Styled.Events exposing (onClick, onInput)
 import Html.Styled.Keyed as HtmlKeyed
 import Html.Styled.Lazy as HtmlLazy
+import Svg.Styled as Svg
+import Svg.Styled.Attributes as SvgAttrs
+import Svg.Styled.Keyed as SvgKeyed
+import Svg.Styled.Lazy as SvgLazy
 import Pages.Sort.Model exposing (Model, SortType(..))
 import Pages.Sort.Update exposing (Msg(..))
 import Utils.IconUtils exposing (toStyledHtml)
 
-
-whiteColorAttr =
-    Canvas.Settings.fill (Color.rgb 1 1 1)
-
 getColor i bh l r =
     if i == l then
-        Canvas.Settings.fill (Color.rgb 1 0 0)
+        SvgAttrs.fill "red"
 
     else if i == r then
-        Canvas.Settings.fill (Color.rgb 1 1 0)
+        SvgAttrs.fill "yellow"
 
     else if i == bh then
-        Canvas.Settings.fill (Color.rgb 0 0.8 0)
+        SvgAttrs.fill "green"
 
     else
-        Canvas.Settings.fill (Color.rgb 0 0 0)
+        SvgAttrs.fill "black"
 
 drawRects listToBeSorted left right width =
     let
         qty = List.length listToBeSorted |> Basics.toFloat
         h =
-            512 / qty
+            256 / qty
 
         w =
             width / qty
@@ -47,9 +44,14 @@ drawRects listToBeSorted left right width =
             floatBarHeight = Basics.toFloat barHeight
             floatIndex = Basics.toFloat index
         in
-        shapes [getColor index barHeight left right][
-            rect (floatIndex * w, 512 - (floatBarHeight + 1) * h) w ((floatBarHeight + 1) * h)
+        Svg.rect [
+            SvgAttrs.x  <| String.fromFloat (floatIndex * w),
+            SvgAttrs.y  <| String.fromFloat (256 - (floatBarHeight + 1) * h),
+            SvgAttrs.width <| String.fromFloat w,
+            SvgAttrs.height <| String.fromFloat ((floatBarHeight + 1) * h),
+            getColor index barHeight left right
         ]
+        []
     ) listToBeSorted
 
 showCode : String -> ( String, Html Msg )
@@ -111,13 +113,12 @@ view model =
                         ],
                         HtmlAttributes.id "canvaAnimation"
                     ]
-                    [ Html.fromUnstyled <|
-                        Canvas.toHtml ( Basics.round model.width, 512 )
-                            []
-                            (shapes [ whiteColorAttr ]
-                                [ rect ( 0, 0 ) model.width 512 ] ::
-                                drawRects currentStep model.currentLeft model.currentRight model.width
-                            )
+                    [ Svg.svg
+                        [ SvgAttrs.width "100%"
+                        , SvgAttrs.height "100%"
+                        , SvgAttrs.viewBox "0 0 512 256"
+                        ]
+                        (drawRects currentStep model.currentLeft model.currentRight model.width)
                     ]
                 ]
             ]

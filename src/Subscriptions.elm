@@ -1,4 +1,4 @@
-port module Subscriptions exposing (subscriptions)
+module Subscriptions exposing (subscriptions)
 
 import Model exposing (CurrentModel(..), Model)
 import Pages.Graph.Subscriptions as GraphAlgorithms
@@ -9,32 +9,24 @@ import Pages.Maze.Subscriptions as MazeAlgorithms
 import Pages.Maze.Update as MazeAlgorithmsUpdate
 import Update exposing (Msg(..), SubPageMsg(..))
 
-
-port getCanvasWidthReceiver : (Float -> msg) -> Sub msg
-
-
 subscriptions : Model -> Sub Msg
 subscriptions model =
     case model.currentModel of
         SortAlgorithmsModel subModel ->
             [ SortAlgorithms.subscriptions subModel
-            , getCanvasWidthReceiver SortAlgorithmsUpdate.CanvasWidthReceiver
+            
             ]
                 |> List.map (\s -> Sub.map SortMsg s |> Sub.map SubPageMsg)
                 |> Sub.batch
 
         GraphAlgorithmModel subModel ->
             [ GraphAlgorithms.subscriptions subModel
-            , getCanvasWidthReceiver
-                GraphAlgorithmsUpdate.CanvasWidthReceiver
             ]
                 |> List.map (\s -> Sub.map GraphMsg s |> Sub.map SubPageMsg)
                 |> Sub.batch
 
         MazeAlgorithmModel subModel ->
             [ MazeAlgorithms.subscriptions subModel
-            , getCanvasWidthReceiver
-                MazeAlgorithmsUpdate.CanvasWidthReceiver
             ]
                 |> List.map (\s -> Sub.map MazeMsg s |> Sub.map SubPageMsg)
                 |> Sub.batch

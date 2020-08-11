@@ -18,7 +18,6 @@ type Msg
     | Tick Time.Posix
     | NewSeedStart Int
     | GotText (Result Http.Error String)
-    | CanvasWidthReceiver Float
 
 
 port beep : ( Int, Int ) -> Cmd msg
@@ -108,9 +107,6 @@ update msg model =
                     updateIndex model (model.index + 1)
             in
             ( newModel, beep ( getSoundFreq newModel, 10 ) )
-
-        CanvasWidthReceiver newWidth ->
-            ({model | width = newWidth}, Cmd.none)
 
         GotText result ->
             case result of

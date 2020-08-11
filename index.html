@@ -56,18 +56,6 @@
         beep(a[0], a[1])
       });
 
-      app.ports.getCanvasWidth.subscribe(function () {
-        width = $("#canvaAnimation").width();
-        if (width)
-          app.ports.getCanvasWidthReceiver.send(width);
-      })
-
-      window.addEventListener('resize', function(event){
-        width = $("#canvaAnimation").width();
-        if (width)
-          app.ports.getCanvasWidthReceiver.send(width);
-      });
-
       app.ports.highlight.subscribe(function() {
         requestAnimationFrame(function () {
           document.querySelectorAll('pre code').forEach((block) => {

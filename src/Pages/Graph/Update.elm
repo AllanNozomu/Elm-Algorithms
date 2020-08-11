@@ -8,8 +8,7 @@ import Time
 
 
 type Msg
-    = CanvasWidthReceiver Float
-    | Tick Time.Posix
+    = Tick Time.Posix
     | SelectTile Position
     | None
 
@@ -35,8 +34,6 @@ setVisited edge l =
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
-        CanvasWidthReceiver edgeLen ->
-            ( { model | edgeLen = 512 }, Cmd.none )
 
         Tick _ ->
             let

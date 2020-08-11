@@ -11,8 +11,6 @@ type Msg
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
-        CanvasWidthReceiver edgeLen -> 
-            ({model | edgeLen = 512 }, Cmd.none)
 
         Tick _ -> 
             let
