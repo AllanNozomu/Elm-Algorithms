@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!--Bootstrap-->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous"><script src="bundle.js"></script>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js" integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous"></script>
+    
+    <!--Devicon-->
+    <link rel="stylesheet" href="src/assets/devicon/devicon.css">
+    <link rel="stylesheet" href="src/assets/devicon/devicon-colors.css">
+
+    <!--Highlight-->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/atom-one-dark-reasonable.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.0.0/highlight.min.js"></script>
+    <script charset="UTF-8" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.0.0/languages/elm.min.js"></script>
+    
+    <!--Elm canvas-->
+    <script charset="UTF-8" src="https://unpkg.com/elm-canvas@2.2.4/elm-canvas.js"></script>
+  </head>
+  <body>
+    <div id="elm-node"></div>
+    <script>
+      var app = Elm.Main.init({
+        node: document.getElementById("elm-node")
+      })
+
+      let audioContext = null;
+      try { 
+        audioContext = new AudioContext() // browsers limit the number of concurrent audio contexts, so you better re-use'em
+      } catch (Exception) {
+
+      }
+
+      function beep(freq, duration){
+        if (audioContext == null)
+          return;
+
+        v=audioContext.createOscillator()
+        u=audioContext.createGain()
+        v.connect(u)
+        v.frequency.value=freq
+        v.type="square"
+        u.gain.value=0.02
+        u.connect(audioContext.destination)
+        v.start(audioContext.currentTime)
+        v.stop(audioContext.currentTime+duration*0.001)
+      }
+
+      app.ports.beep.subscribe(function(a) {
+        beep(a[0], a[1])
+      });
+
+      app.ports.highlight.subscribe(function() {
+        requestAnimationFrame(function () {
+          document.querySelectorAll('pre code').forEach((block) => {
+            hljs.highlightBlock(block);
+          });
+        });
+      });
+
+      
+
+      app.ports.tooltip.subscribe(function() {
+        requestAnimationFrame(function () {
+          $('[data-toggle="tooltip"]').tooltip();   
+        });
+      });
+    </script>
+  </body>
+</html>
