@@ -17,9 +17,9 @@ import Svg.Styled.Lazy as SvgLazy
 import Utils.IconUtils exposing (toStyledHtml)
 import Dict
 
-edgeSize = 32
+svgSize_ = 512
 
-svgSize = "512"
+edgeSize = svgSize_ // 16
 
 whiteColorAttr =
     SvgAttrs.fill "white"
@@ -59,8 +59,8 @@ drawInvisibleClickableSquares dimension beginPosition endPosition =
                 []
     in
     Svg.svg [
-        SvgAttrs.width svgSize,
-        SvgAttrs.height svgSize
+        SvgAttrs.width <| String.fromInt svgSize_,
+        SvgAttrs.height <| String.fromInt svgSize_
     ]
     (List.range 0 (dimension.width * dimension.height - 1) |> List.map
         (\i ->
@@ -97,8 +97,8 @@ drawMazeFromListEdges path beginEndPath isPath visited =
             Svg.rect [
                 SvgAttrs.x  <| String.fromInt (x * edgeSize + (if isPath then middle - 1 else 0)),
                 SvgAttrs.y  <| String.fromInt (y * edgeSize + (if isPath then middle - 1 else 0)),
-                SvgAttrs.width <| String.fromFloat width,
-                SvgAttrs.height <| String.fromFloat height,
+                SvgAttrs.width <| String.fromInt width,
+                SvgAttrs.height <| String.fromInt height,
                 if not isPath 
                     then whiteColorAttr 
                     else if Maybe.withDefault 0 (Dict.get ((from.x, from.y), (to.x, to.y)) visited) == 0 then blueCollorAttr
@@ -108,8 +108,8 @@ drawMazeFromListEdges path beginEndPath isPath visited =
             []
     in
     Svg.svg [
-        SvgAttrs.width svgSize,
-        SvgAttrs.height svgSize
+        SvgAttrs.width <| String.fromInt svgSize_,
+        SvgAttrs.height <| String.fromInt svgSize_
     ]
     (List.map
         (\{ from, to } ->
@@ -129,18 +129,17 @@ view model =
                         [ displayFlex
                         , alignItems center
                         , justifyContent center
-                        , width (pct 50)
                         ]
                         ,HtmlAttributes.id "canvaAnimation"
                     ]
                     [ Svg.svg
-                        [ SvgAttrs.width "100%"
-                        , SvgAttrs.height "100%"
-                        , SvgAttrs.viewBox "0 0 512 512"
+                        [ SvgAttrs.width <| String.fromInt svgSize_
+                        , SvgAttrs.height <| String.fromInt svgSize_
+                        , SvgAttrs.viewBox ([0, 0, svgSize_, svgSize_] |> List.map String.fromInt |> String.join " ")
                         ]
                         [   Svg.rect [
-                                SvgAttrs.width svgSize,
-                                SvgAttrs.height svgSize
+                                SvgAttrs.width <| String.fromInt svgSize_,
+                                SvgAttrs.height <| String.fromInt svgSize_
                             ][],
                             -- drawMazeFromListEdges model.path False,
                             drawMazeFromListEdges model.maze [] False Dict.empty,
