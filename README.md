@@ -1,6 +1,6 @@
 <!-- Template by https://github.com/othneildrew/Best-README-Template -->
 [![MIT License][license-shield]][license-url]
-![Built with Elm][built-with-shield]
+[![Built with Elm][built-with-shield]](https://elm-lang.org/)
 
 <!-- PROJECT LOGO -->
 <br />
