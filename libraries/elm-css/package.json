@@ -41,7 +41,7 @@
     "lodash": "4.17.19",
     "mkdirp": "0.5.1",
     "node-elm-compiler": "5.0.1",
-    "tmp": "0.0.28"
+    "tmp": "0.2.6"
   },
   "devDependencies": {
     "elm-test": "0.18.13-beta",
